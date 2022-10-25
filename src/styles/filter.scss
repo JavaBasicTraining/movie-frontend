@@ -1,0 +1,30 @@
+$primary_color: rgb(66, 66, 66);
+
+.filter_bar {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    border-top: 3px solid yellow;
+    background-color: $primary_color;
+
+    label {
+        color: white;
+        font-size: 20px;
+    }
+
+    .filter_item {
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+
+        .filter_select {
+            .ant-select-selector {
+                width: 120px;
+                height: 40px;
+            }
+        }
+    }
+
+}

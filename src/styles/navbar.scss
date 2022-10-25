@@ -1,0 +1,16 @@
+$primary_color:  rgb(66, 66, 66);
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    background-color:$primary_color ;   
+    align-items: center;
+    justify-content: center;
+    padding: 14px 0px;
+    
+    .navbar_title {}
+    .nav_dropdown {}
+
+}

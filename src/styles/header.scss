@@ -1,0 +1,33 @@
+$primary_color: rgb(51, 51, 51);
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    flex-direction: column;
+    gap: 20px;
+
+    .title {
+        display: flex;
+        gap: 10px;
+        flex-direction: row;
+        margin-top: 20px;
+
+        label {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .search {
+            width: 300px;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+    }
+
+
+
+}

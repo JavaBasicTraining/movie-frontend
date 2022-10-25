@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
-
+import Search from 'antd/lib/input/Search';
+import './App.scss';
+import Filter from './components/filter';
+import Navbar from './components/navbar';
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='app'>
+      <div className='header'>
+        <div className='title'>
+          <label>PhimHay.Net</label>
+          <Search className='search' placeholder="Tìm:tên phim, đạo diễn, diễn viên" enterButton />
+        </div>
+        <Navbar />
+        <Filter />
+      </div>
+      <div className='body'>
+        <div className='left'></div>
+        <div className='right'></div>
+      </div>
+      <div className='footer'>
+
+      </div>
     </div>
   );
 }
 
 export default App;
+
+  // function getUser() {
+  //   var token = localStorage.getItem("token");
+  //   return axios.get(`${baseUrl}/user/1`,
+  //     {
+  //       headers: {
+  //         "Authorization": `Bearer ${token}`
+  //       }
+  //     }
+  //   ).then((response) => {
+
+  //   })
+  // }
+
+
