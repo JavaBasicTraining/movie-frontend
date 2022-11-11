@@ -1,5 +1,15 @@
 @import url('./styles/header.scss');
 @import url('./styles/filter.scss');
+@import url('./styles/poster-list.scss');
+@import url('./styles/poster-scholl.scss');
+@import url('./styles/video.scss');
+@import url('./styles/poster-item.scss');
+@import url('./styles/poster-group.scss');
+@import "~video-react/styles/scss/video-react";
+html {
+    scroll-behavior: smooth;
+}
+
 
 .app {
     display: flex;
@@ -12,9 +22,25 @@
     //     background-size: cover;
 }
 
+.body{
+    width: 100%;
+}
+
 .ant-dropdown-menu {
     max-height: 250px;
     overflow-y: scroll;
+}
+
+.ant-dropdown-menu-item {
+    font-size: 16px !important;
+}
+
+.ant-select-item-option-content {
+    font-size: 16px;
+}
+
+.ant-select-selection-item {
+    font-size: 16px;
 }
 
 .ant-dropdown-menu::-webkit-scrollbar-track {
