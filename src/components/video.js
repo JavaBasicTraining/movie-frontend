@@ -1,9 +1,13 @@
-import React, { useState } from "react";
-import { Player } from "video-react";
-import { v4 as uuidv4 } from "uuid";
 import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { Player } from "video-react";
+import movieConfig from "../config/movie-config.json";
+import { useParams } from "react-router-dom";
 
-export default function Video({ movie }) {
+export default function Video() {
+  const { id } = useParams();
+  const [movie, setMovie] = useState();
   const [list, setList] = useState([]);
   const [value, setValue] = useState("");
 
@@ -35,52 +39,55 @@ export default function Video({ movie }) {
     setList([...list]);
   }
 
+  useEffect(() => {
+    const movieFinding = movieConfig.data.find(item => item.id === parseInt(id))
+    setMovie(movieFinding);
+  }, []);
+
   return (
-    <div className="video_editor">
-      <Player playsInline poster={movie.posterSource} src={movie.videoSource} />
-      <div className="body">
-        <label>{movie.title}</label>
-        <span>Từ Khóa</span>
-        <p className="description">{movie.description}</p>
-      </div>
-
-      <div className="write_comment">
-        <span>Viết comment...</span>
-        <div className="push_comment">
-          <input
-            type="text"
-            value={value}
-            placeholder="Nhập comment của bạn"
-            onChange={(e) => setValue(e.target.value)}
+    <>
+      {movie && (
+        <div className="video_editor">
+          <Player
+            playsInline
+            poster={movie.posterSource}
+            src={movie.videoSource}
           />
-          <button onClick={() => add(commentValue(value))}>Đăng</button>
-        </div>
-      </div>
+          <div className="body">
+            <label>{movie.title}</label>
+            <span>Từ Khóa</span>
+            <p className="description">{movie.description}</p>
+          </div>
 
-      <div className="comment_list">
-        {Array.of(list)
-          .sort((a, b) => -(a.date - b.date))
-          .map((item, index) => {
-            return (
-              <CommentItem
-                key={index}
-                itemValue={item}
-                like={like}
+          <div className="write_comment">
+            <span>Viết comment...</span>
+            <div className="push_comment">
+              <input
+                type="text"
+                value={value}
+                placeholder="Nhập comment của bạn"
+                onChange={(e) => setValue(e.target.value)}
               />
-            );
-          })}
-      </div>
-      {/* <Player id="Player/2" width="1000" height="600" controls >
-                <source src="doibongthieulam.webm" type="Player/mp4">
-                </source>
-            </Player> */}
-    </div>
+              <button onClick={() => add(commentValue(value))}>Đăng</button>
+            </div>
+          </div>
+
+          <div className="comment_list">
+            {Array.of(list)
+              .sort((a, b) => -(a.date - b.date))
+              .map((item, index) => {
+                return <CommentItem key={index} itemValue={item} like={like} />;
+              })}
+          </div>
+          {/* <Player id="Player/2" width="1000" height="600" controls >
+                  <source src="doibongthieulam.webm" type="Player/mp4">
+                  </source>
+              </Player> */}
+        </div>
+      )}
+    </>
   );
 }
-
-Video.propTypes = {
-  movie: PropTypes.object.isRequired,
-};
 
 const CommentItem = ({ itemValue, like }) => {
   return (

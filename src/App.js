@@ -10,17 +10,11 @@ import { Routes, Route } from "react-router-dom";
 import Video from "./components/video";
 
 function App() {
-  // const videoData = [
-  //   { id: "1", source: "haloweendammau.mp4" },
-  //   { id: "2", source: "doibongthieulam.webm" }
-
-  // ]
-
   return (
     <div className="app">
       <div className="header">
         <div className="title">
-          <label>PhimHay.Net</label>
+          <span>PhimHay.Net</span>
           <Search
             className="search"
             placeholder="Tìm:tên phim, đạo diễn, diễn viên"
@@ -53,15 +47,7 @@ function App() {
                 </div>
               }
             />
-            {movieConfig.data.map((movie, _) => {
-              return (
-                <Route
-                  key={movie.id}
-                  path={`/video/${movie.id}`}
-                  element={<Video movie={movie} />}
-                />
-              );
-            })}
+            <Route path="/video/:id" element={<Video />} />
           </Routes>
         </div>
       </div>
