@@ -27,7 +27,7 @@
         right: 0;
     }
 
-    .content {
+    .comment__content {
         width: 100%;
         display: flex;
         gap: 10px;
@@ -37,7 +37,7 @@
         a {
             // flex-basis: calc(100% / 5);
             // width: 200px;
-            .poster_item {
+            .poster-item {
                 display: flex;
                 flex-direction: column;
                 width: 100%;
@@ -52,7 +52,7 @@
         }
     }
 
-    .content::-webkit-scrollbar {
+    .comment__content::-webkit-scrollbar {
         display: none;
         background-color: transparent;
     }

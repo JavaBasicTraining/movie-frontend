@@ -62,14 +62,14 @@
     }
   }
 
-  .comment_list {
+  .comment__list {
     display: flex;
     flex-direction: column;
     gap: 12px;
     background: white;
     margin-top: 12px;
 
-    .comment_item {
+    .comment__item {
       background: white;
 
       img {
@@ -82,7 +82,7 @@
       flex-direction: column;
       color: black;
 
-      .content {
+      .comment__content {
         background: white;
 
         img {

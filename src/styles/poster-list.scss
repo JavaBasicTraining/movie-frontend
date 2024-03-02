@@ -1,10 +1,18 @@
-.poster_list {
-    display: flex;
-    width: 100%;
-    flex-wrap: wrap;
-    border: 1px solid black;
+.poster-list {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  border: 1px solid black;
 
-    .poster_item_link {
-        width: calc(100% / 5);
+  .poster-item-link {
+    width: calc(100% / 5);
+
+    .poster-item {
+      border: 1px solid;
+
+      .poster-item__img {
+        object-fit: cover;
+      }
     }
+  }
 }

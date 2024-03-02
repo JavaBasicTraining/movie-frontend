@@ -18,7 +18,7 @@ export const PosterScroll = () => {
         var difference = 300;
         var element = posterScrollRef.current;
         var to = element.scrollLeft + difference;
-        
+
         scrollTo(element, to, 60);
         // posterScrollRef.current.scrollTo(posterScrollRef.current.scrollLeft + 300, 10000);
     }
@@ -39,7 +39,7 @@ export const PosterScroll = () => {
         <div className="arrow arrow_left" onClick={scrollLeft}>
             <i class="fa-sharp fa-solid fa-chevron-left"></i>
         </div>
-        <div className="content" ref={posterScrollRef}>
+        <div className="comment__content" ref={posterScrollRef}>
             {/* <PosterList posters={posterJson.data}/> */}
             {posterJson.data.map((poster, index) => {
                 return <PosterItem key={index} poster={poster} />

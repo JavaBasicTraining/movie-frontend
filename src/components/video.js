@@ -1,13 +1,18 @@
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { Player } from "video-react";
+import React, {useEffect, useState} from "react";
+import {v4 as uuidv4} from "uuid";
+import {Player} from "video-react";
 import movieConfig from "../config/movie-config.json";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 
 export default function Video() {
-  const { id } = useParams();
-  const [movie, setMovie] = useState();
+  const {id} = useParams();
+  const [movie, setMovie] = useState({
+    title: undefined,
+    posterSource: undefined,
+    videoSource: undefined,
+    description: undefined,
+  });
   const [list, setList] = useState([]);
   const [value, setValue] = useState("");
 
@@ -42,7 +47,7 @@ export default function Video() {
   useEffect(() => {
     const movieFinding = movieConfig.data.find(item => item.id === parseInt(id))
     setMovie(movieFinding);
-  }, []);
+  }, [id]);
 
   return (
     <>
@@ -72,28 +77,26 @@ export default function Video() {
             </div>
           </div>
 
-          <div className="comment_list">
-            {Array.of(list)
-              .sort((a, b) => -(a.date - b.date))
-              .map((item, index) => {
-                return <CommentItem key={index} itemValue={item} like={like} />;
-              })}
+          <div className="comment__list">
+            {
+              Array.of(list)
+                .sort((a, b) => -(a.date - b.date))
+                .map((item, index) => {
+                  return <CommentItem key={index} itemValue={item} like={like}/>;
+                })
+            }
           </div>
-          {/* <Player id="Player/2" width="1000" height="600" controls >
-                  <source src="doibongthieulam.webm" type="Player/mp4">
-                  </source>
-              </Player> */}
         </div>
       )}
     </>
   );
 }
 
-const CommentItem = ({ itemValue, like }) => {
+const CommentItem = ({itemValue, like}) => {
   return (
-    <div className="comment_item">
-      <div className="content">
-        <img src={itemValue.avatar} alt="" />
+    <div className="comment__item">
+      <div className="comment__content">
+        <img src={itemValue.avatar} alt=""/>
         <div className="content_item">
           <div className="content_user">
             <a href="/" className="username">
@@ -101,6 +104,7 @@ const CommentItem = ({ itemValue, like }) => {
             </a>
             <label>{itemValue.comment}</label>
           </div>
+
           <div className="like_comment">
             <button onClick={() => like(itemValue)}>
               {itemValue.like ? "Bỏ thích" : "Thích"}

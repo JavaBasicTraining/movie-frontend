@@ -1,7 +1,7 @@
 import { PosterItem } from "./poster-item";
 
 export const PosterList = ({ posters }) => {
-    return <div className="poster_list">{
+    return <div className="poster-list">{
         posters.map((poster, index) => {
             return <PosterItem key={index} movie={poster} />
         })}

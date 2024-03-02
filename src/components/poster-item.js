@@ -1,11 +1,15 @@
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
-export const PosterItem = ({ movie }) => {
-    return (<Link to={`/video/${movie.id}`} className="poster_item_link">
-        <div className="poster_item">
-            <img src={movie.posterSource} alt="" />
-            <label>{movie.viTitle}</label>
-            <label>{movie.enTitle}</label>
-        </div>
-    </Link>)
+export const PosterItem = ({movie}) => {
+  const {posterSource, viTitle, enTitle, id} = movie;
+
+  return (
+    <Link to={`/video/${id}`} className="poster-item-link">
+      <div className="poster-item">
+        <img src={posterSource} alt="" className="poster-item__img"/>
+        <label>{viTitle}</label>
+        <label>{enTitle}</label>
+      </div>
+    </Link>
+  )
 }
