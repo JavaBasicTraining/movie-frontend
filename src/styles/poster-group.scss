@@ -2,4 +2,10 @@
     display: flex;
     width: 100%;
     flex-wrap: wrap;
+
+    .content-group__title {
+        color: white;
+        font-size: 30px;
+        font-weight: bold;
+    }
 }

@@ -1,7 +1,7 @@
-export default function Group({ title, content }) {
+export default function Group({title, content}) {
   return (
     <div className="content_group">
-      <label>{title}</label>
+      <label className="content-group__title">{title}</label>
       {content}
     </div>
   );
