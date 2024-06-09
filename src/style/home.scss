@@ -1,0 +1,35 @@
+.home-page {
+    display: flex;
+    flex-direction: column;
+   
+    background-color: rgb(59, 58, 62);
+    color: white;
+    font-size: 40px;
+    border-bottom: 3px solid rgb(196, 196, 15);
+    font-weight: bold;
+    font-family:  'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    .header {
+        
+        display: flex;
+        gap: 70px;
+        align-items: center;
+
+        
+        .header-title {
+            display: flex;
+            flex-direction: column; 
+            label {
+                color: rgb(18, 196, 212);
+               font-size: 12px;
+              }
+     
+        }
+        .search {
+            display: flex;
+            width: 240px;
+            border-radius: 10px;
+            height: 25px;
+        }
+    }
+
+}

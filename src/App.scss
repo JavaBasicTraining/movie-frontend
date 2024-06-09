@@ -1,0 +1,9 @@
+@import url(./style/home.scss);
+@import url(./style/navbar.scss);
+.Page
+{
+    display: flex;
+    flex-direction: column;
+    width: 1200px;
+    margin: 0 auto;
+}

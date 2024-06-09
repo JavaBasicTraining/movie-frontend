@@ -1,67 +1,16 @@
 {
     "data": [
         {
-            "title": "Phim mới",
-           "subItems":
-           []
-        },
-        {
-            "title": "Thể loại",
             "subItems": [
-                "Siêu nhiên",
-                "Kinh dị",
-                "Chiến tranh",
-                "Hoạt hình"
-            ]
-        },
-        {
-            "title": "Quốc gia",
-            "subItems": [
-                "Việt nam",
-                "Ấn độ",
-                "Trung quốc",
-                "Hàn quốc",
-                "Nhật bản",
-                "Đài loan"
-            ]
-        },
-        {
-            "title": "Phim lẻ",
-            "subItems": [
-                "Phim lẻ 2011",
-                "Phim lẻ 2012",
-                "Phim lẻ 2013",
-                "Phim lẻ 2014",
-                "Phim lẻ 2015",
-                "Phim lẻ 2016",
-                "Phim lẻ 2017",
-                "Phim lẻ 2018",
-                "Phim lẻ 2019",
-                "Phim lẻ 2020",
-                "Phim lẻ 2021",
-                "Phim lẻ 2022"
-
-            ]
-        },
-        {
-            "title": "Phim thuyết minh",
-            "subItems": [
-              
-            ]
-        },
-        {
-            "title": "Phim chiếu rạp",
-            "subItems": [
-                
-            ]
-        },
-        {
-            "title": "Trailer",
-            "subItems": [
-              
+                "Trang Chủ",
+                "Phim Mới",
+                "Phim Bộ",
+                "Phim Lẻ",
+                "Phim Chiếu Rạp",
+                "Thể Loại",
+                "Quốc Gia",
+                "Phim Hay"
             ]
         }
-        
-
     ]
 }
