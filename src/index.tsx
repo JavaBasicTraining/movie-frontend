@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider, } from "react-router-dom";
-import MovieDetail, { MovieDetailLoader } from "./page/MovieDetail";
+import MovieDetail, { MovieDetailLoader } from "./pages/MovieDetail";
 import ErrorPage from "./ErrorPage";
-import Home, { HomeLoader } from "./page/Home";
+import Home, { HomeLoader } from "./pages/Home";
 import App from "./App";
+import 'bootstrap/dist/css/bootstrap.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

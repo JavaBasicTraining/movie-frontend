@@ -1,0 +1,39 @@
+[
+  {
+    "slug": "phim-le",
+    "label": "Phim Lẻ"
+  },
+  {
+    "slug": "phim-bo",
+    "label": "Phim Bộ"
+  },
+  {
+    "label": "Thể Loại",
+    "children": [
+      {
+        "slug": "phim-co-trang",
+        "label": "Phim Cổ Trang"
+      },
+      {
+        "slug": "phim-tam-ly",
+        "label": "Phim Tâm Lý"
+      },
+      {
+        "slug": "phim-tinh-cam",
+        "label": "Phim Tình Cảm"
+      },
+      {
+        "slug": "phim-bi-an",
+        "label": "Phim Bí Ẩn"
+      },
+      {
+        "slug": "phim-kinh-di",
+        "label": "Phim Kinh Dị"
+      },
+      {
+        "slug": "phim-hanh-dong",
+        "label": "Phim Hành Động"
+      }
+    ]
+  }
+]

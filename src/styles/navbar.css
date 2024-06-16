@@ -1,0 +1,30 @@
+.Navbar {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.Navbar .nav-item {
+    position: relative;
+    label {
+        white-space: nowrap;
+        cursor: pointer;
+    }
+}
+
+.Navbar .nav-item:hover label{
+    text-decoration: underline;
+}
+
+.Navbar .nav-item .nav-item-sub {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    background: white;
+}
+
+.Navbar .nav-item:hover .nav-item-sub {
+    display: flex;
+}
