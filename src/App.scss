@@ -1,9 +1,24 @@
 @import url(./style/home.scss);
 @import url(./style/navbar.scss);
+@import url(./style/movie.scss);
+@import url(./style/login.scss);
+@import url(./style/register.scss);
+@import url(./style/admin.scss);
+@import url(./style/addmovie.scss);
+@import url(./style/info-movie.scss);
+
+
+
+
+root{  background: rgb(85, 83, 87) !important;}
+
 .Page
 {
     display: flex;
     flex-direction: column;
     width: 1200px;
     margin: 0 auto;
+    background: rgb(85, 83, 87) !important;
+    
+  
 }

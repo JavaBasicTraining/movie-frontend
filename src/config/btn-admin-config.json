@@ -1,0 +1,15 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "title": " Thêm Phim",
+      "link": "/admin/movie/new"
+    },
+
+    {
+      "id": 2,
+      "title": " Danh Sách Phim",
+      "link": "/admin/movie"
+    }
+  ]
+}

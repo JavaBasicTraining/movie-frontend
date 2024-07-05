@@ -1,15 +1,78 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import App from "./App";
+import { Movie } from "./component/Movie";
+import Register from "./component/Register";
+import { Admin } from "./component/Admin";
+import Login from "./component/Login";
+import { AddMovie } from "./component/addPhim/AddMovie";
+import { ListMovie } from "./component/addPhim/ListMovie";
+import { UpdateMovie, UpdateMovieLoader } from "./component/addPhim/UpdateMovie";
+import { UploadFile } from "./component/UploadFile";
+import { filterMovieLoader, InfoMovie } from "./component/addPhim/InfoMovie";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/movie",
+        element: <Movie />,
+      },
+      // {
+      //   path: "/movie/:title",
+      //   element: <Movie />,
+      //  // loader: MovieLoader,
+      // },
+    ],
+  },
+  {
+    path: "/admin",
+    element: <Admin />,
+    children: [
+      {
+        path: "/admin/movie/",
+        element: <ListMovie />,
+      },
+      {
+        path: "/admin/movie/new",
+        element: <AddMovie />,
+     
+      },
+      {
+        path: "/admin/movie/:id",  
+        element: <UpdateMovie />,
+        loader: UpdateMovieLoader
+      },
+      
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/auto",
+    element: <UploadFile />,
+  },
+  {
+    path: "/movie/info/:nameMovie",
+    element: <InfoMovie />,
+    loader: filterMovieLoader
+  }
+]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-
-root.render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App/>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 

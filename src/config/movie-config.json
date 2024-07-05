@@ -2,8 +2,9 @@
     "data": [
         {
             "id": 1,
+            "link": "http://localhost:3000/video/quyedinhcuachua.mp4",
             "videoSource": "quyedinhcuachua.mp4",
-            "posterSource": "/poster/ajpre2k-250x350.jpg",
+            "posterSource": "student/images/poster/quyetdinhcuachua.jpg",
             "vititle": "Quyết định của chúa",
             "enTitle": "The god committee",
             "title": "Quyết Định Của Chúa HD Trailer - The God Committee 2021",
@@ -11,8 +12,9 @@
         },
         {
             "id": 2,
+            "link": "http://localhost:3000/video/congdianguc.mp4",
             "videoSource": "congdianguc.mp4",
-            "posterSource": "/poster/cong-dia-nguc-2022-64162-thumbnail.jpg",
+            "posterSource": "congdianguc.jpg",
             "vititle": "Cổng địa ngục 2022",
             "enTitle": "The Lightless Door 2022",
             "title": "Cổng Địa Ngục HD Vietsub - Guimoon: The Lightless Doors 2021",
@@ -20,8 +22,9 @@
         },
         {
             "id": 3,
+            "link": "http://localhost:3000/video/Offering to the Storm Trailer.mp4",
             "videoSource": "Offering to the Storm Trailer.mp4",
-            "posterSource": "/poster/ikscg3r-250x350.jpg",
+            "posterSource": "thanchet.jpg",
             "vititle": "Lễ vật kinh hoàng",
             "enTitle": "Offering To The Storm 2020",
             "title": "Lễ Vật Kinh Hoàng Trailer HD - Offering To The Storm 2020",
@@ -29,8 +32,9 @@
         },
         {
             "id": 4,
+            "link": "http://localhost:3000/video/TOO LATE (2021) Official Trailer (HD) HORROR COMEDY.mp4",
             "videoSource": "TOO LATE (2021) Official Trailer (HD) HORROR COMEDY.mp4",
-            "posterSource": "/poster/sxmkkey-250x350.jpg",
+            "posterSource": "quamuon.jpg",
             "vititle": "Quá Muộn",
             "enTitle": "Too Late 2021",
             "title": "Quá Muộn Trailer HD - Too Late 2021",
@@ -38,8 +42,9 @@
         },
         {
             "id": 5,
+            "link": "http://localhost:3000/video/haloweendammau.mp4",
             "videoSource": "haloweendammau.mp4",
-            "posterSource": "Movie_theaters/halloweendammau.jpg",
+            "posterSource": "halloweendammau.jpg",
             "vititle": "Haloween chấm dứt",
             "enTitle": "Halloween Ends",
             "title": "Halloween Chấm Dứt HD Vietsub - Halloween Ends 2022",
@@ -47,8 +52,9 @@
         },
         {
             "id": 6,
+            "link": "http://localhost:3000/video/doibongthieulam.mp4",
             "videoSource": "doibongthieulam.mp4",
-            "posterSource": "Movie_theaters/doibongthieulam.jpg",
+            "posterSource": "doibongthieulam.jpg",
             "vititle": "Đội Bóng Thiếu Lâm",
             "enTitle": "kungfu soccer",
             "title": "Đội Bóng Thiếu Lâm HD Vietsub - Shaolin Soccer 2001",
@@ -56,8 +62,9 @@
         },
         {
             "id": 7,
+            "link": "http://localhost:3000/video/congdianguc.mp4",
             "videoSource": "congdianguc.mp4",
-            "posterSource": "Movie_theaters/contim.jpg",
+            "posterSource": "contim.jpg",
             "vititle": "Lời Hứa Trở Về",
             "enTitle": "Promise To Return",
             "title": "Lời Hứa Trở Về HD Vietsub - Pulang 2018",
@@ -65,8 +72,9 @@
         },
         {
             "id": 8,
+            "link": "http://localhost:3000/video/congdianguc.mp4",
             "videoSource": "congdianguc.mp4",
-            "posterSource": "Movie_theaters/macuong.jpg",
+            "posterSource": "macuong.jpg",
             "vititle": "Cương Thi Tái Thế",
             "enTitle": "The Vampire Returns",
             "title": "Cương Thi Tái Thế HD Vietsub Tập 20 / 20 - The Vampire Returns 1993",
