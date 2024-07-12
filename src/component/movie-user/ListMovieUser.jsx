@@ -1,0 +1,45 @@
+import React, { useEffect, useState } from "react";
+import { axiosInstance } from "../../API/axiosConfig";
+import { Link, useLoaderData } from "react-router-dom";
+
+export async function MovieLoader({ params }) {
+  const response = await axiosInstance.get(`/api/v1/movies`, {
+    params: params,
+  });
+  return {
+    movies: response.data ?? []
+  };
+}
+
+export async function CountryLoader({ params }) {
+  const response = await axiosInstance.get(`/api/v1/movies`, {
+    params: params,
+  });
+  return {
+    movies: response.data ?? []
+  };
+}
+
+export const Movie = () => {
+  const {movies} = useLoaderData();
+
+  return (
+    <div className="container">
+      {
+        <div className="item">
+          {movies?.map((item) => (
+            <Link to={`/${item.nameMovie}`}>
+              <div className="poster" key={item.id}>
+                <img src={item.posterUrl} alt="" />
+                <div className="title-movie">
+                  <span>{item.nameMovie}</span>
+                  <span>{item.enTitle}</span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      }
+    </div>
+  );
+};

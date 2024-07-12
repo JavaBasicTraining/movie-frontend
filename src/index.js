@@ -4,15 +4,36 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
-import { Movie } from "./component/Movie";
-import Register from "./component/Register";
-import { Admin } from "./component/Admin";
-import Login from "./component/Login";
-import { AddMovie } from "./component/addPhim/AddMovie";
-import { ListMovie } from "./component/addPhim/ListMovie";
-import { UpdateMovie, UpdateMovieLoader } from "./component/addPhim/UpdateMovie";
-import { UploadFile } from "./component/UploadFile";
-import { filterMovieLoader, InfoMovie } from "./component/addPhim/InfoMovie";
+import {
+  CountryLoader,
+  Movie,
+  MovieLoader,
+} from "./component/movie-user/ListMovieUser";
+import Register from "./component/account/Register";
+import { Admin } from "./component/manager/Admin";
+import Login from "./component/account/Login";
+import { AddMovie } from "./component/manager/AddMovie";
+import {
+  ListMovie,
+  MovieManagerLoader,
+} from "./component/manager/ListMovieAdmin";
+import {
+  UpdateMovie,
+  UpdateMovieLoader,
+} from "./component/manager/UpdateMovie";
+import {
+  MovieDetail,
+  posterMovieLoader,
+} from "./component/movie-user/MovieDetail";
+import {
+  filterMovieLoader,
+  MovieVideo,
+} from "./component/movie-user/MovieVideoSingle";
+import {
+  filterMovieSeriesLoader,
+  MovieVideoSeries,
+} from "./component/movie-user/MovieVideoSeries";
+import { Episode } from "./component/manager/Episode";
 
 const router = createBrowserRouter([
   {
@@ -20,14 +41,35 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/movie",
+        path: "/",
         element: <Movie />,
+        loader: MovieLoader,
       },
-      // {
-      //   path: "/movie/:title",
-      //   element: <Movie />,
-      //  // loader: MovieLoader,
-      // },
+      {
+        path: "/the-loai/:keyword?",
+        element: <Movie />,
+        loader: CountryLoader,
+      },
+      {
+        path: "/quoc-gia/:keyword",
+        element: <Movie />,
+        loader: MovieLoader,
+      },
+      {
+        path: "/:name",
+        element: <MovieDetail />,
+        loader: posterMovieLoader,
+      },
+      {
+        path: "/xem-phim/:name",
+        element: <MovieVideo />,
+        loader: filterMovieLoader,
+      },
+      {
+        path: "/xem-phim-bo/:name",
+        element: <MovieVideoSeries />,
+        loader: filterMovieSeriesLoader,
+      },
     ],
   },
   {
@@ -37,18 +79,26 @@ const router = createBrowserRouter([
       {
         path: "/admin/movie/",
         element: <ListMovie />,
+        loader: MovieManagerLoader,
+      },
+      {
+        path: "/admin/movie/category/:keyword",
+        element: <ListMovie />,
+        loader: MovieManagerLoader,
       },
       {
         path: "/admin/movie/new",
         element: <AddMovie />,
-     
+        loader: MovieManagerLoader,
+      
       },
       {
-        path: "/admin/movie/:id",  
+        path: "/admin/movie/:id",
         element: <UpdateMovie />,
-        loader: UpdateMovieLoader
-      },
+        loader: UpdateMovieLoader,
       
+      },
+     
     ],
   },
   {
@@ -59,15 +109,6 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
-  {
-    path: "/auto",
-    element: <UploadFile />,
-  },
-  {
-    path: "/movie/info/:nameMovie",
-    element: <InfoMovie />,
-    loader: filterMovieLoader
-  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -76,16 +117,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   </React.StrictMode>
 );
 
-// ReactDOM.render(
-//   <React.StrictMode>
-//     <BrowserRouter>
-//       <App />
-//     </BrowserRouter>
-//   </React.StrictMode>,
-//   document.getElementById('root')
-// );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

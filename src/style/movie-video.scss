@@ -1,0 +1,74 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  .header-container {
+    display: flex;
+    flex-direction: column;
+    .header {
+      display: flex;
+      justify-items: center;
+      flex-direction: column;
+
+      .btn-next-movie{
+        button {
+         width: 100px;
+        }
+      }
+      span {
+        font-weight: bold;
+      }
+      a {
+        font-size: 25px;
+        color: white;
+      }
+    }
+    video {
+      display: flex;
+      width: 1000px;
+      align-items: center;
+      justify-content: center;
+      video {
+        width: 100%;
+      }
+    }
+    .like-share {
+      display: flex;
+
+      gap: 5px;
+      border: none;
+      button {
+        background-color: blue;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 30px;
+      }
+    }
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 10px;
+    .comment {
+      display: flex;
+      flex-direction: column;
+      span {
+        font-size: 30px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .input {
+        width: 1000px;
+        height: 25px !important;
+        height: auto;
+      }
+    }
+    button {
+      font-size: 20px;
+    }
+  }
+}

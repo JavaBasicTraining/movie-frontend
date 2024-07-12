@@ -1,16 +1,22 @@
 {
-    "data": [
-        {
-            "subItems": [
-                "Trang Chủ",
-                "Phim Bộ",
-                "Phim Mới",
-                "Phim Lẻ",
-                "Phim Chiếu Rạp",
-                "Thể Loại",
-                "Quốc Gia",
-                "Phim Hay"
-            ]
-        }
-    ]
+  "data": [
+    {
+      "name": "Trang Chủ"
+    },
+    {
+      "name": "Thể Loại",
+       "basePath": "http://localhost:3000"
+    },
+    {
+      "name": "Phổ Biến"
+      },
+      {
+      "name": "Phim Mới"
+    },
+    {
+      "name": "Phim Chiếu Rạp"
+    }
+   
+  ]
+
 }

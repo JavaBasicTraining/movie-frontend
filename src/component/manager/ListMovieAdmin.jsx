@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
+import { Link } from "react-router-dom";
+
+export async function MovieManagerLoader({ params }) {
+  const response = await axiosInstance.get(`/api/v1/movies`, {
+    params: params,
+  });
+  return {
+    movies: response.data ?? []
+  };
+}
 
 export const ListMovie = () => {
-  const [data, setData] = useState([]);
-    const navigate = useNavigate();
+  const {movies} = useLoaderData();
 
+  const navigate = useNavigate();
+
+  
   //   async function getList() {
   // const response = await axios.get(
   //   "http://localhost:8081/api/v1/movies" //
@@ -26,20 +38,25 @@ export const ListMovie = () => {
     }
   };
 
-  const fetchMovies = () => {
-    axiosInstance
-      .get("/api/v1/admin/movies")
-      .then((res) => {
-        console.log(res)
-        setData(res.data);
-      });
-  };
-  useEffect(() => {
-    fetchMovies();
-  }, []);
+  // const fetchMovies = () => {
+  //   axiosInstance.get("/api/v1/admin/movies").then((res) => {
+  //     console.log(res);
+  //     setData(res.data);
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   fetchMovies();
+  // }, []);
 
   return (
     <div>
+      <div>
+        <Link to="/admin/movie/new">
+          <button>Add New</button>
+        </Link>
+      </div>
+      
       <table>
         <thead>
           <tr>
@@ -50,14 +67,18 @@ export const ListMovie = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
+          {movies.map((item) => (
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.nameMovie}</td>
               <td>{item.description}</td>
               <td>
-                <button onClick={() => navigate(`/admin/movie/${item.id}`)}>Edit</button>
-                <button onClick={() => deleteMovie(`${item.id}`)}>Remove</button>
+                <button onClick={() => navigate(`/admin/movie/${item.id}`)}>
+                  Edit
+                </button>
+                <button onClick={() => deleteMovie(`${item.id}`)}>
+                  Remove
+                </button>
               </td>
             </tr>
           ))}

@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
-import axios from "axios";
 import qs from "qs";
-export async function AddMovieLoader() {
-  const res = await axiosInstance.get(`/api/v1/admin/movies/new`);
-
-  return {
-    movie: res.data,
-  };
-}
+import { countries } from "../../static-data/countries";
+import { DEFAULT_EPISODE, Episode } from "./Episode";
 
 export const AddMovie = () => {
-  const [selectedNavbar, setSelectedNavbar] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [option, setOption] = useState([]);
+  const [showEpisode, setShowEpisode] = useState(false);
   const [suggestions, setSuggestion] = useState([]);
   const [ids, setids] = useState("");
-
-
   const navigate = useNavigate();
   const [data, setData] = useState({
     nameMovie: "",
@@ -25,53 +21,67 @@ export const AddMovie = () => {
     viTitle: "",
     enTitle: "",
     description: "",
-    navbar: "",
-    ids: "",
+    country: "",
+    category: [],
+    year: "",
+    idGenre: [],
     nameCategory: [],
+    episodes: [],
   });
 
-
-
   const handleRemoveItem = (itemToRemove) => {
-    const filtered = selectedNavbar.filter(
+    const filtered = selectedCategory.filter(
       (item) => item.id !== itemToRemove.id
     );
-    setSelectedNavbar(filtered);
+    setSelectedCategory(filtered);
 
     const request = {
       excludeIds: [...filtered.map((item) => item.id)],
     };
-    fetchCategories(request); // khi xóa thi add vào lại suggestions
+    fetchGenre(request); // khi xóa thi add vào lại suggestions
   };
 
-  const handleSelectItem = (item) => {
-    setids(item.id)
+  const getIdCategory = () => {
+    const filtered = categories.filter((item) => item.id);
+    setSelectedCategory(filtered);
+
+    const request = {
+      excludeIds: [...filtered.map((item) => item.id)],
+    };
+    fetchGenre(request);
+  };
+
+  const handleSelectCategory = (item) => {
+    setids((idCategoryids) => [...idCategoryids, item.id]);
     setData((item) => ({
       ...item,
-      idCategory: parseInt(data.idCategory),
+      idGenre: parseInt(data.idGenre),
     }));
 
-    if (selectedNavbar.some((selectedItem) => selectedItem.id === item.id)) {
+    if (selectedCategory.some((selectedItem) => selectedItem.id === item.id)) {
       alert("Item đã có trong danh sách selected");
     } else {
-      setSelectedNavbar([...selectedNavbar, item]);
+      setSelectedCategory([...selectedCategory, item]);
       const request = {
-        excludeIds: [...selectedNavbar.map((item) => item.id), item.id],
+        excludeIds: [...selectedCategory.map((item) => item.id), item.id],
       };
-      fetchCategories(request);
+      fetchGenre(request);
     }
   };
 
-
-
   useEffect(() => {
+    fetchGenre();
     fetchCategories();
   }, []);
 
+  const fetchCategories = async () => {
+    const response = await axiosInstance.get(`/api/v1/category`);
+    setCategories(response.data);
+  };
 
-  const fetchCategories = (params) => {
+  const fetchGenre = (params) => {
     axiosInstance
-      .get(`/api/v1/categories`, {
+      .get(`/api/v1/genre`, {
         params,
         paramsSerializer: (params) => {
           return qs.stringify(params);
@@ -81,8 +91,6 @@ export const AddMovie = () => {
         setSuggestion(res.data ?? []);
       });
   };
-
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -108,7 +116,7 @@ export const AddMovie = () => {
         data.viTitle === "" ||
         data.enTitle === "" ||
         data.description === "" ||
-        data.idCategory === ""
+        data.idGenre === ""
       ) {
         alert("Vui lòng nhập đầy đủ thông tin phim");
       } else {
@@ -119,12 +127,13 @@ export const AddMovie = () => {
         createMovieRequest.append("description", data.description);
         createMovieRequest.append("filePoster", data.filePoster);
         createMovieRequest.append("fileMovie", data.fileMovie);
-        createMovieRequest.append("navbar",data.navbar);
-        createMovieRequest.append("ids", parseInt(ids));
+        createMovieRequest.append("country", data.country);
+        createMovieRequest.append("year", data.year);
+        createMovieRequest.append(["idGenre"], [ids]);
+        createMovieRequest.append("idCategory", data.category);
         const response = await axiosInstance.post(
           `/api/v1/admin/movies`,
-          createMovieRequest,
-        
+          createMovieRequest
         );
 
         alert("Thêm phim mới thành Công", response.data);
@@ -134,6 +143,37 @@ export const AddMovie = () => {
       alert("Lỗi");
     }
   };
+
+  const handleShowEpisode = (e) => {
+    if (e.target.value === "1") {
+      setShowEpisode(true);
+      setData({
+        ...data,
+        episodes: [DEFAULT_EPISODE],
+      });
+    } else {
+      setShowEpisode(false);
+    }
+  };
+
+  const handleEpisodeChanged = (episode, index) => {
+    console.log("episode ", episode, index);
+    const clone = [...data.episodes];
+    clone[index] = episode;
+
+    setData({
+      ...data,
+      episodes: clone,
+    });
+  };
+
+  const handleAddEpisode = () => {
+    setData({
+      ...data,
+      episodes: [...data.episodes, DEFAULT_EPISODE],
+    });
+  };
+
   return (
     <div className="container-addmovie">
       <h1>Thêm Phim Mới</h1>
@@ -197,12 +237,60 @@ export const AddMovie = () => {
           />
         </div>
         <div className="selectedInputForm">
+          <label>Năm Phát Hành:</label>
+          <input
+            type="text"
+            name="year"
+            value={data.year}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="selectedInputForm">
+          <label>Nhập Quốc Gia</label>
+          <select
+            type="text"
+            name="country"
+            value={data.country}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled selected>
+              Chọn Quốc Gia
+            </option>
+            {countries.map((value) => (
+              <option value={value}>{value}</option>
+            ))}
+          </select>
+        </div>
+        <div className="selectedInputForm">
+          <label>Chọn Phân Loại Phim</label>
+          <select
+            type="text"
+            name="category"
+            value={data.category}
+            onChange={(e) => {
+              handleChange(e);
+              handleShowEpisode(e);
+            }}
+            required
+          >
+            <option value="" disabled>
+              Chọn Phân Loại Phim
+            </option>
+            {categories.map((value) => (
+              <option key={value.id} value={value.id}>
+                {value.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="selectedInputForm">
           <label>Nhập Thể Loại</label>
           <div>
-            {/* selected items */}
-            {selectedNavbar && (
+            {selectedCategory && (
               <div>
-                {selectedNavbar.map((item) => (
+                {selectedCategory.map((item) => (
                   <button onClick={() => handleRemoveItem(item)}>
                     <span>{item.name}</span>
                   </button>
@@ -215,7 +303,7 @@ export const AddMovie = () => {
               {suggestions.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => handleSelectItem(category)}
+                  onClick={() => handleSelectCategory(category)}
                 >
                   <span>{category.name}</span>
                 </button>
@@ -224,35 +312,26 @@ export const AddMovie = () => {
           )}
         </div>
       </div>
-      <div>
-      <div className="selectedInputForm">
-          <label>Nhập Thể Loại</label>
-          <div>
-            {/* selected items */}
-            {selectedNavbar && (
-              <div>
-                {selectedNavbar.map((item) => (
-                  <button onClick={() => handleRemoveItem(item)}>
-                    <span>{item.name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          {suggestions && (
-            <div>
-              {suggestions.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => handleSelectItem(category)}
-                >
-                  <span>{category.name}</span>
-                </button>
+
+      {showEpisode && (
+        <div className="episodes">
+          {data.episodes && (
+            <>
+              {data.episodes.map((item, index) => (
+                <Episode
+                  key={index}
+                  episode={item}
+                  index={index}
+                  formChanged={handleEpisodeChanged}
+                />
               ))}
-            </div>
+            </>
           )}
+
+          <button onClick={handleAddEpisode}>Add Episode</button>
         </div>
-      </div>
+      )}
+
       <button onClick={handleSubmit}>Thêm</button>
     </div>
   );

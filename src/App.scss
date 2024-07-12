@@ -1,11 +1,15 @@
 @import url(./style/home.scss);
-@import url(./style/navbar.scss);
-@import url(./style/movie.scss);
+@import url(./style/navbar-user.scss);
+@import url(./style/list-movie-user.scss);
 @import url(./style/login.scss);
 @import url(./style/register.scss);
 @import url(./style/admin.scss);
 @import url(./style/addmovie.scss);
-@import url(./style/info-movie.scss);
+@import url(./style/movie-detail.scss);
+@import url(./style/navbar-admin.scss);
+@import url(./style/movie-video.scss);
+
+
 
 
 
@@ -21,4 +25,8 @@ root{  background: rgb(85, 83, 87) !important;}
     background: rgb(85, 83, 87) !important;
     
   
+}
+
+.h-fit {
+    height: fit-content;
 }

@@ -1,19 +1,13 @@
 import { Outlet } from "react-router-dom";
 import "./App.scss";
-import { Navbar } from "./component/Navbar";
 import { HomePage } from "./component/Home";
-import { Movie } from "./component/Movie";
+import { NavbarUser } from "./component/NavbarUser";
 function App() {
   return (
     <div className="Page">
       <HomePage/>
-      <Navbar />
-     
-      <Movie/>
-      {/* Outlet load page con */}
-      {/* luc nay dang load Movie */}
+      <NavbarUser />
       <Outlet/> 
-      {/* <UploadFile/> */}
     </div>
   );
 }

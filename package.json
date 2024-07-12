@@ -11,6 +11,8 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.18.0",
     "axios": "^1.7.2",
+    "flowbite": "^2.4.1",
+    "flowbite-react": "^0.10.1",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "or": "^0.2.0",

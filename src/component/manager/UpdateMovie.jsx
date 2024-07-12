@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
 import qs from "qs";
+import { Select } from "antd";
+import { countries } from "../../static-data/countries";
 
 export async function UpdateMovieLoader({ params }) {
   const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);
@@ -14,7 +16,7 @@ export async function UpdateMovieLoader({ params }) {
 export const UpdateMovie = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [suggestions, setSuggestion] = useState([]);
-  const [ids, setids] = useState("");
+  const [ids, setIds] = useState("");
   const { movie } = useLoaderData();
   const navigate = useNavigate();
   const [data, setData] = useState({
@@ -23,16 +25,19 @@ export const UpdateMovie = () => {
     fileMovie: "",
     viTitle: "",
     enTitle: "",
+    country: "",
+    year: "",
+
     description: "",
-    ids: "",
+    idCategory: [],
     nameCategory: [],
   });
 
   const handleSelectItem = (item) => {
-    setids(item.id);
+    setIds((idCategories) => [...idCategories, item.id]);
     setData((item) => ({
       ...item,
-      ids: data.ids,
+      idCategory: parseInt(data.idCategory),
     }));
 
     if (selectedItems.some((selectedItem) => selectedItem.id === item.id)) {
@@ -54,7 +59,7 @@ export const UpdateMovie = () => {
     const request = {
       excludeIds: [...filtered.map((item) => item.id)],
     };
-    fetchCategories(request); // khi xóa thi add vào lại suggestions
+    fetchCategories(request);
   };
 
   useEffect(() => {
@@ -64,7 +69,7 @@ export const UpdateMovie = () => {
 
   const fetchCategories = (params) => {
     axiosInstance
-      .get(`/api/v1/categories`, {
+      .get(`/api/v1/genre`, {
         params,
         paramsSerializer: (params) => {
           return qs.stringify(params);
@@ -98,7 +103,10 @@ export const UpdateMovie = () => {
   createMovieRequest.append("description", data.description);
   createMovieRequest.append("filePoster", data.filePoster);
   createMovieRequest.append("fileMovie", data.fileMovie);
-  createMovieRequest.append("ids", parseInt(ids));
+  createMovieRequest.append("country", data.country);
+  createMovieRequest.append("country", data.year);
+
+  createMovieRequest.append("idCategory", [ids]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -187,6 +195,31 @@ export const UpdateMovie = () => {
             onChange={handleChange}
             required
           />
+        </div>
+  <div className="selectedInputForm">
+          <label>Năm Phát Hành:</label>
+          <input
+            type="text"
+            name="year"
+            value={data.year}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="selectedInputForm">
+          <label>Nhập Quốc Gia</label>
+          <select
+            type="text"
+            name="country"
+            value={data.country}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled selected>Chọn Quốc Gia</option>
+            {countries.map((value) => (
+              <option value={value}>{value}</option>
+            ))}
+          </select>
         </div>
         <div className="selectedInputForm">
           <label>Nhập Thể Loại</label>
