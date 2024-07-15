@@ -33,7 +33,9 @@ import {
   filterMovieSeriesLoader,
   MovieVideoSeries,
 } from "./component/movie-user/MovieVideoSeries";
-import { Episode } from "./component/manager/Episode";
+import PrivateRoute from "./API/PrivateRoute";
+import UsePrivate from "./API/UsePrivate";
+
 
 const router = createBrowserRouter([
   {
@@ -108,6 +110,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/admin/login",
+    element: <UsePrivate />,
   },
 ]);
 

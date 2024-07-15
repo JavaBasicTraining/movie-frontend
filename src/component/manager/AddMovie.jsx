@@ -9,7 +9,6 @@ export const AddMovie = () => {
   const [categories, setCategories] = useState([]);
 
   const [selectedCategory, setSelectedCategory] = useState([]);
-  const [option, setOption] = useState([]);
   const [showEpisode, setShowEpisode] = useState(false);
   const [suggestions, setSuggestion] = useState([]);
   const [ids, setids] = useState("");
@@ -93,11 +92,11 @@ export const AddMovie = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: value,
-    });
+        const { name, value } = e.target;
+        setData({
+          ...data,
+          [name]: value,
+        });
   };
 
   const handleFileChange = (e) => {
@@ -157,7 +156,6 @@ export const AddMovie = () => {
   };
 
   const handleEpisodeChanged = (episode, index) => {
-    console.log("episode ", episode, index);
     const clone = [...data.episodes];
     clone[index] = episode;
 
@@ -167,12 +165,12 @@ export const AddMovie = () => {
     });
   };
 
-  const handleAddEpisode = () => {
-    setData({
-      ...data,
-      episodes: [...data.episodes, DEFAULT_EPISODE],
-    });
-  };
+    const handleAddEpisode = () => {
+      setData({
+        ...data,
+        episodes: [...data.episodes, DEFAULT_EPISODE],
+      });
+    };
 
   return (
     <div className="container-addmovie">
@@ -313,24 +311,24 @@ export const AddMovie = () => {
         </div>
       </div>
 
-      {showEpisode && (
-        <div className="episodes">
-          {data.episodes && (
-            <>
-              {data.episodes.map((item, index) => (
-                <Episode
-                  key={index}
-                  episode={item}
-                  index={index}
-                  formChanged={handleEpisodeChanged}
-                />
-              ))}
-            </>
-          )}
+        {showEpisode && (
+          <div className="episodes">
+            {data.episodes && (
+              <>
+                {data.episodes.map((item, index) => (
+                  <Episode
+                    key={index}
+                    episode={item}
+                    index={index}
+                    formChanged={handleEpisodeChanged}
+                  />
+                ))}
+              </>
+            )}
 
-          <button onClick={handleAddEpisode}>Add Episode</button>
-        </div>
-      )}
+            <button onClick={handleAddEpisode}>Add Episode</button>
+          </div>
+        )}
 
       <button onClick={handleSubmit}>Thêm</button>
     </div>

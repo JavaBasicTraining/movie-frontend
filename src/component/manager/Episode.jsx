@@ -10,7 +10,7 @@ export const DEFAULT_EPISODE = {
 
 export const Episode = ({ formChanged, episode, index }) => {
   const [data, setData] = useState(DEFAULT_EPISODE);
-
+ 
   useEffect(() => {
     setData(episode);
   }, [episode]);
@@ -21,9 +21,7 @@ export const Episode = ({ formChanged, episode, index }) => {
       ...data,
       [name]: value,
     };
-
     setData(newValue);
-
     formChanged(newValue, index);
   };
 
@@ -51,9 +49,9 @@ export const Episode = ({ formChanged, episode, index }) => {
   };
 
   return (
-    <form>
-      <div>
-        <div className="selectedInputForm">
+    <form className="episode-container">
+      <div className="body-episode">
+        <div className="selectedInputFormEpisode">
           <label>Tập:</label>
           <input
             type="text"
@@ -63,7 +61,7 @@ export const Episode = ({ formChanged, episode, index }) => {
             required
           />
         </div>
-        <div className="selectedInputForm">
+        <div className="selectedInputFormEpisodeFile">
           <label>Tải Poster </label>
           <input
             type="file"
@@ -72,7 +70,7 @@ export const Episode = ({ formChanged, episode, index }) => {
             required
           />
         </div>
-        <div className="selectedInputForm">
+        <div className="selectedInputFormEpisodeFile">
           <label>Tải Phim </label>
           <input
             type="file"
@@ -81,8 +79,8 @@ export const Episode = ({ formChanged, episode, index }) => {
             required
           />
         </div>
-        <div className="selectedInputForm">
-          <label>Tập:</label>
+        <div className="selectedInputFormEpisode">
+          <label>Nội dung:</label>
           <input
             type="text"
             name="descriptions"
@@ -91,7 +89,7 @@ export const Episode = ({ formChanged, episode, index }) => {
             required
           />
         </div>
-        <div className="selectedInputForm">
+        <div className="selectedInputFormEpisode">
           <label>Tập:</label>
           <input
             type="text"
