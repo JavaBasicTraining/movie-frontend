@@ -1,17 +1,14 @@
 import axios from "axios";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import useAuth from "../../hook/useAuth";
+import { useEffect } from "react";
 
 async function login(username, password) {
-
   const isLoggedIn = () => {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem("token");
   };
 
-
-
-
-  const loginUrl = "http://localhost:8081/api/account/login";
-
+const loginUrl = "http://localhost:8081/api/account/login";
   try {
     const response = await axios.post(loginUrl, {
       username: username,
@@ -41,15 +38,25 @@ async function login(username, password) {
 
 export default function Login() {
   const navigate = useNavigate();
+  const isAuth = useAuth();
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/"); // đăng nhập thành công rồi thì khi vào login nó tự động redireact trang khác
+    }
+  }, [isAuth]);
+
   async function handleLogin() {
     const username = document.getElementById("username").value;
+
     const password = document.getElementById("password").value;
     const token = await login(username, password);
     if (token) {
       const user = await getUser(token);
       if (user && user.authorities.includes("admin")) {
-        alert("Đăng Nhập Tài Khoản Admin Thành Công!!!"); 
-        navigate("/admin");
+      
+        alert("Đăng Nhập Tài Khoản Admin Thành Công!!!");
+        navigate("/admin/movie");
       } else {
         navigate("/");
       }

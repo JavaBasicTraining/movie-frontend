@@ -91,12 +91,16 @@ export const AddMovie = () => {
       });
   };
 
-  const handleChange = (e) => {
-        const { name, value } = e.target;
-        setData({
-          ...data,
-          [name]: value,
-        });
+  const handleChange = (e, onSuccess) => {
+    const { name, value } = e.target;
+    setData((prev) => {
+      prev = {
+        ...data,
+        [name]: value,
+      };
+      onSuccess?.(prev);
+      return prev;
+    });
   };
 
   const handleFileChange = (e) => {
@@ -143,13 +147,13 @@ export const AddMovie = () => {
     }
   };
 
-  const handleShowEpisode = (e) => {
+  const handleShowEpisode = (e, formData) => {
     if (e.target.value === "1") {
       setShowEpisode(true);
-      setData({
+      formData = {
         ...data,
         episodes: [DEFAULT_EPISODE],
-      });
+      };
     } else {
       setShowEpisode(false);
     }
@@ -165,12 +169,13 @@ export const AddMovie = () => {
     });
   };
 
-    const handleAddEpisode = () => {
-      setData({
-        ...data,
-        episodes: [...data.episodes, DEFAULT_EPISODE],
-      });
-    };
+  const handleAddEpisode = async (e) => {
+    e.preventDefault();
+    setData({
+      ...data,
+      episodes: [...data.episodes, DEFAULT_EPISODE],
+    });
+  };
 
   return (
     <div className="container-addmovie">
@@ -268,8 +273,9 @@ export const AddMovie = () => {
             name="category"
             value={data.category}
             onChange={(e) => {
-              handleChange(e);
-              handleShowEpisode(e);
+              handleChange(e, (formData) => {
+                handleShowEpisode(e, formData);
+              });
             }}
             required
           >
@@ -293,7 +299,7 @@ export const AddMovie = () => {
                     <span>{item.name}</span>
                   </button>
                 ))}
-              </div>
+              </div>  
             )}
           </div>
           {suggestions && (
@@ -311,24 +317,24 @@ export const AddMovie = () => {
         </div>
       </div>
 
-        {showEpisode && (
-          <div className="episodes">
-            {data.episodes && (
-              <>
-                {data.episodes.map((item, index) => (
-                  <Episode
-                    key={index}
-                    episode={item}
-                    index={index}
-                    formChanged={handleEpisodeChanged}
-                  />
-                ))}
-              </>
-            )}
+      {showEpisode && (
+        <div className="episodes">
+          {data.episodes && (
+            <>
+              {data.episodes.map((item, index) => (
+                <Episode
+                  key={index}
+                  episode={item}
+                  index={index}
+                  formChanged={handleEpisodeChanged}
+                />
+              ))}
+            </>
+          )}
 
-            <button onClick={handleAddEpisode}>Add Episode</button>
-          </div>
-        )}
+          <button onClick={handleAddEpisode}>Add Episode</button>
+        </div>
+      )}
 
       <button onClick={handleSubmit}>Thêm</button>
     </div>

@@ -1,5 +1,4 @@
 import axios from "axios";
-import UsePrivate from "./UsePrivate";
 
 export const axiosInstance = axios.create({
   baseURL: "http://localhost:8081",
@@ -15,7 +14,7 @@ const publicAPI = [
 
 axiosInstance.interceptors.request.use(
   function (config) {
-    const isPublicAPI = publicAPI.some((api) => config.url.startsWith(api));
+    const isPublicAPI = publicAPI.some((api) => config.url.includes(api));
     if (isPublicAPI) {
       return config;
     }
@@ -24,7 +23,6 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    <UsePrivate />;
     return config;
   },
   function (error) {

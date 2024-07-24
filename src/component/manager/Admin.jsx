@@ -14,7 +14,8 @@ export const Admin = () => {
 
   return (
     <div className="admin-container">
-      <div className={`menu-navbar ${showNavbar ? 'navbar-show' : ''}`}><NavbarAdmin /></div>
+      <div className={`menu-navbar ${showNavbar ? 'navbar-show' : ''}`}>
+        <NavbarAdmin /></div>
 
       <div className="right-container">
         <div className="header">

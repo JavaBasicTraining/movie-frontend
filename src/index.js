@@ -33,10 +33,9 @@ import {
   filterMovieSeriesLoader,
   MovieVideoSeries,
 } from "./component/movie-user/MovieVideoSeries";
-import PrivateRoute from "./API/PrivateRoute";
-import UsePrivate from "./API/UsePrivate";
+import PrivateRoute from "./component/PrivateRoute";
 
-
+// này là cách mới
 const router = createBrowserRouter([
   {
     path: "/",
@@ -74,35 +73,40 @@ const router = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "/admin",
-    element: <Admin />,
+    element: <PrivateRoute />,
     children: [
       {
-        path: "/admin/movie/",
-        element: <ListMovie />,
-        loader: MovieManagerLoader,
+        path: "/admin",
+        element: <Admin />,
+        children: [
+          {
+            path: "/admin/movie/", // k cần index true
+            element: <ListMovie />,
+            loader: MovieManagerLoader,
+          },
+          {
+            path: "/admin/movie/category/:keyword",
+            element: <ListMovie />,
+            loader: MovieManagerLoader,
+          },
+          {
+            path: "/admin/movie/new",
+            element: <AddMovie />,
+            loader: MovieManagerLoader,
+          },
+          {
+            path: "/admin/movie/:id",
+            element: <UpdateMovie />,
+            loader: UpdateMovieLoader,
+          },
+        ],
       },
-      {
-        path: "/admin/movie/category/:keyword",
-        element: <ListMovie />,
-        loader: MovieManagerLoader,
-      },
-      {
-        path: "/admin/movie/new",
-        element: <AddMovie />,
-        loader: MovieManagerLoader,
-      
-      },
-      {
-        path: "/admin/movie/:id",
-        element: <UpdateMovie />,
-        loader: UpdateMovieLoader,
-      
-      },
-     
     ],
   },
+
   {
     path: "/login",
     element: <Login />,
@@ -110,10 +114,6 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
-  },
-  {
-    path: "/admin/login",
-    element: <UsePrivate />,
   },
 ]);
 

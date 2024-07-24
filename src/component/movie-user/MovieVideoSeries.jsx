@@ -14,7 +14,6 @@ export async function filterMovieSeriesLoader({ params }) {
   }
 
 export const MovieVideoSeries = () => {
-  const navigate = useNavigate();
   const [comment, setComment] = useState([]);
   const { movie } = useLoaderData();
 
@@ -38,14 +37,7 @@ export const MovieVideoSeries = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isLoggedIn) {
-      alert("Comment Thành Công!!!");
-    } else {
-      alert(`Bạn phải đăng nhập`);
-    }
-  };
+
 
   return (
     <div className="container">

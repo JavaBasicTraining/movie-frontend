@@ -3,13 +3,19 @@ import { axiosInstance } from "../../API/axiosConfig";
 
 export const DEFAULT_EPISODE = {
   episodeCount: "",
-  posterUrl: "",
-  videoUrl: "",
+  fileMovie: "",
+  filePoster: "",
   descriptions: "",
+  movieId: ""
+
 };
+
+
+
 
 export const Episode = ({ formChanged, episode, index }) => {
   const [data, setData] = useState(DEFAULT_EPISODE);
+ 
  
   useEffect(() => {
     setData(episode);
@@ -33,19 +39,26 @@ export const Episode = ({ formChanged, episode, index }) => {
     });
   };
 
-  const create = async () => {
-    // sai r,
-    const createEpisodeRequest = new FormData();
-    createEpisodeRequest.append("episodeCount", data.episodeCount);
-    createEpisodeRequest.append("posterUrl", data.posterUrl);
-    createEpisodeRequest.append("videoUrl", data.videoUrl);
-    createEpisodeRequest.append("descriptions", data.descriptions);
-    createEpisodeRequest.append("movieId", data.movieId);
-    const res = await axiosInstance.post(
-      `/api/v1/episode/create`,
-      createEpisodeRequest
-    );
-    return res.data;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+  
+        const createEpisodeRequest = new FormData();
+        createEpisodeRequest.append("episodeCount", data.episodeCount);
+       createEpisodeRequest.append("filePoster", data.filePoster);
+        createEpisodeRequest.append("fileMovie", data.fileMovie);
+        createEpisodeRequest.append("descriptions", data.descriptions);
+        createEpisodeRequest.append("movieId", data.movieId);
+        const res = await axiosInstance.post(
+          `/api/v1/episode/create`,
+          createEpisodeRequest
+        );
+        alert("Thêm phim mới thành Công", res.data);
+     
+      
+    } catch (error) {
+      alert("Lỗi");
+    }
   };
 
   return (
@@ -90,7 +103,7 @@ export const Episode = ({ formChanged, episode, index }) => {
           />
         </div>
         <div className="selectedInputFormEpisode">
-          <label>Tập:</label>
+          <label>MovieId:</label>
           <input
             type="text"
             name="movieId"
@@ -100,6 +113,7 @@ export const Episode = ({ formChanged, episode, index }) => {
           />
         </div>
       </div>
+      {/* <button onClick={handleSubmit}> Add</button> */}
     </form>
   );
 };
