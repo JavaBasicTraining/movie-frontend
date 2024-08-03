@@ -83,7 +83,7 @@ const router = createBrowserRouter([
         element: <Admin />,
         children: [
           {
-            path: "/admin/movie/", // k cần index true
+            path: "/admin/movie/",
             element: <ListMovie />,
             loader: MovieManagerLoader,
           },

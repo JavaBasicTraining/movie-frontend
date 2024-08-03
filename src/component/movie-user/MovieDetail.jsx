@@ -22,21 +22,18 @@ export const MovieDetail = () => {
   const [user, setUser] = useState([]);
   const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
-  const [countRating, setCountRating] = useState(() => {
-    const savedCount = localStorage.getItem("countRating");
-    return savedCount ? JSON.parse(savedCount) : 0;
-  });
-
-  useEffect(() => {
-    localStorage.setItem("countRating", JSON.stringify(countRating));
-  }, [countRating]);
-
+  const [countRating, setCountRating] = useState();
+  const evaluationsNumberReview = async (params) => {
+    const response = await axiosInstance.get(`/api/v1/evaluations/numberOfReviews/${params}`)
+    setCountRating(response.data);
+  };
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
       getUser();
+      evaluationsNumberReview(movie.id);
     }
     window.addEventListener("keyup", handleKeyup);
     return () => {
@@ -49,7 +46,7 @@ export const MovieDetail = () => {
   }, [average]);
 
   const handleKeyup = (e) => {
-    if (e.code === "Escape") {
+    if (e.code === "Escape") {``
       setIsShowTrailer(false);
     }
   };
@@ -70,12 +67,6 @@ export const MovieDetail = () => {
     }
   };
 
-  // const checkExistUser = async () => {
-
-  //   );
-
-  //   setUserExist(response.data.userId);
-  // };
   const handleClick = async (index) => {
     try {
       setRating(index);
@@ -83,7 +74,6 @@ export const MovieDetail = () => {
         const response = await axiosInstance.get(
           `/api/v1/evaluations/evaluations/user/${user.id}/movie/${movie.id}`
         );
-
         if (response.status === 200 && response.data !== "") {
           const request = {
             star: index,
@@ -106,8 +96,6 @@ export const MovieDetail = () => {
             movieId: movie.id,
           };
           await axiosInstance.post(`/api/v1/evaluations`, request);
-          setCountRating((prevCount) => prevCount + 1);
-          console.log(countRating);
           if (index === null) {
             return 0;
           } else {

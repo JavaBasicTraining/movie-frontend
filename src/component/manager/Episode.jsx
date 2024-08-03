@@ -3,20 +3,14 @@ import { axiosInstance } from "../../API/axiosConfig";
 
 export const DEFAULT_EPISODE = {
   episodeCount: "",
-  fileMovie: "",
-  filePoster: "",
+  video: "",
+  poster: "",
   descriptions: "",
-  movieId: ""
-
+  movie: "",
 };
-
-
-
-
 export const Episode = ({ formChanged, episode, index }) => {
   const [data, setData] = useState(DEFAULT_EPISODE);
- 
- 
+
   useEffect(() => {
     setData(episode);
   }, [episode]);
@@ -39,28 +33,6 @@ export const Episode = ({ formChanged, episode, index }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-  
-        const createEpisodeRequest = new FormData();
-        createEpisodeRequest.append("episodeCount", data.episodeCount);
-       createEpisodeRequest.append("filePoster", data.filePoster);
-        createEpisodeRequest.append("fileMovie", data.fileMovie);
-        createEpisodeRequest.append("descriptions", data.descriptions);
-        createEpisodeRequest.append("movieId", data.movieId);
-        const res = await axiosInstance.post(
-          `/api/v1/episode/create`,
-          createEpisodeRequest
-        );
-        alert("Thêm phim mới thành Công", res.data);
-     
-      
-    } catch (error) {
-      alert("Lỗi");
-    }
-  };
-
   return (
     <form className="episode-container">
       <div className="body-episode">
@@ -78,7 +50,7 @@ export const Episode = ({ formChanged, episode, index }) => {
           <label>Tải Poster </label>
           <input
             type="file"
-            name="filePoster"
+            name="poster"
             onChange={handleFileChange}
             required
           />
@@ -87,7 +59,7 @@ export const Episode = ({ formChanged, episode, index }) => {
           <label>Tải Phim </label>
           <input
             type="file"
-            name="fileMovie"
+            name="video"
             onChange={handleFileChange}
             required
           />
@@ -106,14 +78,13 @@ export const Episode = ({ formChanged, episode, index }) => {
           <label>MovieId:</label>
           <input
             type="text"
-            name="movieId"
-            value={data.movieId}
+            name="movie"
+            value={data.movie}
             onChange={handleChange}
             required
           />
         </div>
       </div>
-      {/* <button onClick={handleSubmit}> Add</button> */}
     </form>
   );
 };
