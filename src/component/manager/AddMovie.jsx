@@ -48,16 +48,6 @@ export const AddMovie = () => {
     fetchGenre(request);
   };
 
-  // const getIdCategory = () => {
-  //   const filtered = categories.filter((item) => item.id);
-  //   setSelectedCategory(filtered);
-
-  //   const request = {
-  //     excludeIds: [...filtered.map((item) => item.id)],
-  //   };
-  //   fetchGenre(request);
-  // };
-
   const handleSelectCategory = (item) => {
     setData((prevData) => {
       return {
@@ -110,7 +100,6 @@ export const AddMovie = () => {
       onSuccess?.(prev);
       return prev;
     });
- 
   };
 
   const handleFileChange = (e) => {
@@ -120,7 +109,6 @@ export const AddMovie = () => {
       [name]: files[0],
     });
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -144,12 +132,21 @@ export const AddMovie = () => {
         // createMovieRequest.append(["idGenre"], [ids]);
         // createMovieRequest.append("idCategory", data.category);
 
-     
-        
+        const newData = {
+          ...data,
+          episodes: data.episodes.map((episode) => ({
+            ...episode,
+            tempId: "" + new Date().getTime(),
+          })),
+        };
+
+        const episodesMap = new Map(
+          newData.episodes.map((item) => [item.tempId, item])
+        );
+
         const response = await axiosInstance.post(
           `/api/v1/admin/movies/createWithEpisode`,
-          data,
-        
+          newData
         );
 
         if (data.idCategory !== "1") {
@@ -162,10 +159,17 @@ export const AddMovie = () => {
           );
           console.log(res);
         } else {
-          for (const [index, item] of response.data.episodes.entries()) {
+          const createMovieRequest = new FormData();
+          createMovieRequest.append("poster", uploadMovie.poster);
+            await axiosInstance.patch(
+            `/api/v1/admin/movies/${response.data.id}`,
+            createMovieRequest
+          );
+          for (const item of response.data.episodes) {
             const createEpisodeRequest = new FormData();
-            createEpisodeRequest.append("poster", uploadMovieEpisode.poster);
-            createEpisodeRequest.append("video", uploadMovieEpisode.video);
+            const episodeMap = episodesMap.get(item.tempId);
+            createEpisodeRequest.append("poster", episodeMap.poster);
+            createEpisodeRequest.append("video", episodeMap.video);
             const res = await axiosInstance.patch(
               `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
               createEpisodeRequest
@@ -191,7 +195,6 @@ export const AddMovie = () => {
       };
     } else {
       setShowUpLoadFielMovie(true);
-
       setShowEpisode(false);
     }
   };
@@ -205,9 +208,8 @@ export const AddMovie = () => {
     });
     setUploadMovieEpisode({
       ...uploadMovieEpisode,
-      poster:   data.episodes[0].poster ||  uploadMovieEpisode.poster,
-      video:   data.episodes[0].video ||  uploadMovieEpisode.video,
-
+      poster: data.episodes[0].poster || uploadMovieEpisode.poster,
+      video: data.episodes[0].video || uploadMovieEpisode.video,
     });
   };
 
@@ -216,7 +218,7 @@ export const AddMovie = () => {
     setData({
       ...data,
       episodes: [...data.episodes, DEFAULT_EPISODE],
-    });  
+    });
   };
 
   return (
@@ -234,18 +236,18 @@ export const AddMovie = () => {
           />
         </div>
 
+        <div>
+          <label>Tải Poster</label>
+          <input
+            type="file"
+            name="poster"
+            onChange={handleFileChange}
+            required
+          />
+        </div>
         {showUploadFileMovie && (
           <div className="selectedInputForm">
             <div className="selectedInputForm">
-              <div>
-                <label>Tải Poster</label>
-                <input
-                  type="file"
-                  name="poster"
-                  onChange={handleFileChange}
-                  required
-                />
-              </div>
               <div>
                 <label>Tải Phim</label>
                 <input

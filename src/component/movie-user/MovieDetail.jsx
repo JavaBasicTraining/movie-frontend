@@ -46,7 +46,7 @@ export const MovieDetail = () => {
   }, [average]);
 
   const handleKeyup = (e) => {
-    if (e.code === "Escape") {``
+    if (e.code === "Escape") {
       setIsShowTrailer(false);
     }
   };

@@ -6,7 +6,7 @@ export const DEFAULT_EPISODE = {
   video: "",
   poster: "",
   descriptions: "",
-  movie: "",
+  movieId: "",
 };
 export const Episode = ({ formChanged, episode, index }) => {
   const [data, setData] = useState(DEFAULT_EPISODE);
@@ -70,16 +70,6 @@ export const Episode = ({ formChanged, episode, index }) => {
             type="text"
             name="descriptions"
             value={data.descriptions}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="selectedInputFormEpisode">
-          <label>MovieId:</label>
-          <input
-            type="text"
-            name="movie"
-            value={data.movie}
             onChange={handleChange}
             required
           />

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
 import qs from "qs";
-import { Select } from "antd";
 import { countries } from "../../static-data/countries";
+import { DEFAULT_EPISODE, Episode } from "./Episode";
 
 export async function UpdateMovieLoader({ params }) {
   const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);
@@ -14,60 +14,79 @@ export async function UpdateMovieLoader({ params }) {
 }
 
 export const UpdateMovie = () => {
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [showEpisode, setShowEpisode] = useState(false);
   const [suggestions, setSuggestion] = useState([]);
-  const [ids, setIds] = useState("");
   const { movie } = useLoaderData();
+  // const [idMovie, setIdMovie] = useState("");
+  const [showUploadFileMovie, setShowUpLoadFielMovie] = useState(true);
   const navigate = useNavigate();
+
   const [data, setData] = useState({
     nameMovie: "",
-    filePoster: "",
-    fileMovie: "",
     viTitle: "",
     enTitle: "",
-    country: "",
-    year: "",
-
     description: "",
+    country: "",
     idCategory: [],
-    nameCategory: [],
+    year: "",
+    idGenre: [],
+    episodes: [],
   });
 
-  const handleSelectItem = (item) => {
-    setIds((idCategories) => [...idCategories, item.id]);
-    setData((item) => ({
-      ...item,
-      idCategory: parseInt(data.idCategory),
-    }));
 
-    if (selectedItems.some((selectedItem) => selectedItem.id === item.id)) {
-      alert("Item đã có trong danh sách selected");
-    } else {
-      setSelectedItems([...selectedItems, item]);
-      const request = {
-        excludeIds: [...selectedItems.map((item) => item.id), item.id],
-      };
-      fetchCategories(request);
-    }
-  };
+  const [uploadMovie, setUploadMovie] = useState({
+    poster: "",
+    video: "",
+  });
+  const [uploadMovieEpisode, setUploadMovieEpisode] = useState({
+    poster: "",
+    video: "",
+  });
 
   const handleRemoveItem = (itemToRemove) => {
-    const filtered = selectedItems.filter(
+    const filtered = selectedCategory.filter(
       (item) => item.id !== itemToRemove.id
     );
-    setSelectedItems(filtered);
+    setSelectedCategory(filtered);
+
     const request = {
       excludeIds: [...filtered.map((item) => item.id)],
     };
-    fetchCategories(request);
+    fetchGenre(request);
   };
 
-  useEffect(() => {
-    setData(movie);
-    fetchCategories();
-  }, [movie]);
+  const handleSelectCategory = (item) => {
+    setData((prevData) => {
+      return {
+        ...prevData,
+        idGenre: [...prevData.idGenre, item.id].map((id) => parseInt(id)),
+      };
+    });
 
-  const fetchCategories = (params) => {
+    if (selectedCategory.some((selectedItem) => selectedItem.id === item.id)) {
+      alert("Item đã có trong danh sách selected");
+    } else {
+      const newSelectedCategory = [...selectedCategory, item];
+      setSelectedCategory(newSelectedCategory);
+      const request = {
+        excludeIds: newSelectedCategory.map((item) => item.id),
+      };
+      fetchGenre(request);
+    }
+  };
+  useEffect(() => {
+    fetchGenre();
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    const response = await axiosInstance.get(`/api/v1/category`);
+    setCategories(response.data);
+  };
+
+  const fetchGenre = (params) => {
     axiosInstance
       .get(`/api/v1/genre`, {
         params,
@@ -80,33 +99,26 @@ export const UpdateMovie = () => {
       });
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: value,
+    setData((prev) => {
+      prev = {
+        ...data,
+        [name]: value,
+      };
+      onSuccess?.(prev);
+      return prev;
     });
   };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    setData({
-      ...data,
+    setUploadMovie({
+      ...uploadMovie,
       [name]: files[0],
     });
   };
 
-  const createMovieRequest = new FormData();
-  createMovieRequest.append("nameMovie", data.nameMovie);
-  createMovieRequest.append("viTitle", data.viTitle);
-  createMovieRequest.append("enTitle", data.enTitle);
-  createMovieRequest.append("description", data.description);
-  createMovieRequest.append("filePoster", data.filePoster);
-  createMovieRequest.append("fileMovie", data.fileMovie);
-  createMovieRequest.append("country", data.country);
-  createMovieRequest.append("country", data.year);
-
-  createMovieRequest.append("idCategory", [ids]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -115,23 +127,108 @@ export const UpdateMovie = () => {
         data.viTitle === "" ||
         data.enTitle === "" ||
         data.description === "" ||
-        data.ids === "" ||
-        data.filePoster === "" ||
-        data.fileMovie === ""
+        data.idGenre === ""
       ) {
         alert("Vui lòng nhập đầy đủ thông tin phim");
       } else {
-        const response = await axiosInstance.put(
-          `/api/v1/admin/movies/${movie.id}`,
-          createMovieRequest
+        // const createMovieRequest = new FormData();
+        // createMovieRequest.append("nameMovie", data.nameMovie);
+        // createMovieRequest.append("viTitle", data.viTitle);
+        // createMovieRequest.append("enTitle", data.enTitle);
+        // createMovieRequest.append("description", data.description);
+        // createMovieRequest.append("country", data.country);
+        // createMovieRequest.append("year", data.year);
+        // createMovieRequest.append(["idGenre"], [ids]);
+        // createMovieRequest.append("idCategory", data.category);
+
+        const newData = {
+          ...data,
+          episodes: data.episodes.map((episode) => ({
+            ...episode,
+            tempId: "" + new Date().getTime(),
+          })),
+        };
+
+        const episodesMap = new Map(
+          newData.episodes.map((item) => [item.tempId, item])
         );
-        alert("Sửa thông tin phim thành công", response.data);
-        console.log(response.data);
+
+        const response = await axiosInstance.put(
+          `/api/v1/admin/movies/updateWithEpisode/${movie.id}`,
+          newData
+        );
+
+        if (data.idCategory !== "1") {
+          const createMovieRequest = new FormData();
+          createMovieRequest.append("poster", uploadMovie.poster);
+          createMovieRequest.append("video", uploadMovie.video);
+          const res = await axiosInstance.patch(
+            `/api/v1/admin/movies/${response.data.id}`,
+            createMovieRequest
+          );
+          console.log(res);
+        } else {
+          const createMovieRequest = new FormData();
+          createMovieRequest.append("poster", uploadMovie.poster);
+         const res =  await axiosInstance.patch(
+            `/api/v1/admin/movies/${response.data.id}`,
+            createMovieRequest
+          );
+        console.log(res);
+          for (const item of response.data.episodes) {
+            const createEpisodeRequest = new FormData();
+            const episodeMap = episodesMap.get(item.tempId);
+            createEpisodeRequest.append("poster", episodeMap.poster);
+            createEpisodeRequest.append("video", episodeMap.video);
+            const res = await axiosInstance.patch(
+              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
+              createEpisodeRequest
+            );
+          }
+        }
+
+        alert("Thêm phim mới thành Công", response.data);
         navigate("/admin");
       }
     } catch (error) {
       alert("Lỗi");
     }
+  };
+
+  const handleShowEpisode = (e, formData) => {
+    if (e.target.value === "1") {
+      setShowEpisode(true);
+      setShowUpLoadFielMovie(false);
+      formData = {
+        ...data,
+        episodes: [DEFAULT_EPISODE],
+      };
+    } else {
+      setShowUpLoadFielMovie(true);
+      setShowEpisode(false);
+    }
+  };
+
+  const handleEpisodeChanged = (episode, index) => {
+    const clone = [...data.episodes];
+    clone[index] = episode;
+    setData({
+      ...data,
+      episodes: clone,
+    });
+    setUploadMovieEpisode({
+      ...uploadMovieEpisode,
+      poster: data.episodes[0].poster || uploadMovieEpisode.poster,
+      video: data.episodes[0].video || uploadMovieEpisode.video,
+    });
+  };
+
+  const handleAddEpisode = async (e) => {
+    e.preventDefault();
+    setData({
+      ...data,
+      episodes: [...data.episodes, DEFAULT_EPISODE],
+    });
   };
 
   return (
@@ -148,24 +245,31 @@ export const UpdateMovie = () => {
             required
           />
         </div>
-        <div className="selectedInputForm">
+
+        <div>
           <label>Tải Poster</label>
           <input
             type="file"
-            name="filePoster"
+            name="poster"
             onChange={handleFileChange}
             required
           />
         </div>
-        <div className="selectedInputForm">
-          <label>Tải Video</label>
-          <input
-            type="file"
-            name="fileMovie"
-            onChange={handleFileChange}
-            required
-          />
-        </div>
+        {showUploadFileMovie && (
+          <div className="selectedInputForm">
+            <div className="selectedInputForm">
+              <div>
+                <label>Tải Phim</label>
+                <input
+                  type="file"
+                  name="video"
+                  onChange={handleFileChange}
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        )}
         <div className="selectedInputForm">
           <label>Nhập Tên Phim Tiếng Việt</label>
           <input
@@ -196,7 +300,7 @@ export const UpdateMovie = () => {
             required
           />
         </div>
-  <div className="selectedInputForm">
+        <div className="selectedInputForm">
           <label>Năm Phát Hành:</label>
           <input
             type="text"
@@ -215,19 +319,43 @@ export const UpdateMovie = () => {
             onChange={handleChange}
             required
           >
-            <option value="" disabled selected>Chọn Quốc Gia</option>
+            <option value="" disabled selected>
+              Chọn Quốc Gia
+            </option>
             {countries.map((value) => (
               <option value={value}>{value}</option>
             ))}
           </select>
         </div>
         <div className="selectedInputForm">
+          <label>Chọn Phân Loại Phim</label>
+          <select
+            type="text"
+            name="idCategory"
+            value={data.idCategory}
+            onChange={(e) => {
+              handleChange(e, (formData) => {
+                handleShowEpisode(e, formData);
+              });
+            }}
+            required
+          >
+            <option value="" disabled>
+              Chọn Phân Loại Phim
+            </option>
+            {categories.map((value) => (
+              <option key={value.id} value={value.id}>
+                {value.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="selectedInputForm">
           <label>Nhập Thể Loại</label>
           <div>
-            {/* selected items */}
-            {selectedItems && (
+            {selectedCategory && (
               <div>
-                {selectedItems.map((item) => (
+                {selectedCategory.map((item) => (
                   <button onClick={() => handleRemoveItem(item)}>
                     <span>{item.name}</span>
                   </button>
@@ -240,7 +368,7 @@ export const UpdateMovie = () => {
               {suggestions.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => handleSelectItem(category)}
+                  onClick={() => handleSelectCategory(category)}
                 >
                   <span>{category.name}</span>
                 </button>
@@ -249,6 +377,25 @@ export const UpdateMovie = () => {
           )}
         </div>
       </div>
+
+      {showEpisode && (
+        <div className="episodes">
+          {data.episodes && (
+            <>
+              {data.episodes.map((item, index) => (
+                <Episode
+                  key={index}
+                  episode={item}
+                  index={index}
+                  formChanged={handleEpisodeChanged}
+                />
+              ))}
+            </>
+          )}
+
+          <button onClick={handleAddEpisode}>Add Episode</button>
+        </div>
+      )}
 
       <button onClick={handleSubmit}>Sửa</button>
     </div>
