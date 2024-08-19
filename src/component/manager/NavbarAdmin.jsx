@@ -14,11 +14,10 @@ export const NavbarAdmin = () => {
 
   useEffect(() => {
     fetchGenre();
-    
   }, []);
 
   useEffect(() => {
-   navbar.map((item) => {
+    navbar.map((item) => {
       if (item.name === "Thể Loại") {
         item.subItems = categories.map((category) => ({
           name: category.name,
@@ -67,7 +66,7 @@ export const NavbarAdmin = () => {
                       className="admin-link-item"
                       to={`/admin/movie/category/${sub.name}`}
                     >
-                      {sub.name}  
+                      {sub.name}
                     </Link>
                   </span>
                 );
@@ -81,12 +80,17 @@ export const NavbarAdmin = () => {
 
   return (
     <div className="navbar-admin">
-      <div className="logo">LOGO</div>
-      {navbarList.map((value, index) => (
-        <Link key={index} to={value.link}>
-          <button className="list-btn-admin text-nowrap">{value.name}</button>
-        </Link>
-      ))}
+      <div className="logo">
+      <img src="https://www.kindpng.com/picc/m/113-1133253_film-reel-bieu-tuong-xem-phim-hd-png.png"
+       alt=""/>
+      </div>
+      <div>
+        {navbarList.map((value, index) => (
+          <Link key={index} to={value.link}>
+            <button className="list-btn-admin text-nowrap">{value.name}</button>
+          </Link>
+        ))}
+      </div>
 
       <div>
         <div className="navbar-admin-container">{listItem()}</div>

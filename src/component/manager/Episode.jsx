@@ -27,10 +27,13 @@ export const Episode = ({ formChanged, episode, index }) => {
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    setData({
+    const newValue = {
       ...data,
       [name]: files[0],
-    });
+    };
+    setData(newValue);
+
+    formChanged(newValue, index);
   };
 
   return (
@@ -54,15 +57,21 @@ export const Episode = ({ formChanged, episode, index }) => {
             onChange={handleFileChange}
             required
           />
+          <img src={episode.posterUrl} alt="" />
         </div>
         <div className="selectedInputFormEpisodeFile">
-          <label>Tải Phim </label>
+        <div>  <label>Tải Phim </label>
           <input
             type="file"
             name="video"
             onChange={handleFileChange}
             required
-          />
+          /></div>
+          <video
+            className="video-episode-item"
+            src={episode.videoUrl}
+            controls
+          ></video>{" "}
         </div>
         <div className="selectedInputFormEpisode">
           <label>Nội dung:</label>

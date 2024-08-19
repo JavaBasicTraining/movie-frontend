@@ -22,7 +22,7 @@ export const MovieDetail = () => {
   const [user, setUser] = useState([]);
   const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
-  const [countRating, setCountRating] = useState();
+  const [countRating, setCountRating] = useState(0);
   const evaluationsNumberReview = async (params) => {
     const response = await axiosInstance.get(`/api/v1/evaluations/numberOfReviews/${params}`)
     setCountRating(response.data);
@@ -33,7 +33,7 @@ export const MovieDetail = () => {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
       getUser();
-      evaluationsNumberReview(movie.id);
+     
     }
     window.addEventListener("keyup", handleKeyup);
     return () => {
@@ -43,7 +43,8 @@ export const MovieDetail = () => {
 
   useEffect(() => {
     averageRating(movie.id);
-  }, [average]);
+    evaluationsNumberReview(movie.id);
+  }, [average, rating]);
 
   const handleKeyup = (e) => {
     if (e.code === "Escape") {
@@ -70,6 +71,7 @@ export const MovieDetail = () => {
   const handleClick = async (index) => {
     try {
       setRating(index);
+      evaluationsNumberReview(movie.id)
       if (jwt) {
         const response = await axiosInstance.get(
           `/api/v1/evaluations/evaluations/user/${user.id}/movie/${movie.id}`
@@ -119,15 +121,17 @@ export const MovieDetail = () => {
             <div className="btn-poster">
               <img className="poster" src={movie.posterUrl} alt="" />
               <div className="list-btn">
-                {movie.category.name === "Phim lẻ" ? (
+                {movie.category.name === "Phim Bộ".toLowerCase()? (
                   <button
-                    onClick={() => navigate(`/xem-phim/${movie.nameMovie}`)}
+                  onClick={() => navigate(`/xem-phim-bo/${movie.nameMovie}`)}
+
                   >
                     Xem Phim
                   </button>
                 ) : (
                   <button
-                    onClick={() => navigate(`/xem-phim-bo/${movie.nameMovie}`)}
+                  onClick={() => navigate(`/xem-phim/${movie.nameMovie}`)}
+
                   >
                     Xem Phim
                   </button>
@@ -161,8 +165,7 @@ export const MovieDetail = () => {
               <span>Quốc Gia: {movie.country}</span>
               <span>Năm Phát Hành: {movie.year} </span>
               <span>
-                Thể Loại:
-                {movie.genres.map((category) => category.name).join(" , ")}
+                Thể Loại: {movie.genres.map((category) => category.name).join(", ")}
               </span>
             </div>
           </div>

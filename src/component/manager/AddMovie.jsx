@@ -4,6 +4,7 @@ import { axiosInstance } from "../../API/axiosConfig";
 import qs from "qs";
 import { countries } from "../../static-data/countries";
 import { DEFAULT_EPISODE, Episode } from "./Episode";
+import { MultiSelect } from "react-multi-select-component";
 
 export const AddMovie = () => {
   const [categories, setCategories] = useState([]);
@@ -36,37 +37,37 @@ export const AddMovie = () => {
     video: "",
   });
 
-  const handleRemoveItem = (itemToRemove) => {
-    const filtered = selectedCategory.filter(
-      (item) => item.id !== itemToRemove.id
-    );
-    setSelectedCategory(filtered);
+  // const handleRemoveItem = (itemToRemove) => {
+  //   const filtered = selectedCategory.filter(
+  //     (item) => item.id !== itemToRemove.id
+  //   );
+  //   setSelectedCategory(filtered);
 
-    const request = {
-      excludeIds: [...filtered.map((item) => item.id)],
-    };
-    fetchGenre(request);
-  };
+  //   const request = {
+  //     excludeIds: [...filtered.map((item) => item.id)],
+  //   };
+  //   fetchGenre(request);
+  // };
 
-  const handleSelectCategory = (item) => {
-    setData((prevData) => {
-      return {
-        ...prevData,
-        idGenre: [...prevData.idGenre, item.id].map((id) => parseInt(id)),
-      };
-    });
+  // const handleSelectCategory = (item) => {
+  //   setData((prevData) => {
+  //     return {
+  //       ...prevData,
+  //       idGenre: [...prevData.idGenre, item.id].map((id) => parseInt(id)),
+  //     };
+  //   });
 
-    if (selectedCategory.some((selectedItem) => selectedItem.id === item.id)) {
-      alert("Item đã có trong danh sách selected");
-    } else {
-      const newSelectedCategory = [...selectedCategory, item];
-      setSelectedCategory(newSelectedCategory);
-      const request = {
-        excludeIds: newSelectedCategory.map((item) => item.id),
-      };
-      fetchGenre(request);
-    }
-  };
+  //   if (selectedCategory.some((selectedItem) => selectedItem.id === item.id)) {
+  //     alert("Item đã có trong danh sách selected");
+  //   } else {
+  //     const newSelectedCategory = [...selectedCategory, item];
+  //     setSelectedCategory(newSelectedCategory);
+  //     const request = {
+  //       excludeIds: newSelectedCategory.map((item) => item.id),
+  //     };
+  //     fetchGenre(request);
+  //   }
+  // };
   useEffect(() => {
     fetchGenre();
     fetchCategories();
@@ -342,29 +343,18 @@ export const AddMovie = () => {
         </div>
         <div className="selectedInputForm">
           <label>Nhập Thể Loại</label>
-          <div>
-            {selectedCategory && (
-              <div>
-                {selectedCategory.map((item) => (
-                  <button onClick={() => handleRemoveItem(item)}>
-                    <span>{item.name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          {suggestions && (
-            <div>
-              {suggestions.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => handleSelectCategory(category)}
-                >
-                  <span>{category.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
+          <MultiSelect
+            options={suggestions.map((item) => ({
+              label: item.name,
+              value: item,
+            }))}
+            value={selectedCategory}
+            onChange={setSelectedCategory}
+            labelledBy="Select"
+            className="light custom-multi-select"
+            defaultIsOpen={true}
+          />
+
         </div>
       </div>
 

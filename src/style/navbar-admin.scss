@@ -7,6 +7,7 @@
   gap: 20px;
   overflow: hidden;
 
+
   .list-navbar-admin {
     height: 100%;
     margin: auto;
@@ -20,6 +21,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+   img{
+    width: 100%;
+    height: 140px;
+   }
   }
 
   .list-btn-admin {
