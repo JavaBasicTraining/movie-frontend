@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
 import { RightOutlined } from "@ant-design/icons";
-import { navbar } from "../../static-data/navBar";
+import { navbar } from "../../static-data/navBarAdmin";
 export const NavbarAdmin = () => {
+
+  
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
@@ -18,11 +20,11 @@ export const NavbarAdmin = () => {
 
   useEffect(() => {
     navbar.map((item) => {
-      if (item.name === "Thể Loại") {
-        item.subItems = categories.map((category) => ({
-          name: category.name,
-        }));
-      }
+        if (item.name === "Thể Loại") {
+          item.subItems = categories.map((category) => ({
+            name: category.name,
+          }));
+        }
 
       return item;
     });

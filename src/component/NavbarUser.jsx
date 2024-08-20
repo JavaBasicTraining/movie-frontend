@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../API/axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
-import { navbar } from "../static-data/navBar";
+import { navbar } from "../static-data/navBarusUser";
 
 export const NavbarUser = () => {
   const [categories, setCategories] = useState([]);
@@ -31,7 +31,7 @@ export const NavbarUser = () => {
 
   const listItem = () => {
     return navbar.map((value) => {
-      return (
+      return (    
         <div className="nav-item">
           <span
             className="nav-item-name"

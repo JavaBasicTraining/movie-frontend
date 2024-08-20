@@ -1,0 +1,18 @@
+.container-navbar-admin
+{
+    display: flex;
+    height: auto;
+
+    .navbar-filter-list {
+        display: flex;
+        gap: 12px;
+        font-weight: 50px;
+        position: relative;
+    
+        .subItem-category{
+            display: none;
+        }
+    }
+    
+    
+}

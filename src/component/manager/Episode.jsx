@@ -10,6 +10,9 @@ export const DEFAULT_EPISODE = {
 };
 export const Episode = ({ formChanged, episode, index }) => {
   const [data, setData] = useState(DEFAULT_EPISODE);
+  const [sectlected, setSeclected] = useState ();
+
+  
 
   useEffect(() => {
     setData(episode);
@@ -25,6 +28,7 @@ export const Episode = ({ formChanged, episode, index }) => {
     formChanged(newValue, index);
   };
 
+  
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     const newValue = {
@@ -57,23 +61,28 @@ export const Episode = ({ formChanged, episode, index }) => {
             onChange={handleFileChange}
             required
           />
-          <img src={episode.posterUrl} alt="" />
+          {episode.poster && <img src={episode.posterUrl} alt="" />}
         </div>
         <div className="selectedInputFormEpisodeFile">
-        <div>  <label>Tải Phim </label>
-          <input
-            type="file"
-            name="video"
-            onChange={handleFileChange}
-            required
-          /></div>
-          <video
-            className="video-episode-item"
-            src={episode.videoUrl}
-            controls
-          ></video>{" "}
+         
+          
+            <label>Tải Phim </label>
+            <input
+              type="file"
+              name="video"
+              onChange={handleFileChange}
+              required
+            />
+         
+          {episode.video && (
+            <video
+              className="video-episode-item"
+              src={episode.videoUrl}
+              controls
+            ></video>
+          )}
         </div>
-        <div className="selectedInputFormEpisode">
+        <div className="selectedInputFormEpisodeFile">
           <label>Nội dung:</label>
           <input
             type="text"

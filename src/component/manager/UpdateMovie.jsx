@@ -50,13 +50,12 @@ export const UpdateMovie = () => {
     setData((prevData) => ({
       ...prevData,
       poster: getFileNameFromUrl(movie.posterUrl),
-      video: data.video === null ? null : getFileNameFromUrl(movie.videoUrl)
+      video: data.video === null ? null : getFileNameFromUrl(movie.videoUrl),
     }));
-
   }, [movie.posterUrl]);
 
   const fetchData = (newData) => {
-    setData({ ...data, ...newData, idCategory: newData?.category?.id || [] });
+    setData({ ...data, ...newData, idCategory: newData?.category?.id || [] }); // đây
     // Handle load poster and video if necessary
   };
 
@@ -77,11 +76,10 @@ export const UpdateMovie = () => {
     }
   };
 
-  function getFileNameFromUrl (filePath) {
+  function getFileNameFromUrl(filePath) {
     const fileUrl = new URL(filePath, window.location.origin);
     return fileUrl.pathname;
-}
-
+  }
 
   // const getFileNameFromUrl = (url) => {
   //   return url.substring(url.lastIndexOf("/") + 1);
@@ -116,6 +114,15 @@ export const UpdateMovie = () => {
   };
 
   const isSeries = () => data?.idCategory?.toString() === "1";
+
+  const uploadFileMovie = async (id, type, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    await axiosInstance.patch(
+      `/api/v1/admin/movies/${id}?type=${type}`,
+      formData
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -159,18 +166,13 @@ export const UpdateMovie = () => {
       );
       fetchData(response.data);
       if (!isSeries() && data.poster && data.video) {
-        const formData = new FormData();
-        formData.append("poster", data.poster);
-        formData.append("video", data.video);
-        await axiosInstance.patch(
-          `/api/v1/admin/movies/${response.data.id}`,
-          formData
-        );
+        uploadFileMovie(response.data.id, "poster", data.poster);
+        uploadFileMovie(response.data.id, "video", data.video);
       } else if (data.poster) {
         const formData = new FormData();
-        formData.append("poster", data.poster);
-        await axiosInstance.patch(
-          `/api/v1/admin/movies/${response.data.id}`,
+        formData.append("file", data.poster);
+        const res = await axiosInstance.patch(
+          `/api/v1/admin/movies/${response.data.id}?type=poster`,
           formData
         );
         for (const item of response.data.episodes) {
@@ -333,13 +335,13 @@ export const UpdateMovie = () => {
           >
             <option value="" disabled>
               Chọn Quốc Gia
-            </option>
+            </option>, 
             {countries.map((value) => (
               <option key={value} value={value}>
                 {value}
               </option>
             ))}
-          </select>
+          </select> 
         </div>
         <div className="selectedInputForm">
           <label>Chọn Phân Loại Phim</label>
@@ -353,7 +355,7 @@ export const UpdateMovie = () => {
             }}
             required
           >
-            <option value="" disabled>
+            <option disabled selected>
               Chọn Phân Loại Phim
             </option>
             {categories.map((value) => (
