@@ -55,8 +55,8 @@ export const UpdateMovie = () => {
   }, [movie.posterUrl]);
 
   const fetchData = (newData) => {
-    setData({ ...data, ...newData, idCategory: newData?.category?.id || [] }); // đây
-    // Handle load poster and video if necessary
+    setData({ ...data, ...newData, idCategory: newData?.category?.id || [] }); 
+    
   };
 
   const fetchCategories = async () => {

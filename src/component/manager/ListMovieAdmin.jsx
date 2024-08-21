@@ -11,11 +11,11 @@ export async function MovieManagerLoader({ params }) {
 export const ListMovie = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
-  
-  
-  const [jsonFilter, setJsonFilter] = useState([
-    { name: "Thể Loại", basePath: "/the-loai" },
-  ]);
+
+  const category = [
+    { id: 1, name: "Việt Nam" },
+    { id: 2, name: "Mỹ" },
+  ];
 
   const countries = [
     { name: "Việt Nam", path: "viet-nam" },
@@ -26,16 +26,6 @@ export const ListMovie = () => {
     { name: "Ấn Độ", path: "an-do" },
     { name: "Úc", path: "uc" },
   ];
-
-  const [country, setCountries] = useState([
-    {
-      name: "Quốc Gia",
-      basePath: "/quoc-gia",
-      subItems: [
-       
-      ],
-    },
-  ]);
 
   const { movies } = useLoaderData();
   const navigate = useNavigate();
@@ -84,23 +74,24 @@ export const ListMovie = () => {
 
   const renderSelect = (items, paramName, placeholder) => {
     const handleSearchChange = (e) => {
-        // lấy params hiện tại
-        const params = new URLSearchParams(searchParams);
-        // set param mới
-        params.set(paramName, e.target.value);
-        setSearchParams(params);
-    }
+      const params = new URLSearchParams(searchParams);
+      // set param mới
+      params.set(paramName, e.target.value);
+      setSearchParams(params);
+    };
 
-    return <select
-      onChange={handleSearchChange}
-    >
-      <option disabled selected>{placeholder}</option>
-      {items.map((item) => (
-        <option key={item.label} value={item.value.name}>
-          {item.label}
+    return (
+      <select onChange={handleSearchChange}>
+        <option disabled selected>
+          {placeholder}
         </option>
-      ))}
-    </select>
+        {items.map((item) => (
+          <option key={item.label} value={item.value.name}>
+            {item.label}
+          </option>
+        ))}
+      </select>
+    );
   };
 
   return (
@@ -113,15 +104,18 @@ export const ListMovie = () => {
         {filterMovie(country, "Quốc Gia", "")} */}
         {/* mỗi hàm có 3 params, giải thích từng params để lầm gì */}
         {renderSelect(
-          categories.map(category => ({label: category.name, value: category})), // giải thích ở đây
-          'category', // ...
-          'Chon the loai' // ...
-          )}
+          categories.map((category) => ({
+            label: category.name,
+            value: category,
+          })), // giải thích ở đây
+          "category", // ...
+          "Chon the loai" // ...
+        )}
         {renderSelect(
-          countries.map(country => ({label: country.name, value: country})), 
-          'country', 
-          'Chon quoc gia'
-          )}
+          countries.map((country) => ({ label: country.name, value: country })),
+          "country",
+          "Chon quoc gia"
+        )}
       </div>
       <table>
         <thead>

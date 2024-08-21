@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "label": "Kinh dị",
+      "value": [
+        {
+          "id": 1,
+          "name": "Kinh dị",
+          "description": "description 1"
+        }
+      ]
+    },
+    {
+        "label": "Hài Hước",
+        "value": [
+          {
+            "id": 1,
+            "name": "Hài Hước",
+            "description": "description 2"
+          }
+        ]
+      }
+  ]
+}

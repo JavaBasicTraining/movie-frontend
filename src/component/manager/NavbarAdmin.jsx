@@ -83,7 +83,7 @@ export const NavbarAdmin = () => {
   return (
     <div className="navbar-admin">
       <div className="logo">
-      <img src="https://www.kindpng.com/picc/m/113-1133253_film-reel-bieu-tuong-xem-phim-hd-png.png"
+      <img src="/poster/quay-phim-ch-p-nh-1696309932862999506271.png"
        alt=""/>
       </div>
       <div>
