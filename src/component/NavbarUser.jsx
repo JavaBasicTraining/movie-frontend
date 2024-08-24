@@ -30,8 +30,13 @@ export const NavbarUser = () => {
 
   const listItem = () => {
     return navbar.map((value) => {
+   
       return (
+        
         <div className="nav-item">
+          {
+            
+          }
           <span
             className="nav-item-name"
             onClick={() => {

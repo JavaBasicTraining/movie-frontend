@@ -25,6 +25,7 @@ export const Movie = () => {
 
   return (
     <div className="container">
+     
       {
         <div className="item">
           {movies?.map((item) => (

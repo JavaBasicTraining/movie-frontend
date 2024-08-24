@@ -42,20 +42,15 @@ export const UpdateMovie = () => {
     if (movie?.category?.id === 1) {
       setShowUploadFileMovie(false);
     }
-  }, [movie]);
+
+    // xử lý init data trong này hết
   
+  }, [movie]);
+
   useEffect(() => {
     fetchGenre();
     fetchCategories();
   }, []);
-
-  useEffect(() => {
-    setData((prevData) => ({
-      ...prevData,
-      poster: getFileNameFromUrl(movie.posterUrl),
-      video: data.video === null ? null : getFileNameFromUrl(movie.videoUrl),
-    }));
-  }, [movie.posterUrl]);
 
   const fetchData = (newData) => {
     setData({ ...data, ...newData, idCategory: newData?.category?.id || [] }); // đây
@@ -79,7 +74,7 @@ export const UpdateMovie = () => {
     }
   };
 
-  function getFileNameFromUrl(filePath) {
+  function getFileNameFromUrl(filePath) { // hàm này là gì?, convert cai link để đưa vô cái chỗ file á a, mà h ko cần thiết nữa
     const fileUrl = new URL(filePath, window.location.origin);
     return fileUrl.pathname;
   }
@@ -116,11 +111,17 @@ export const UpdateMovie = () => {
     }
   };
 
-  const isSeries = () => data?.idCategory?.toString() === "1";
+  const isSeries = (category) => {
+    if (category) {
+      return category.name === "Phim bộ";
+    }
+
+    return data?.idCategory?.toString() === "1";
+  };
 
   const uploadFileMovie = async (id, type, file) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
     await axiosInstance.patch(
       `/api/v1/admin/movies/${id}?type=${type}`,
       formData
@@ -167,17 +168,22 @@ export const UpdateMovie = () => {
             : [],
         }
       );
-      fetchData(response.data);
-      if (!isSeries() && data.poster && data.video) {
+
+      // fetchData(response.data); cái này k có tác dụng gì hết
+
+      // upload poster nếu có poster file
+      if (data.poster) {
         uploadFileMovie(response.data.id, "poster", data.poster);
+      }
+
+      // chỉ upload video nếu k phải là phim bộ
+      if (!isSeries(response.data.category) && data.video) {
         uploadFileMovie(response.data.id, "video", data.video);
-      } else if (data.poster) {
-        const formData = new FormData();
-        formData.append("file", data.poster);
-        const res = await axiosInstance.patch(
-          `/api/v1/admin/movies/${response.data.id}?type=poster`,
-          formData
-        );
+      }
+
+      // lưu ý chỗ này, có thể lúc trước category là phim bộ, nhưng khi update thành category khác thì xóa episode đi
+      // phim bo mới dược update episodes
+      if (isSeries(response.data.category)) {
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
           if (episodeMap.poster && episodeMap.video) {
@@ -191,6 +197,7 @@ export const UpdateMovie = () => {
           }
         }
       }
+
       alert("Cập nhật thành công");
       // navigate("/admin");
     } catch (error) {
@@ -338,13 +345,14 @@ export const UpdateMovie = () => {
           >
             <option value="" disabled>
               Chọn Quốc Gia
-            </option>, 
+            </option>
+            ,
             {countries.map((value) => (
               <option key={value} value={value}>
                 {value}
               </option>
             ))}
-          </select> 
+          </select>
         </div>
         <div className="selectedInputForm">
           <label>Chọn Phân Loại Phim</label>
@@ -393,7 +401,7 @@ export const UpdateMovie = () => {
                   key={index}
                   episode={item}
                   index={index}
-                  formChanged={handleEpisodeChanged}
+                  formChanged={handleEpisodeChanged} // đây nè
                 />
               ))}
             </>

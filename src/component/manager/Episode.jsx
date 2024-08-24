@@ -10,21 +10,19 @@ export const DEFAULT_EPISODE = {
   prevPosterUrl: "",
   prevVideoUrl: "",
 };
+
 export const Episode = ({ formChanged, episode, index }) => {
   const [data, setData] = useState(DEFAULT_EPISODE);
   const [showFileVideo, setShowFileVideo] = useState(false);
-
   const [showFilePoster, setShowFilePoster] = useState(false);
 
   useEffect(() => {
     setData(episode);
-    if(episode.poster !== null)
-    {
-      setShowFilePoster(true)
-    }else if (episode.video !== true)
-    {
+    if (episode.poster) {
+      setShowFilePoster(true);
+    }
+    if (episode.video) {
       setShowFileVideo(true);
-      
     }
   }, [episode]);
 
@@ -43,23 +41,31 @@ export const Episode = ({ formChanged, episode, index }) => {
     const file = files[0];
     const previewUrl = URL.createObjectURL(file);
 
+    // copy data cũ
+    let newData = {...data};
+
     if (name === "video") {
-      setShowFileVideo(true)
-      setData((prev) => ({
-        ...prev,
+      setShowFileVideo(true);
+      newData = {
+        ...newData,
         video: file,
-        [name === "video" ? "prevVideoUrl" : "prevVideoUrl"]: previewUrl,
-      }));
+        prevVideoUrl: previewUrl,
+      }
+      setData(newData);
     } else if (name === "poster") {
-      setShowFilePoster(true)
-      setData((prev) => ({
-        ...prev,
+      setShowFilePoster(true);
+      newData = {
+        ...newData,
         poster: file,
-        [name === "poster" ? "prevPosterUrl" : "prevPosterUrl"]: previewUrl,
-      }));
+        prevPosterUrl: previewUrl,
+      }
+      setData(newData);
     }
-    
+
+    // sao bỏ hàm formChanged() đi z, thì nó sẽ k gọi ra bên ngoài để set data
+    formChanged(newData); // này nó sẽ gọi hàm bên thằng cha đê set lại data
   };
+
   return (
     <form className="episode-container">
       <div className="body-episode">
@@ -81,13 +87,13 @@ export const Episode = ({ formChanged, episode, index }) => {
             onChange={handleFileChange}
             required
           />
-          {showFilePoster === true ? (
+          {showFilePoster && (
             <img
               className="poster-item"
               src={episode.posterUrl || data.prevPosterUrl}
               alt=""
             />
-          ) : null}{" "}
+          )}
         </div>
         <div className="selectedInputFormEpisodeFile">
           <label>Tải Phim </label>
@@ -97,11 +103,10 @@ export const Episode = ({ formChanged, episode, index }) => {
             onChange={handleFileChange}
             required
           />
-
-          {episode.video || showFileVideo && (
+          {(showFileVideo || episode.video) && (
             <video
               className="video-episode-item"
-              src={episode.videoUrl|| data.prevVideoUrl}
+              src={episode.videoUrl || data.prevVideoUrl}
               controls
             ></video>
           )}
