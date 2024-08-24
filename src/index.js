@@ -34,6 +34,8 @@ import {
   MovieVideoSeries,
 } from "./component/movie-user/MovieVideoSeries";
 import PrivateRoute from "./component/PrivateRoute";
+import { Page } from "./component/movie-user/Page";
+
 
 // này là cách mới
 const router = createBrowserRouter([
@@ -43,16 +45,22 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
+        element: <Page />,
+       loader: MovieLoader,
+      },
+
+      {
+        path: "/the-loai/:keyword?",
         element: <Movie />,
         loader: MovieLoader,
       },
       {
-        path: "/the-loai/:keyword?",
+        path: "/quoc-gia/:keyword",
         element: <Movie />,
         loader: CountryLoader,
       },
       {
-        path: "/quoc-gia/:keyword",
+        path: "/filter/:keyword",
         element: <Movie />,
         loader: MovieLoader,
       },

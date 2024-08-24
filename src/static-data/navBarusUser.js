@@ -20,6 +20,11 @@ export const navbar = [
     path: "the-loai/phim-chieu-rap",
   },
   {
+    name: "Phim Lẻ",
+    path: "the-loai/phim-le",
+    
+  },
+  {
     name: "Quốc Gia",
     basePath: "/quoc-gia",
     subItems: [

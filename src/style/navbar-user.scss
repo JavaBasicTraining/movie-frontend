@@ -10,6 +10,7 @@
 
     &:hover .nav-sub-items {
       display: flex !important;
+      z-index: 9999;
     }
 
     .nav-item-name {

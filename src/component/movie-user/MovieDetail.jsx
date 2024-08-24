@@ -121,7 +121,7 @@ export const MovieDetail = () => {
             <div className="btn-poster">
               <img className="poster" src={movie.posterUrl} alt="" />
               <div className="list-btn">
-                {movie.category.name === "Phim Bộ".toLowerCase()? (
+                {movie.category.id ===  1 ? (
                   <button
                   onClick={() => navigate(`/xem-phim-bo/${movie.nameMovie}`)}
 

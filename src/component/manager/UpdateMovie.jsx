@@ -39,8 +39,11 @@ export const UpdateMovie = () => {
   useEffect(() => {
     fetchData(movie);
     setShowEpisode(movie?.category?.id === 1);
+    if (movie?.category?.id === 1) {
+      setShowUploadFileMovie(false);
+    }
   }, [movie]);
-
+  
   useEffect(() => {
     fetchGenre();
     fetchCategories();
@@ -55,8 +58,8 @@ export const UpdateMovie = () => {
   }, [movie.posterUrl]);
 
   const fetchData = (newData) => {
-    setData({ ...data, ...newData, idCategory: newData?.category?.id || [] }); 
-    
+    setData({ ...data, ...newData, idCategory: newData?.category?.id || [] }); // đây
+    // Handle load poster and video if necessary
   };
 
   const fetchCategories = async () => {
@@ -395,7 +398,7 @@ export const UpdateMovie = () => {
               ))}
             </>
           )}
-          <button onClick={handleAddEpisode}>Add Episode</button>
+          <button onClick={handleAddEpisode}>Thêm Tập </button>
         </div>
       )}
 

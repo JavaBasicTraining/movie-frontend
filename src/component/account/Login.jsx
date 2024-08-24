@@ -4,9 +4,6 @@ import useAuth from "../../hook/useAuth";
 import { useEffect } from "react";
 
 async function login(username, password) {
-  const isLoggedIn = () => {
-    return !!localStorage.getItem("token");
-  };
 
 const loginUrl = "http://localhost:8081/api/account/login";
   try {
@@ -107,8 +104,11 @@ export default function Login() {
             Bạn chưa có tài khoản?
           </Link>
           <Link className="color-label" to="/">
-            {" "}
+          
             Trở về trang chủ
+          </Link>
+          <Link className="color-label" to="https://www.facebook.com/login">
+          Đăng Nhập Bằng FaceBook
           </Link>
         </div>
       </div>

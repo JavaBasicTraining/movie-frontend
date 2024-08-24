@@ -16,10 +16,9 @@ export const NavbarUser = () => {
       if (item.name === "Thể Loại") {
         item.subItems = categories.map((category) => ({
           name: category.name,
-          path: category.name
+          path: category.name,
         }));
       }
-
       return item;
     });
   }, [categories]);
@@ -31,7 +30,7 @@ export const NavbarUser = () => {
 
   const listItem = () => {
     return navbar.map((value) => {
-      return (    
+      return (
         <div className="nav-item">
           <span
             className="nav-item-name"
@@ -51,26 +50,13 @@ export const NavbarUser = () => {
                     <Link
                       key={subIndex}
                       className="link-item"
-                      to={(value.basePath ?? '') + `/${sub.path}`}
+                      to={(value.basePath ?? "") + `/${sub.name}`}
                     >
                       {sub.name}
                     </Link>
                   </span>
                 );
               })}
-              {/* {value["subItems-quoc-gia"].map((sub, subIndex) => {
-                return (
-                  <span value={sub} className="nav-item-name">
-                    <Link
-                      key={subIndex}
-                      className="link-item"
-                      to={`/movie/quoc-gia/${sub.name}`}
-                    >
-                      {sub.name}
-                    </Link>
-                  </span>
-                );
-              })} */}
             </div>
           )}
         </div>

@@ -7,15 +7,25 @@ export const DEFAULT_EPISODE = {
   poster: "",
   descriptions: "",
   movieId: "",
+  prevPosterUrl: "",
+  prevVideoUrl: "",
 };
 export const Episode = ({ formChanged, episode, index }) => {
   const [data, setData] = useState(DEFAULT_EPISODE);
-  const [sectlected, setSeclected] = useState ();
+  const [showFileVideo, setShowFileVideo] = useState(false);
 
-  
+  const [showFilePoster, setShowFilePoster] = useState(false);
 
   useEffect(() => {
     setData(episode);
+    if(episode.poster !== null)
+    {
+      setShowFilePoster(true)
+    }else if (episode.video !== true)
+    {
+      setShowFileVideo(true);
+      
+    }
   }, [episode]);
 
   const handleChange = (e) => {
@@ -28,18 +38,28 @@ export const Episode = ({ formChanged, episode, index }) => {
     formChanged(newValue, index);
   };
 
-  
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    const newValue = {
-      ...data,
-      [name]: files[0],
-    };
-    setData(newValue);
+    const file = files[0];
+    const previewUrl = URL.createObjectURL(file);
 
-    formChanged(newValue, index);
+    if (name === "video") {
+      setShowFileVideo(true)
+      setData((prev) => ({
+        ...prev,
+        video: file,
+        [name === "video" ? "prevVideoUrl" : "prevVideoUrl"]: previewUrl,
+      }));
+    } else if (name === "poster") {
+      setShowFilePoster(true)
+      setData((prev) => ({
+        ...prev,
+        poster: file,
+        [name === "poster" ? "prevPosterUrl" : "prevPosterUrl"]: previewUrl,
+      }));
+    }
+    
   };
-
   return (
     <form className="episode-container">
       <div className="body-episode">
@@ -61,23 +81,27 @@ export const Episode = ({ formChanged, episode, index }) => {
             onChange={handleFileChange}
             required
           />
-          {episode.poster && <img src={episode.posterUrl} alt="" />}
+          {showFilePoster === true ? (
+            <img
+              className="poster-item"
+              src={episode.posterUrl || data.prevPosterUrl}
+              alt=""
+            />
+          ) : null}{" "}
         </div>
         <div className="selectedInputFormEpisodeFile">
-         
-          
-            <label>Tải Phim </label>
-            <input
-              type="file"
-              name="video"
-              onChange={handleFileChange}
-              required
-            />
-         
-          {episode.video && (
+          <label>Tải Phim </label>
+          <input
+            type="file"
+            name="video"
+            onChange={handleFileChange}
+            required
+          />
+
+          {episode.video || showFileVideo && (
             <video
               className="video-episode-item"
-              src={episode.videoUrl}
+              src={episode.videoUrl|| data.prevVideoUrl}
               controls
             ></video>
           )}

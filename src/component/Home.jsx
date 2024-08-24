@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { HiOutlineFilm } from "react-icons/hi";
 import { SearchOutlined } from "@ant-design/icons";
 import { axiosInstance } from "../API/axiosConfig";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -19,21 +19,31 @@ export const HomePage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-   
   };
 
-  const filterMovie = async (params) => {
+  const filterMovie = async (event, params) => {
     try {
-      const response = await axiosInstance.get(
-        `/api/v1/movies/filter/${params}`
-      );
-      console.log(response.data);
+      if (event && event.key === "Enter") {
+        event.preventDefault();
+      }
+      if (params === "") {
+        alert("Nhập tên phim bạn muốn xem!");
+        return;
+      } 
+      const response = await axiosInstance.get(`/api/v1/movies/name/${params}`);
+      if (response.data) {
+        navigate(`/filter/${params}`);
+      }
       alert("Tìm kiếm thành công");
+  
     } catch (error) {
-      alert(`Lỗi khi tìm kiếm phim: ${error.message}`);
+      
+        navigate(`/filter/${params}`);
+       return null;
+
     }
   };
-
+  
   return (
     <div className="home-page">
       <div className="header">
@@ -53,10 +63,14 @@ export const HomePage = () => {
               name="name"
               value={name}
               onChange={handleChange}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  filterMovie(event, name);
+                }
+              }}
               required
             ></input>
-            <button onClick={() => filterMovie(name)}>
-         
+            <button onClick={() => filterMovie(null, name)}>
               <SearchOutlined />
             </button>
           </div>
@@ -68,10 +82,10 @@ export const HomePage = () => {
           </div>
         )}
         {isLoggedIn() && (
-          <div className="login-register" >
-          
-              <a href="/" onClick={handleLogout}>Đăng Xuất</a>
-          
+          <div className="login-register">
+            <a href="/" onClick={handleLogout}>
+              Đăng Xuất
+            </a>
           </div>
         )}
       </div>
