@@ -36,13 +36,40 @@ export const Episode = ({ formChanged, episode, index }) => {
     formChanged(newValue, index);
   };
 
+  const validateFile = (file, type) => {
+    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+
+    if (type === "poster") {
+      return validImageTypes.includes(file.type);
+    } else if (type === "video") {
+      return validVideoTypes.includes(file.type);
+    }
+    return false;
+  };
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     const file = files[0];
+    if (!file) {
+      alert("Không có tệp nào được chọn.");
+      return;
+    }
+    if (name === "poster" && !validateFile(file, "poster")) {
+      alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).");
+      e.target.value = "";
+      setShowFilePoster(false);
+    }
+
+    if (name === "video" && !validateFile(file, "video")) {
+      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).");
+      e.target.value = "";
+      setShowFileVideo(false);
+
+    }
     const previewUrl = URL.createObjectURL(file);
 
     // copy data cũ
-    let newData = {...data};
+    let newData = { ...data };
 
     if (name === "video") {
       setShowFileVideo(true);
@@ -50,7 +77,7 @@ export const Episode = ({ formChanged, episode, index }) => {
         ...newData,
         video: file,
         prevVideoUrl: previewUrl,
-      }
+      };
       setData(newData);
     } else if (name === "poster") {
       setShowFilePoster(true);
@@ -58,7 +85,7 @@ export const Episode = ({ formChanged, episode, index }) => {
         ...newData,
         poster: file,
         prevPosterUrl: previewUrl,
-      }
+      };
       setData(newData);
     }
 

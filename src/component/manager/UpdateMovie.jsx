@@ -74,14 +74,8 @@ export const UpdateMovie = () => {
     }
   };
 
-  function getFileNameFromUrl(filePath) { // hàm này là gì?, convert cai link để đưa vô cái chỗ file á a, mà h ko cần thiết nữa
-    const fileUrl = new URL(filePath, window.location.origin);
-    return fileUrl.pathname;
-  }
 
-  // const getFileNameFromUrl = (url) => {
-  //   return url.substring(url.lastIndexOf("/") + 1);
-  // };
+
 
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
@@ -92,10 +86,36 @@ export const UpdateMovie = () => {
     });
   };
 
+   const validateFile = (file, type) => {
+    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+    
+    if (type === "poster") {
+      return validImageTypes.includes(file.type);
+    } else if (type === "video") {
+      return validVideoTypes.includes(file.type);
+    }
+    return false;
+  };
   const handleFileUpload = (e) => {
     const { name, files } = e.target;
     const file = files[0];
+    if (!file) {
+      alert("Không có tệp nào được chọn.");
+      return;
+    }
+    if (name === "poster" && !validateFile(file, "poster")) {
+      alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).");
+      e.target.value = ""; 
+    } 
+  
+    if (name === "video" && !validateFile(file, "video")) {
+      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).");
+      e.target.value = ""; 
+    }
+
     const previewUrl = URL.createObjectURL(file);
+  
     if (name === "video") {
       setData((prev) => ({
         ...prev,
@@ -110,7 +130,7 @@ export const UpdateMovie = () => {
       }));
     }
   };
-
+  
   const isSeries = (category) => {
     if (category) {
       return category.name === "Phim bộ";
