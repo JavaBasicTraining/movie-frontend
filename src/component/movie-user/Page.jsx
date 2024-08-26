@@ -11,7 +11,6 @@ export const Page = () => {
         
         const response = await axiosInstance.get(`/api/v1/movies`);
         setMovies(response.data);
-        console.log(response.data)
       } catch (error) {
         console.error("Failed to fetch movies", error);
       }
