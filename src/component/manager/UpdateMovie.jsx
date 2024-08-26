@@ -44,7 +44,6 @@ export const UpdateMovie = () => {
     }
 
     // xử lý init data trong này hết
-  
   }, [movie]);
 
   useEffect(() => {
@@ -54,7 +53,7 @@ export const UpdateMovie = () => {
 
   const fetchData = (newData) => {
     setData({ ...data, ...newData, idCategory: newData?.category?.id || [] }); // đây
-    // Handle load poster and video if necessary
+  
   };
 
   const fetchCategories = async () => {
@@ -74,9 +73,6 @@ export const UpdateMovie = () => {
     }
   };
 
-
-
-
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
     setData((prev) => {
@@ -86,10 +82,10 @@ export const UpdateMovie = () => {
     });
   };
 
-   const validateFile = (file, type) => {
+  const validateFile = (file, type) => {
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
     const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
-    
+
     if (type === "poster") {
       return validImageTypes.includes(file.type);
     } else if (type === "video") {
@@ -106,16 +102,16 @@ export const UpdateMovie = () => {
     }
     if (name === "poster" && !validateFile(file, "poster")) {
       alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).");
-      e.target.value = ""; 
-    } 
-  
+      e.target.value = "";
+    }
+
     if (name === "video" && !validateFile(file, "video")) {
       alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).");
-      e.target.value = ""; 
+      e.target.value = "";
     }
 
     const previewUrl = URL.createObjectURL(file);
-  
+
     if (name === "video") {
       setData((prev) => ({
         ...prev,
@@ -130,7 +126,7 @@ export const UpdateMovie = () => {
       }));
     }
   };
-  
+
   const isSeries = (category) => {
     if (category) {
       return category.name === "Phim bộ";
@@ -377,7 +373,7 @@ export const UpdateMovie = () => {
         <div className="selectedInputForm">
           <label>Chọn Phân Loại Phim</label>
           <select
-            name="idCategory"
+          
             value={data.idCategory}
             onChange={(e) => {
               handleChange(e, (formData) => {
@@ -399,6 +395,7 @@ export const UpdateMovie = () => {
         <div className="selectedInputForm">
           <label>Nhập Thể Loại</label>
           <MultiSelect
+            name="idGenre"
             options={suggestions.map((item) => ({
               label: item.name,
               value: item,
