@@ -15,6 +15,7 @@ export const Episode = ({ formChanged, episode, index }) => {
   const [data, setData] = useState(DEFAULT_EPISODE);
   const [showFileVideo, setShowFileVideo] = useState(false);
   const [showFilePoster, setShowFilePoster] = useState(false);
+  const [errorsFile, setErrorsFile] = useState({});
 
   useEffect(() => {
     setData(episode);
@@ -51,26 +52,33 @@ export const Episode = ({ formChanged, episode, index }) => {
     const { name, files } = e.target;
     const file = files[0];
     if (!file) {
-      alert("Không có tệp nào được chọn.");
+      setErrorsFile((prevErrors) => ({
+        ...prevErrors,
+        [name]: "Không có tệp nào được chọn.",
+      }));
       return;
     }
+
     if (name === "poster" && !validateFile(file, "poster")) {
-      alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).");
+      setErrorsFile((prevErrors) => ({
+        ...prevErrors,
+        [name]: "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).",
+      }));
       e.target.value = "";
       setShowFilePoster(false);
+      return;
     }
-
     if (name === "video" && !validateFile(file, "video")) {
-      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).");
+      setErrorsFile((prevErrors) => ({
+        ...prevErrors,
+        [name]: "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).",
+      }));
       e.target.value = "";
       setShowFileVideo(false);
-
+      return;
     }
     const previewUrl = URL.createObjectURL(file);
-
-    // copy data cũ
     let newData = { ...data };
-
     if (name === "video") {
       setShowFileVideo(true);
       newData = {
@@ -88,11 +96,8 @@ export const Episode = ({ formChanged, episode, index }) => {
       };
       setData(newData);
     }
-
-    // sao bỏ hàm formChanged() đi z, thì nó sẽ k gọi ra bên ngoài để set data
-    formChanged(newData); // này nó sẽ gọi hàm bên thằng cha đê set lại data
+    formChanged(newData);
   };
-
   return (
     <form className="episode-container">
       <div className="body-episode">
@@ -107,36 +112,49 @@ export const Episode = ({ formChanged, episode, index }) => {
           />
         </div>
         <div className="selectedInputFormEpisodeFile">
-          <label>Tải Poster </label>
-          <input
-            type="file"
-            name="poster"
-            onChange={handleFileChange}
-            required
-          />
-          {showFilePoster && (
-            <img
-              className="poster-item"
-              src={episode.posterUrl || data.prevPosterUrl}
-              alt=""
-            />
-          )}
+          <div className="selectedInputFormEpisode">
+            <label>Tải Poster</label>
+            <div className="validate-episode">
+              <input
+                type="file"
+                name="poster"
+                onChange={handleFileChange}
+                required
+                style={{ color: "black" }}
+              />
+              {errorsFile.poster || (
+                <p style={{ color: "red" }}>{errorsFile.poster}</p>
+              )}
+            </div>
+            {showFilePoster === true ? (
+              <img className="poster-item" src={data.prevPosterUrl} alt="" />
+            ) : null}
+          </div>
         </div>
         <div className="selectedInputFormEpisodeFile">
-          <label>Tải Phim </label>
-          <input
-            type="file"
-            name="video"
-            onChange={handleFileChange}
-            required
-          />
-          {(showFileVideo || episode.video) && (
-            <video
-              className="video-episode-item"
-              src={episode.videoUrl || data.prevVideoUrl}
-              controls
-            ></video>
-          )}
+          <div className="selectedInputFormEpisode">
+            <label>Tải Phim </label>
+            <div className="validate-episode">
+              <input
+                type="file"
+                name="video"
+                onChange={handleFileChange}
+                required
+                style={{ color: "black" }}
+              />
+              {errorsFile.video || (
+                <p style={{ color: "red" }}>{errorsFile.video}</p>
+              )}
+            </div>
+
+            {showFileVideo && (
+              <video
+                className="video-episode-item"
+                src={episode.videoUrl || data.prevVideoUrl}
+                controls
+              ></video>
+            )}
+          </div>
         </div>
         <div className="selectedInputFormEpisodeFile">
           <label>Nội dung:</label>

@@ -19,7 +19,7 @@ export const UpdateMovie = () => {
   const [suggestions, setSuggestion] = useState([]);
   const { movie } = useLoaderData();
   const [showUploadFileMovie, setShowUploadFileMovie] = useState(true);
-
+  const [errorsFile, setErrorsFile] = useState({});
   const [data, setData] = useState({
     nameMovie: "",
     viTitle: "",
@@ -44,7 +44,6 @@ export const UpdateMovie = () => {
     }
 
     // xử lý init data trong này hết
-  
   }, [movie]);
 
   useEffect(() => {
@@ -74,9 +73,6 @@ export const UpdateMovie = () => {
     }
   };
 
-
-
-
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
     setData((prev) => {
@@ -86,10 +82,10 @@ export const UpdateMovie = () => {
     });
   };
 
-   const validateFile = (file, type) => {
+  const validateFile = (file, type) => {
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
     const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
-    
+
     if (type === "poster") {
       return validImageTypes.includes(file.type);
     } else if (type === "video") {
@@ -101,21 +97,33 @@ export const UpdateMovie = () => {
     const { name, files } = e.target;
     const file = files[0];
     if (!file) {
-      alert("Không có tệp nào được chọn.");
+      setErrorsFile((prevErrors) => ({
+        ...prevErrors,
+        [name]: "Không có tệp nào được chọn.",
+      }));
       return;
     }
+
     if (name === "poster" && !validateFile(file, "poster")) {
-      alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).");
-      e.target.value = ""; 
-    } 
-  
+      setErrorsFile((prevErrors) => ({
+        ...prevErrors,
+        [name]: "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).",
+      }));
+      e.target.value = "";
+      return;
+    }
+
     if (name === "video" && !validateFile(file, "video")) {
-      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).");
-      e.target.value = ""; 
+      setErrorsFile((prevErrors) => ({
+        ...prevErrors,
+        [name]: "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).",
+      }));
+      e.target.value = "";
+      return;
     }
 
     const previewUrl = URL.createObjectURL(file);
-  
+
     if (name === "video") {
       setData((prev) => ({
         ...prev,
@@ -130,7 +138,7 @@ export const UpdateMovie = () => {
       }));
     }
   };
-  
+
   const isSeries = (category) => {
     if (category) {
       return category.name === "Phim bộ";
@@ -279,33 +287,46 @@ export const UpdateMovie = () => {
           />
         </div>
 
-        <div className="file-item">
-          <div className="selectedInputForm">
-            <label>Tải Poster</label>
-            <input
-              type="file"
-              name="poster"
-              onChange={handleFileUpload}
-              required
+        <div className="selectedInputForm">
+          <div className="file-item">
+            <div className="selectedInputForm">
+              <label>Tải Poster</label>
+              <div className="validate">
+                <input
+                  type="file"
+                  name="poster"
+                  onChange={handleFileUpload}
+                  required
+                  style={{ color: "white" }}
+                />
+                {errorsFile.poster || (
+                  <p style={{ color: "red" }}>{errorsFile.poster}</p>
+                )}
+              </div>
+            </div>
+            <img
+              className="poster-item"
+              src={data.prevPosterUrl || movie.posterUrl}
+              alt=""
             />
           </div>
-          <img
-            className="poster-item"
-            src={data.prevPosterUrl || movie.posterUrl}
-            alt=""
-          />
         </div>
         {showUploadFileMovie && (
           <div className="selectedInputForm">
             <div className="file-item">
               <div className="selectedInputForm">
                 <label>Tải Phim</label>
-                <input
+               <div className="validate">
+               <input
                   type="file"
                   name="video"
                   onChange={handleFileUpload}
                   required
                 />
+                {errorsFile.video || (
+                  <p style={{ color: "red" }}>{errorsFile.video}</p>
+                )}
+               </div>
               </div>
               <video
                 className="video-item"
