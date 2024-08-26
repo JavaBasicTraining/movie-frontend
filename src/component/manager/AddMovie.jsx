@@ -14,11 +14,7 @@ export const AddMovie = () => {
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [showFileVideo, setShowFileVideo] = useState(false);
   const [errors, setErrors] = useState({});
-  const [errorsFile, setErrorsFile] = useState({}); 
-  // Để lưu lỗi
-
-  // const [showUploadFileMovie, setShowUploadFileMovie] = useState(true);
-
+  const [errorsFile, setErrorsFile] = useState({});
   const [data, setData] = useState({
     nameMovie: "",
     viTitle: "",
@@ -42,7 +38,6 @@ export const AddMovie = () => {
     setShowFileVideo(false);
   }, []);
 
-
   const fetchData = async () => {
     try {
       const [categoriesResponse, genreResponse] = await Promise.all([
@@ -58,15 +53,17 @@ export const AddMovie = () => {
       console.error("Error fetching data:", error);
     }
   };
-
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
     setData((prev) => {
       const updatedData = { ...prev, [name]: value };
       onSuccess?.(updatedData);
+      validateField(name, value);
       return updatedData;
     });
   };
+  
+  
 
   const validateFile = (file, type) => {
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
@@ -83,7 +80,7 @@ export const AddMovie = () => {
     const { name, files } = e.target;
     const file = files[0];
 
-    if (!file || file===null) {
+    if (!file) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
         [name]: "Không có tệp nào được chọn.",
@@ -91,79 +88,100 @@ export const AddMovie = () => {
       return;
     }
 
-    if (name === "poster" && !validateFile(file, "poster")) {
-      setShowFilePoster(false)
-      setErrorsFile((prevErrors) => ({
-        ...prevErrors,
-        [name]: "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).",
-      }));
-      e.target.value = "";
-      return;
+    let isValid = false;
+    if (name === "poster") {
+      isValid = validateFile(file, "poster");
+    } else if (name === "video") {
+      isValid = validateFile(file, "video");
     }
 
-    if (name === "video" && !validateFile(file, "video")) {
-      setShowFileVideo(false)
+    if (!isValid) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
-        [name]: "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).",
+        [name]:
+          name === "poster"
+            ? "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF)."
+            : "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).",
       }));
       e.target.value = "";
       return;
     }
 
     const previewUrl = URL.createObjectURL(file);
+    setData((prev) => ({
+      ...prev,
+      [name]: file,
+      [`prev${name.charAt(0).toUpperCase() + name.slice(1)}Url`]: previewUrl,
+    }));
 
-    if (name === "video") {
-      setShowFileVideo(true);
-      setData((prev) => ({
-        ...prev,
-        video: file,
-        prevVideoUrl: previewUrl,
-      }));
-    } else if (name === "poster") {
-      setShowFilePoster(true);
-      setData((prev) => ({
-        ...prev,
-        poster: file,
-        prevPosterUrl: previewUrl,
-      }));
-    }
+    if (name === "video") setShowFileVideo(true);
+    if (name === "poster") setShowFilePoster(true);
   };
 
   const isSeries = () => data?.idCategory?.toString() === "1";
 
-  const validateForm = () => {
-    let formErrors = {};
-
-    if (!data.nameMovie.trim()) {
-      formErrors.nameMovie = "Username không được để trống";
+  const validateField = (name, value) => {
+    let fieldError = '';
+  
+    switch (name) {
+      case 'nameMovie':
+        if (!value.trim()) {
+          fieldError = 'Tên phim không được để trống';
+        }
+        break;
+      case 'viTitle':
+        if (!value.trim()) {
+          fieldError = 'Tên phim tiếng Việt không được để trống';
+        }
+        break;
+      case 'enTitle':
+        if (!value.trim()) {
+          fieldError = 'Tên phim tiếng Anh không được để trống';
+        }
+        break;
+      case 'description':
+        if (!value.trim()) {
+          fieldError = 'Nội dung phim không được để trống';
+        }
+        break;
+      case 'year':
+        if (!value.trim()) {
+          fieldError = 'Năm phát hành không được để trống';
+        } else if (
+          isNaN(value) ||
+          parseInt(value) <= 0 ||
+          value.length !== 4
+        ) {
+          fieldError = 'Năm phát hành phải là một số dương hợp lệ với 4 chữ số';
+        }
+        break;
+      case 'country':
+        if (!value.trim()) {
+          fieldError = 'Quốc gia không được để trống';
+        }
+        break;
+      default:
+        break;
     }
-
-    if (!data.viTitle.trim()) {
-      formErrors.viTitle = "Tên phim tiếng việt không được để trống";
-    }
-
-    if (!data.enTitle.trim()) {
-      formErrors.enTitle = "Tên phim tiếng anh không được để trống";
-    }
-    if (!data.description.trim()) {
-      formErrors.description = "Nội dung phim không được để trống";
-    }
-    if (!data.year.trim()) {
-      formErrors.year = "Năm phát hành không được để trống";
-    }
-    if (!data.country.trim()) {
-      formErrors.country = "Quốc gia không được để trống";
-    }
-
-    setErrors(formErrors);
-    return Object.keys(formErrors).length === 0;
+  
+    setErrors((prev) => ({ ...prev, [name]: fieldError }));
   };
-
+  
+  const validateForm = () => {
+    let isValid = true;
+    const fields = ['nameMovie', 'viTitle', 'enTitle', 'description', 'year', 'country'];
+    fields.forEach((field) => {
+      const value = data[field];
+      validateField(field, value);
+      if (errors[field]) isValid = false;
+    });
+    return isValid;
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      return; // Dừng lại nếu có lỗi
+      return;
     }
 
     try {
@@ -277,24 +295,25 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.nameMovie || <p className="error">{errors.nameMovie}</p>}
+            {errors.nameMovie || (
+              <small className="error">{errors.nameMovie}</small>
+            )}
           </div>
         </div>
         <div className="selectedInputForm">
           <div className="file-item">
             <div className="selectedInputForm">
               <label>Tải Poster</label>
-              <div className="validate" >
+              <div className="validate">
                 <input
                   type="file"
                   name="poster"
                   onChange={handleFileUpload}
                   required
-                  style={{color: "white"
-                  }}
+                  style={{ color: "white" }}
                 />
                 {errorsFile.poster || (
-                  <p style={{ color: "red" }}>{errorsFile.poster}</p>
+                  <small style={{ color: "red" }}>{errorsFile.poster}</small>
                 )}
               </div>
             </div>
@@ -314,11 +333,10 @@ export const AddMovie = () => {
                     name="video"
                     onChange={handleFileUpload}
                     required
-                    style={{color: "white"
-                    }}
+                    style={{ color: "white" }}
                   />
                   {errorsFile.video || (
-                    <p style={{ color: "red" }}>{errorsFile.video}</p>
+                    <small style={{ color: "red" }}>{errorsFile.video}</small>
                   )}
                 </div>
               </div>
@@ -342,7 +360,9 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.viTitle || <p className="error">{errors.viTitle}</p>}
+            {errors.viTitle || (
+              <small className="error">{errors.viTitle}</small>
+            )}
           </div>
         </div>
         <div className="selectedInputForm">
@@ -355,7 +375,9 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.enTitle || <p className="error">{errors.enTitle}</p>}
+            {errors.enTitle || (
+              <small className="error">{errors.enTitle}</small>
+            )}
           </div>
         </div>
         <div className="selectedInputForm">
@@ -369,7 +391,7 @@ export const AddMovie = () => {
               required
             />
             {errors.description || (
-              <p className="error">{errors.description}</p>
+              <small className="error">{errors.description}</small>
             )}
           </div>
         </div>
@@ -383,7 +405,7 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.year || <p className="error">{errors.year}</p>}
+            {errors.year || <small className="error">{errors.year}</small>}
           </div>
         </div>
         <div className="selectedInputForm">
@@ -391,10 +413,12 @@ export const AddMovie = () => {
           <select
             name="country"
             value={data.country}
-            onChange={handleChange}
+            onChange={handleChange} 
             required
           >
-            {errors.country || <p className="error">{errors.country}</p>}
+            {errors.country || (
+              <small className="error">{errors.country}</small>
+            )}
             <option value="" disabled>
               Chọn Quốc Gia
             </option>
@@ -427,7 +451,9 @@ export const AddMovie = () => {
               </option>
             ))}
           </select>
-          {errors.idCategory || <p className="error">{errors.idCategory}</p>}
+          {errors.idCategory || (
+            <small className="error">{errors.idCategory}</small>
+          )}
         </div>
         <div className="selectedInputForm">
           <label>Nhập Thể Loại</label>

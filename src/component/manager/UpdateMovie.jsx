@@ -300,7 +300,7 @@ export const UpdateMovie = () => {
                   style={{ color: "white" }}
                 />
                 {errorsFile.poster || (
-                  <p style={{ color: "red" }}>{errorsFile.poster}</p>
+                  <small style={{ color: "red" }}>{errorsFile.poster}</small>
                 )}
               </div>
             </div>
@@ -324,7 +324,7 @@ export const UpdateMovie = () => {
                   required
                 />
                 {errorsFile.video || (
-                  <p style={{ color: "red" }}>{errorsFile.video}</p>
+                  <small style={{ color: "red" }}>{errorsFile.video}</small>
                 )}
                </div>
               </div>

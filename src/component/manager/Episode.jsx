@@ -101,7 +101,7 @@ export const Episode = ({ formChanged, episode, index }) => {
   return (
     <form className="episode-container">
       <div className="body-episode">
-        <div className="selectedInputFormEpisode">
+        <div className="selected-input-form-episode">
           <label>Tập:</label>
           <input
             type="text"
@@ -111,8 +111,8 @@ export const Episode = ({ formChanged, episode, index }) => {
             required
           />
         </div>
-        <div className="selectedInputFormEpisodeFile">
-          <div className="selectedInputFormEpisode">
+        <div className="selected-input-form-episode-file">
+          <div className="selected-input-form-episode">
             <label>Tải Poster</label>
             <div className="validate-episode">
               <input
@@ -123,7 +123,7 @@ export const Episode = ({ formChanged, episode, index }) => {
                 style={{ color: "black" }}
               />
               {errorsFile.poster || (
-                <p style={{ color: "red" }}>{errorsFile.poster}</p>
+                <small style={{ color: "red" }}>{errorsFile.poster}</small>
               )}
             </div>
             {showFilePoster === true ? (
@@ -131,8 +131,8 @@ export const Episode = ({ formChanged, episode, index }) => {
             ) : null}
           </div>
         </div>
-        <div className="selectedInputFormEpisodeFile">
-          <div className="selectedInputFormEpisode">
+        <div className="selected-input-form-episode-file">
+          <div className="selected-input-form-episode">
             <label>Tải Phim </label>
             <div className="validate-episode">
               <input
@@ -143,7 +143,7 @@ export const Episode = ({ formChanged, episode, index }) => {
                 style={{ color: "black" }}
               />
               {errorsFile.video || (
-                <p style={{ color: "red" }}>{errorsFile.video}</p>
+                <small style={{ color: "red" }}>{errorsFile.video}</small>
               )}
             </div>
 
@@ -156,7 +156,7 @@ export const Episode = ({ formChanged, episode, index }) => {
             )}
           </div>
         </div>
-        <div className="selectedInputFormEpisodeFile">
+        <div className="selected-input-form-episode">
           <label>Nội dung:</label>
           <input
             type="text"
