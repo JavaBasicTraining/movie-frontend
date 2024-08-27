@@ -78,7 +78,7 @@ export const AddMovie = () => {
 
   const validateFile = (file, type) => {
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg","video/mov"];
     
     if (type === "poster") {
       return validImageTypes.includes(file.type);
