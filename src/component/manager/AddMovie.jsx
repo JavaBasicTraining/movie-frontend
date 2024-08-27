@@ -59,7 +59,7 @@ export const AddMovie = () => {
       const updatedData = { ...prev, [name]: value };
       onSuccess?.(updatedData);
       validateField(name, value);
-    return updatedData;
+      return updatedData;
     });
   };
 
@@ -162,22 +162,26 @@ export const AddMovie = () => {
   };
 
   const validateForm = () => {
-    let isValid = true;
+    let isValid = true; // lúc đầu true
     const fields = ["nameMovie", "viTitle", "enTitle", "description", "year"];
+    // khi duyệt qua tất cả fields, nếu có bất kỳ field nào k có dl thì trả false
+    // khi chạy qua hết mà k có thằng nào fail thì isvalid vẫn true
     fields.forEach((field) => {
-        const value = data[field];
-        validateField(field, value);
-        if (!field ) {
-            isValid = false;
-        } 
+      const value = data[field];
+      if (!value) {
+        isValid = false;
+      }
+      
+      // set error message cho từng field
+      validateField(field, value);
     });
-    return isValid;
-};
 
+    return isValid;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!validateForm()) { // sai chỗ đây
       return;
     } else {
       try {
@@ -192,8 +196,9 @@ export const AddMovie = () => {
           newData.episodes.map((item) => [item.tempId, item])
         );
 
-        const response = await axiosInstance.post(
-          `/api/v1/admin/movies/createWithEpisode`,
+        const response = await axiosInstance.post( // post = create là action rồi nên đặt tên api k cần phải thêm động từ vào
+          `/api/v1/admin/movies`, // này bữa trước đổi thành /api/v1/admin/movies rồi mà, laf sao a, 
+          //bữa kêu đọc quy ước đặt tên api có đọc hết chưa, cái api cái /api/v1/admin/movies này đâu có đúng, đúng gì, cso  
           newData
         );
 
