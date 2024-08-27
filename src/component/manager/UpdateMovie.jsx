@@ -6,6 +6,7 @@ import { axiosInstance } from "../../API/axiosConfig";
 import { countries } from "../../static-data/countries";
 import "../../style/update-movie.scss";
 import { DEFAULT_EPISODE, Episode } from "./Episode";
+import { iterate } from "localforage";
 
 export async function UpdateMovieLoader({ params }) {
   const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);
@@ -51,10 +52,22 @@ export const UpdateMovie = () => {
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    if (movie) {
+      const genres = movie.idGenre.map(id => suggestions.find(item => item.id === id));
+      setSelectedCategory(genres);
+    }
+  }, [movie, suggestions]);
+
   const fetchData = (newData) => {
-    setData({ ...data, ...newData, idCategory: newData?.category?.id || [] }); // đây
-  
+    setData({
+      ...data,
+      ...newData,
+      idCategory: newData?.category?.id || [],
+      idGenre: newData?.genres.map((item) => item?.id) || [], 
+    });
   };
+  
 
   const fetchCategories = async () => {
     const response = await axiosInstance.get(`/api/v1/category`);
@@ -373,7 +386,6 @@ export const UpdateMovie = () => {
         <div className="selectedInputForm">
           <label>Chọn Phân Loại Phim</label>
           <select
-          
             value={data.idCategory}
             onChange={(e) => {
               handleChange(e, (formData) => {
@@ -395,16 +407,15 @@ export const UpdateMovie = () => {
         <div className="selectedInputForm">
           <label>Nhập Thể Loại</label>
           <MultiSelect
-            name="idGenre"
             options={suggestions.map((item) => ({
               label: item.name,
               value: item,
             }))}
+            name="idGenre"
             value={selectedCategory}
             onChange={handleGenreChange}
             labelledBy="Select"
             className="light custom-multi-select"
-            defaultIsOpen={false}
           />
         </div>
       </div>
