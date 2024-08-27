@@ -30,8 +30,7 @@ export const HomePage = () => {
         alert("Nhập tên phim bạn muốn xem!");
         return;
       } 
-      const response = await axiosInstance.get(`/api/v1/movies/name/${params}`);
-      if (response.data) {
+      if (event.target) {
         navigate(`/filter/${params}`);
       }
       alert("Tìm kiếm thành công");
