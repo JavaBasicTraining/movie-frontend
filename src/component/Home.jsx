@@ -18,7 +18,7 @@ export const HomePage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.setItem("tokenCleared", "true"); // Set flag to indicate token has been cleared
+    localStorage.setItem("tokenCleared", "true"); 
   };
 
   useEffect(() => {
