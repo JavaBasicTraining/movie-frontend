@@ -59,11 +59,9 @@ export const AddMovie = () => {
       const updatedData = { ...prev, [name]: value };
       onSuccess?.(updatedData);
       validateField(name, value);
-      return updatedData;
+    return updatedData;
     });
   };
-  
-  
 
   const validateFile = (file, type) => {
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
@@ -121,115 +119,114 @@ export const AddMovie = () => {
   const isSeries = () => data?.idCategory?.toString() === "1";
 
   const validateField = (name, value) => {
-    let fieldError = '';
-  
+    let fieldError = "";
+
     switch (name) {
-      case 'nameMovie':
+      case "nameMovie":
         if (!value.trim()) {
-          fieldError = 'Tên phim không được để trống';
+          fieldError = "Tên phim không được để trống";
         }
         break;
-      case 'viTitle':
+      case "viTitle":
         if (!value.trim()) {
-          fieldError = 'Tên phim tiếng Việt không được để trống';
+          fieldError = "Tên phim tiếng Việt không được để trống";
         }
         break;
-      case 'enTitle':
+      case "enTitle":
         if (!value.trim()) {
-          fieldError = 'Tên phim tiếng Anh không được để trống';
+          fieldError = "Tên phim tiếng Anh không được để trống";
         }
         break;
-      case 'description':
+      case "description":
         if (!value.trim()) {
-          fieldError = 'Nội dung phim không được để trống';
+          fieldError = "Nội dung phim không được để trống";
         }
         break;
-      case 'year':
+      case "year":
         if (!value.trim()) {
-          fieldError = 'Năm phát hành không được để trống';
-        } else if (
-          isNaN(value) ||
-          parseInt(value) <= 0 ||
-          value.length !== 4
-        ) {
-          fieldError = 'Năm phát hành phải là một số dương hợp lệ với 4 chữ số';
+          fieldError = "Năm phát hành không được để trống";
+        } else if (isNaN(value) || parseInt(value) <= 0 || value.length !== 4) {
+          fieldError = "Năm phát hành phải là một số dương hợp lệ với 4 chữ số";
         }
         break;
-      case 'country':
+      case "country":
         if (!value.trim()) {
-          fieldError = 'Quốc gia không được để trống';
+          fieldError = "Quốc gia không được để trống";
         }
         break;
       default:
         break;
     }
-  
+
     setErrors((prev) => ({ ...prev, [name]: fieldError }));
   };
-  
+
   const validateForm = () => {
     let isValid = true;
-    const fields = ['nameMovie', 'viTitle', 'enTitle', 'description', 'year', 'country'];
+    const fields = ["nameMovie", "viTitle", "enTitle", "description", "year"];
     fields.forEach((field) => {
-      const value = data[field];
-      validateField(field, value);
-      if (errors[field]) isValid = false;
+        const value = data[field];
+        validateField(field, value);
+        if (!field ) {
+            isValid = false;
+        } 
     });
     return isValid;
-  };
-  
+};
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
+    if (validateForm()) {
       return;
-    }
-
-    try {
-      const newData = {
-        ...data,
-        episodes: data.episodes.map((episode) => ({
-          ...episode,
-          tempId: "" + new Date().getTime(),
-        })),
-      };
-      const episodesMap = new Map(
-        newData.episodes.map((item) => [item.tempId, item])
-      );
-
-      const response = await axiosInstance.post(
-        `/api/v1/admin/movies/createWithEpisode`,
-        newData
-      );
-
-      if (!isSeries() && data.poster && data.video) {
-        uploadFileMovie(response.data.id, "poster", data.poster);
-        uploadFileMovie(response.data.id, "video", data.video);
-      } else if (data.poster) {
-        const formData = new FormData();
-        formData.append("file", data.poster);
-        const res = await axiosInstance.patch(
-          `/api/v1/admin/movies/${response.data.id}?type=poster`,
-          formData
+    } else {
+      try {
+        const newData = {
+          ...data,
+          episodes: data.episodes.map((episode) => ({
+            ...episode,
+            tempId: "" + new Date().getTime(),
+          })),
+        };
+        const episodesMap = new Map(
+          newData.episodes.map((item) => [item.tempId, item])
         );
-        for (const item of response.data.episodes) {
-          const episodeMap = episodesMap.get(item.tempId);
-          if (episodeMap.poster && episodeMap.video) {
-            const formDataEpisode = new FormData();
-            formDataEpisode.append("poster", episodeMap.poster);
-            formDataEpisode.append("video", episodeMap.video);
-            await axiosInstance.patch(
-              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
-              formDataEpisode
-            );
+
+        const response = await axiosInstance.post(
+          `/api/v1/admin/movies/createWithEpisode`,
+          newData
+        );
+
+        if (!isSeries() && data.poster && data.video) {
+          uploadFileMovie(response.data.id, "poster", data.poster);
+          uploadFileMovie(response.data.id, "video", data.video);
+        } else if (data.poster) {
+          const formData = new FormData();
+          formData.append("file", data.poster);
+          const res = await axiosInstance.patch(
+            `/api/v1/admin/movies/${response.data.id}?type=poster`,
+            formData
+          );
+          for (const item of response.data.episodes) {
+            const episodeMap = episodesMap.get(item.tempId);
+            if (episodeMap.poster && episodeMap.video) {
+              const formDataEpisode = new FormData();
+              formDataEpisode.append("poster", episodeMap.poster);
+              formDataEpisode.append("video", episodeMap.video);
+              await axiosInstance.patch(
+                `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
+                formDataEpisode
+              );
+            }
           }
         }
-      }
 
-      alert("Thêm phim mới thành công", response.data);
-      navigate("/admin");
-    } catch (error) {
-      alert("Lỗi");
-      console.error("Error submitting movie:", error);
+        alert("Thêm phim mới thành công", response.data);
+        navigate("/admin");
+      } catch (error) {
+        alert("Lỗi");
+        console.error("Error submitting movie:", error);
+      }
     }
   };
 
@@ -413,7 +410,7 @@ export const AddMovie = () => {
           <select
             name="country"
             value={data.country}
-            onChange={handleChange} 
+            onChange={handleChange}
             required
           >
             {errors.country || (

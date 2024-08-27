@@ -16,6 +16,8 @@ export const Episode = ({ formChanged, episode, index }) => {
   const [showFileVideo, setShowFileVideo] = useState(false);
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [errorsFile, setErrorsFile] = useState({});
+  const [errors, setErrors] = useState({});
+
 
   useEffect(() => {
     setData(episode);
@@ -25,6 +27,7 @@ export const Episode = ({ formChanged, episode, index }) => {
     if (episode.video) {
       setShowFileVideo(true);
     }
+ 
   }, [episode]);
 
   const handleChange = (e) => {
@@ -34,7 +37,49 @@ export const Episode = ({ formChanged, episode, index }) => {
       [name]: value,
     };
     setData(newValue);
+    validateField(name, value);
+    if(validateForm )
+    {
+      return;
+    }else
+   {
     formChanged(newValue, index);
+   }
+  };
+
+
+  const validateField = (name, value) => {
+    let fieldError = '';
+  
+    switch (name) {
+     
+      case 'episodeCount':
+        if (!value.trim()) {
+          fieldError = 'Tập phim không được để trống';
+        }
+        break;
+      case 'description':
+        if (!value.trim()) {
+          fieldError = 'Nội dung phim không được để trống';
+        }
+        break;
+    
+      default:
+        break;
+    }
+  
+    setErrors((prev) => ({ ...prev, [name]: fieldError }));
+  };
+  
+  const validateForm = () => {
+    let isValid = true;
+    const fields = ['episodeCount','descriptions'];
+    fields.forEach((field) => {
+      const value = data[field];
+      validateField(field, value);
+      if (errors[field]) isValid = false;
+    });
+    return isValid;
   };
 
   const validateFile = (file, type) => {
@@ -110,6 +155,9 @@ export const Episode = ({ formChanged, episode, index }) => {
             onChange={handleChange}
             required
           />
+             {errors.episodeCount || (
+              <small className="error">{errors.episode}</small>
+            )}
         </div>
         <div className="selected-input-form-episode-file">
           <div className="selected-input-form-episode">
@@ -165,6 +213,9 @@ export const Episode = ({ formChanged, episode, index }) => {
             onChange={handleChange}
             required
           />
+             {errors.descriptions || (
+              <small className="error">{errors.descriptions}</small>
+            )}
         </div>
       </div>
     </form>
