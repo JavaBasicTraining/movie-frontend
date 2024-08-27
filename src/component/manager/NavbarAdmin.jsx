@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
-import { RightOutlined } from "@ant-design/icons";
-import { navbar } from "../../static-data/navBarAdmin";
 export const NavbarAdmin = () => {
 
   
@@ -18,67 +16,21 @@ export const NavbarAdmin = () => {
     fetchGenre();
   }, []);
 
-  useEffect(() => {
-    navbar.map((item) => {
-        if (item.name === "Thể Loại") {
-          item.subItems = categories.map((category) => ({
-            name: category.name,
-          }));
-        }
 
-      return item;
-    });
-  }, [categories]);
   const navbarList = [
     {
       name: "Movie Management",
       link: "/admin/movie",
     },
+    {
+      name: "User Management",
+      link: "/admin/movie",
+    },
+    {
+      name: "Category Management",
+      link: "/admin/movie",
+    },
   ];
-
-  const listItem = () => {
-    return navbar.map((value) => {
-      return (
-        <div className="admin-nav-item">
-          <span
-            className="admin-nav-item-name"
-            onClick={() => {
-              if (value.name === "Thể Loại" || value.name === "Quốc Gia") {
-                navigate("");
-              } else {
-                navigate(`/admin/movie/category/${value.name}`);
-              }
-            }}
-          >
-            {value.name === "Thể Loại" || value.name === "Quốc Gia" ? (
-              <span className="item-icon">
-                {value.name} <RightOutlined />
-              </span>
-            ) : (
-              value.name
-            )}
-          </span>
-          {value["subItems"] && (
-            <div className="admin-nav-sub-items">
-              {value["subItems"].map((sub, subIndex) => {
-                return (
-                  <span value={sub} className="admin-nav-item-name">
-                    <Link
-                      key={subIndex}
-                      className="admin-link-item"
-                      to={`/admin/movie/category/${sub.name}`}
-                    >
-                      {sub.name}
-                    </Link>
-                  </span>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      );
-    });
-  };
 
   return (
     <div className="navbar-admin">
@@ -86,16 +38,12 @@ export const NavbarAdmin = () => {
       <img src="/poster/quay-phim-ch-p-nh-1696309932862999506271.png"
        alt=""/>
       </div>
-      <div>
+      <div className="item-navbar-admin">
         {navbarList.map((value, index) => (
           <Link key={index} to={value.link}>
             <button className="list-btn-admin text-nowrap">{value.name}</button>
           </Link>
         ))}
-      </div>
-
-      <div>
-        <div className="navbar-admin-container">{listItem()}</div>
       </div>
     </div>
   );
