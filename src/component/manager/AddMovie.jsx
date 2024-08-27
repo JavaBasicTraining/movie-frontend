@@ -105,7 +105,7 @@ export const AddMovie = () => {
   
     
     if (name === "video" && !validateFile(file, "video")) {
-      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).");
+      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV).");
       e.target.value = ""; 
       return; 
     }
