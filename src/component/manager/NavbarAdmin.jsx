@@ -20,7 +20,7 @@ export const NavbarAdmin = () => {
 
   useEffect(() => {
     navbar.map((item) => {
-        if (item.name === "Thể Loại") {
+         if (item.name === "Thể Loại") {
           item.subItems = categories.map((category) => ({
             name: category.name,
           }));
@@ -96,7 +96,7 @@ export const NavbarAdmin = () => {
 
       <div>
         <div className="navbar-admin-container">{listItem()}</div>
-      </div>
+        </div>
     </div>
   );
 };
