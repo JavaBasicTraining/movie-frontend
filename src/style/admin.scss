@@ -4,13 +4,14 @@
 
   .right-container {
     width: 100%;
+
     .body {
       background: white;
-      min-height: 500px;
-      width: 100%;
+      min-height: 400px;
       padding: 20px;
     }
   }
+  
   .menu-navbar {
     display: flex;
     width: 0;
@@ -18,7 +19,7 @@
   }
 
   .navbar-show {
-    width: 300px
+    width: 300px;
   }
 
   .header {
