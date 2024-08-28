@@ -28,11 +28,15 @@
         color: black;
         font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
       }
-      .video-episode-item
-      {
-        width: 200px                                                                                                                                                                                                                                                                                                             ;
+      .video-episode-item {
+        width: 200px;
         height: 300px;
       }
     }
   }
+}
+.poster-item-episode {
+  margin-left: auto;
+  width: 200px;
+  height: 250px;
 }

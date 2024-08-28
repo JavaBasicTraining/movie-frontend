@@ -116,7 +116,7 @@ export const Episode = ({ formChanged, episode, index }) => {
           />
           {showFilePoster && (
             <img
-              className="poster-item"
+              className="poster-item-episode"
               src={episode.posterUrl || data.prevPosterUrl}
               alt=""
             />
