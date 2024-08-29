@@ -92,7 +92,7 @@ export const ListMovie = () => {
             label: category.name,
             value: category,
           })),
-          "category",
+          "genre",
           "Chon the loai"
         )}
         {renderSelect(
