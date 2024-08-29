@@ -3,6 +3,7 @@ import { axiosInstance } from "../../API/axiosConfig";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { StarFilled, StarOutlined, StarTwoTone } from "@ant-design/icons";
 import { jwtDecode } from "jwt-decode";
+import useFetchUser from "../../hook/useFetchUser";
 
 export async function posterMovieLoader({ params }) {
   const response = await axiosInstance.get(
@@ -19,7 +20,7 @@ export const MovieDetail = () => {
   const navigate = useNavigate();
   const { movie } = useLoaderData();
   const [isShowTrailer, setIsShowTrailer] = useState(false);
-  const [user, setUser] = useState([]);
+  const {user, isUser} = useFetchUser();
   const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
   const [countRating, setCountRating] = useState(0);
@@ -32,7 +33,12 @@ export const MovieDetail = () => {
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
-      getUser();
+      if(isUser.status === 401)
+      {
+        alert('Phiên bản hết hạn, vui lòng đăn nhập lại...')
+        navigate('/login');
+        return;
+      }
      
     }
     window.addEventListener("keyup", handleKeyup);
@@ -58,16 +64,6 @@ export const MovieDetail = () => {
     );
     setAverage(response.data);
   };
-
-  const getUser = async () => {
-    try {
-      const response = await axiosInstance.get(`/api/account/info`);
-      setUser(response.data ?? []);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-    }
-  };
-
   const handleClick = async (index) => {
     try {
       setRating(index);

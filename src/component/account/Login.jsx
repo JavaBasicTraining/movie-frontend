@@ -2,6 +2,7 @@ import axios from "axios";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../../hook/useAuth";
 import { useEffect } from "react";
+import useFetchUser from "../../hook/useFetchUser";
 
 async function login(username, password) {
 
@@ -36,10 +37,15 @@ const loginUrl = "http://localhost:8081/api/account/login";
 export default function Login() {
   const navigate = useNavigate();
   const isAuth = useAuth();
+  const {user, isUser} = useFetchUser();
 
   useEffect(() => {
-    if (isAuth) {
-      navigate("/"); // đăng nhập thành công rồi thì khi vào login nó tự động redireact trang khác
+    if (isAuth && isUser ) {
+      navigate("/");
+      
+    }else if (!isUser)
+    {
+      navigate('/login')
     }
   }, [isAuth]);
 
@@ -49,9 +55,8 @@ export default function Login() {
     const password = document.getElementById("password").value;
     const token = await login(username, password);
     if (token) {
-      const user = await getUser(token);
+     // const user = await getUser(token);
       if (user && user.authorities.includes("admin")) {
-      
         alert("Đăng Nhập Tài Khoản Admin Thành Công!!!");
         navigate("/admin/movie");
       } else {
@@ -65,21 +70,6 @@ export default function Login() {
       );
     }
   }
-
-  const getUser = async (token) => {
-    try {
-      const res = await axios.get("http://localhost:8081/api/account/info", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return res.data;
-    } catch (err) {
-      return null;
-    }
-  };
-
   return (
     <div className="form">
       <div className="body">

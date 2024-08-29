@@ -10,6 +10,8 @@ const publicAPI = [
   "/api/v1/account/register",
   "/api/v1/categories/list",
   "/api/v1/genre",
+  "/api/v1/evaluations/numberOfReviews",
+  "/api/v1/evaluations/average/"
 ];
 
 axiosInstance.interceptors.request.use(
