@@ -58,7 +58,7 @@ export const Episode = ({ formChanged, episode, index }) => {
           fieldError = 'Tập phim không được để trống';
         }
         break;
-      case 'description':
+      case 'descriptions':
         if (!value.trim()) {
           fieldError = 'Nội dung phim không được để trống';
         }
@@ -96,6 +96,7 @@ export const Episode = ({ formChanged, episode, index }) => {
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     const file = files[0];
+    validateField();
     if (!file) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
@@ -148,7 +149,8 @@ export const Episode = ({ formChanged, episode, index }) => {
       <div className="body-episode">
         <div className="selected-input-form-episode">
           <label>Tập:</label>
-          <input
+        <div className="validate-episode" style={{color: "red", display: "flex", flexDirection:"column",fontSize:"12px"}}>
+        <input
             type="text"
             name="episodeCount"
             value={data.episodeCount}
@@ -159,10 +161,11 @@ export const Episode = ({ formChanged, episode, index }) => {
               <small className="error">{errors.episode}</small>
             )}
         </div>
+        </div>
         <div className="selected-input-form-episode-file">
           <div className="selected-input-form-episode">
             <label>Tải Poster</label>
-            <div className="validate-episode">
+            <div className="validate-episode" style={{color: "red", display: "flex", flexDirection:"column"}}>
               <input
                 type="file"
                 name="poster"
@@ -182,7 +185,7 @@ export const Episode = ({ formChanged, episode, index }) => {
         <div className="selected-input-form-episode-file">
           <div className="selected-input-form-episode">
             <label>Tải Phim </label>
-            <div className="validate-episode">
+            <div className="validate-episode" style={{color: "red", display: "flex", flexDirection:"column"}} >
               <input
                 type="file"
                 name="video"
@@ -206,7 +209,8 @@ export const Episode = ({ formChanged, episode, index }) => {
         </div>
         <div className="selected-input-form-episode">
           <label>Nội dung:</label>
-          <input
+         <div className="validate-episode" style={{color: "red", display: "flex", flexDirection:"column", fontSize:"12px"}}>
+         <input
             type="text"
             name="descriptions"
             value={data.descriptions}
@@ -216,6 +220,7 @@ export const Episode = ({ formChanged, episode, index }) => {
              {errors.descriptions || (
               <small className="error">{errors.descriptions}</small>
             )}
+         </div>
         </div>
       </div>
     </form>

@@ -162,17 +162,13 @@ export const AddMovie = () => {
   };
 
   const validateForm = () => {
-    let isValid = true; // lúc đầu true
+    let isValid = true;
     const fields = ["nameMovie", "viTitle", "enTitle", "description", "year"];
-    // khi duyệt qua tất cả fields, nếu có bất kỳ field nào k có dl thì trả false
-    // khi chạy qua hết mà k có thằng nào fail thì isvalid vẫn true
     fields.forEach((field) => {
       const value = data[field];
       if (!value) {
         isValid = false;
       }
-      
-      // set error message cho từng field
       validateField(field, value);
     });
 
@@ -181,7 +177,7 @@ export const AddMovie = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) { // sai chỗ đây
+    if (!validateForm()) {
       return;
     } else {
       try {
@@ -196,9 +192,9 @@ export const AddMovie = () => {
           newData.episodes.map((item) => [item.tempId, item])
         );
 
-        const response = await axiosInstance.post( // post = create là action rồi nên đặt tên api k cần phải thêm động từ vào
-          `/api/v1/admin/movies`, // này bữa trước đổi thành /api/v1/admin/movies rồi mà, laf sao a, 
-          //bữa kêu đọc quy ước đặt tên api có đọc hết chưa, cái api cái /api/v1/admin/movies này đâu có đúng, đúng gì, cso  
+        const response = await axiosInstance.post( 
+          `/api/v1/admin/movies`, 
+          
           newData
         );
 
@@ -247,8 +243,6 @@ export const AddMovie = () => {
   const handleShowEpisode = (e) => {
     const isSeries = e.target.value === "1";
     setShowEpisode(isSeries);
-    // setShowUploadFileMovie(!isSeries);
-
     if (isSeries) {
       setData((prev) => ({
         ...prev,
@@ -418,9 +412,7 @@ export const AddMovie = () => {
             onChange={handleChange}
             required
           >
-            {errors.country || (
-              <small className="error">{errors.country}</small>
-            )}
+
             <option value="" disabled>
               Chọn Quốc Gia
             </option>

@@ -20,6 +20,8 @@ export const UpdateMovie = () => {
   const { movie } = useLoaderData();
   const [showUploadFileMovie, setShowUploadFileMovie] = useState(true);
   const [errorsFile, setErrorsFile] = useState({});
+  const [errors, setErrors] = useState({});
+
   const [data, setData] = useState({
     nameMovie: "",
     viTitle: "",
@@ -78,6 +80,7 @@ export const UpdateMovie = () => {
     setData((prev) => {
       const updatedData = { ...prev, [name]: value };
       onSuccess?.(updatedData);
+      validateField(name, value);
       return updatedData;
     });
   };
@@ -156,81 +159,137 @@ export const UpdateMovie = () => {
     );
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (
-        !data.nameMovie ||
-        !data.viTitle ||
-        !data.enTitle ||
-        !data.description ||
-        !data.idGenre.length
-      ) {
-        alert("Vui lòng nhập đầy đủ thông tin phim");
-        return;
-      }
-
-      const newData = {
-        ...data,
-        episodes: data.episodes.map((episode, index) => ({
-          ...episode,
-          tempId: "" + new Date().getTime() + index,
-        })),
-      };
-
-      const episodesMap = new Map(
-        newData.episodes.map((item) => [item.tempId, item])
-      );
-      const response = await axiosInstance.put(
-        `/api/v1/admin/movies/${movie.id}`,
-        {
-          ...newData,
-          poster: undefined,
-          video: undefined,
-          episodes: isSeries()
-            ? newData.episodes.map((episode) => ({
-                ...episode,
-                posterUrl: undefined,
-                videoUrl: undefined,
-              }))
-            : [],
+  const validateField = (name, value) => {
+    let fieldError = "";
+  
+    // Ensure value is a string
+    const stringValue = value ? value.toString() : "";
+  
+    switch (name) {
+      case "nameMovie":
+        if (!stringValue.trim()) {
+          fieldError = "Tên phim không được để trống";
         }
-      );
+        break;
+      case "viTitle":
+        if (!stringValue.trim()) {
+          fieldError = "Tên phim tiếng Việt không được để trống";
+        }
+        break;
+      case "enTitle":
+        if (!stringValue.trim()) {
+          fieldError = "Tên phim tiếng Anh không được để trống";
+        }
+        break;
+      case "description":
+        if (!stringValue.trim()) {
+          fieldError = "Nội dung phim không được để trống";
+        }
+        break;
+      case "year":
+        if (!stringValue.trim()) {
+          fieldError = "Năm phát hành không được để trống";
+        } else if (isNaN(stringValue) || parseInt(stringValue) <= 0 || stringValue.length !== 4) {
+          fieldError = "Năm phát hành phải là một số dương hợp lệ với 4 chữ số";
+        }
+        break;
+      case "country":
+        if (!stringValue.trim()) {
+          fieldError = "Quốc gia không được để trống";
+        }
+        break;
+      default:
+        break;
+    }
+  
+    setErrors((prev) => ({ ...prev, [name]: fieldError }));
+  };
+  
 
-      // fetchData(response.data); cái này k có tác dụng gì hết
-
-      // upload poster nếu có poster file
-      if (data.poster) {
-        uploadFileMovie(response.data.id, "poster", data.poster);
+  const validateForm = () => {
+    let isValid = true;
+    const fields = ["nameMovie", "viTitle", "enTitle", "description", "year"];
+    fields.forEach((field) => {
+      const value = data[field];
+      if (!value) {
+        isValid = false;
       }
+      validateField(field, value);
+    });
 
-      // chỉ upload video nếu k phải là phim bộ
-      if (!isSeries(response.data.category) && data.video) {
-        uploadFileMovie(response.data.id, "video", data.video);
-      }
+    return isValid;
+  };
 
-      // lưu ý chỗ này, có thể lúc trước category là phim bộ, nhưng khi update thành category khác thì xóa episode đi
-      // phim bo mới dược update episodes
-      if (isSeries(response.data.category)) {
-        for (const item of response.data.episodes) {
-          const episodeMap = episodesMap.get(item.tempId);
-          if (episodeMap.poster && episodeMap.video) {
-            const formDataEpisode = new FormData();
-            formDataEpisode.append("poster", episodeMap.poster);
-            formDataEpisode.append("video", episodeMap.video);
-            await axiosInstance.patch(
-              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
-              formDataEpisode
-            );
+  const handleSubmit = async (e) => {
+    if (!validateForm()) {
+      return;
+    } else {
+      e.preventDefault();
+      try {
+        if (
+          !data.nameMovie ||
+          !data.viTitle ||
+          !data.enTitle ||
+          !data.description ||
+          !data.idGenre.length
+        ) {
+          alert("Vui lòng nhập đầy đủ thông tin phim");
+          return;
+        }
+
+        const newData = {
+          ...data,
+          episodes: data.episodes.map((episode, index) => ({
+            ...episode,
+            tempId: "" + new Date().getTime() + index,
+          })),
+        };
+
+        const episodesMap = new Map(
+          newData.episodes.map((item) => [item.tempId, item])
+        );
+        const response = await axiosInstance.put(
+          `/api/v1/admin/movies/${movie.id}`,
+          {
+            ...newData,
+            poster: undefined,
+            video: undefined,
+            episodes: isSeries()
+              ? newData.episodes.map((episode) => ({
+                  ...episode,
+                  posterUrl: undefined,
+                  videoUrl: undefined,
+                }))
+              : [],
+          }
+        );
+        if (data.poster) {
+          uploadFileMovie(response.data.id, "poster", data.poster);
+        }
+        if (!isSeries(response.data.category) && data.video) {
+          uploadFileMovie(response.data.id, "video", data.video);
+        }
+        if (isSeries(response.data.category)) {
+          for (const item of response.data.episodes) {
+            const episodeMap = episodesMap.get(item.tempId);
+            if (episodeMap.poster && episodeMap.video) {
+              const formDataEpisode = new FormData();
+              formDataEpisode.append("poster", episodeMap.poster);
+              formDataEpisode.append("video", episodeMap.video);
+              await axiosInstance.patch(
+                `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
+                formDataEpisode
+              );
+            }
           }
         }
-      }
 
-      alert("Cập nhật thành công");
-      // navigate("/admin");
-    } catch (error) {
-      alert("Lỗi");
-      console.error("Error updating movie:", error);
+        alert("Cập nhật thành công");
+        // navigate("/admin");
+      } catch (error) {
+        alert("Lỗi");
+        console.error("Error updating movie:", error);
+      }
     }
   };
 
@@ -278,15 +337,19 @@ export const UpdateMovie = () => {
       <div className="form-addmovie">
         <div className="selectedInputForm">
           <label>Nhập Tên Phim</label>
-          <input
-            type="text"
-            name="nameMovie"
-            value={data.nameMovie}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="nameMovie"
+              value={data.nameMovie}
+              onChange={handleChange}
+              required
+            />
+            {errors.nameMovie || (
+              <small className="error">{errors.nameMovie}</small>
+            )}
+          </div>
         </div>
-
         <div className="selectedInputForm">
           <div className="file-item">
             <div className="selectedInputForm">
@@ -316,65 +379,84 @@ export const UpdateMovie = () => {
             <div className="file-item">
               <div className="selectedInputForm">
                 <label>Tải Phim</label>
-               <div className="validate">
-               <input
-                  type="file"
-                  name="video"
-                  onChange={handleFileUpload}
-                  required
-                />
-                {errorsFile.video || (
-                  <small style={{ color: "red" }}>{errorsFile.video}</small>
-                )}
-               </div>
+                <div className="validate">
+                  <input
+                    type="file"
+                    name="video"
+                    onChange={handleFileUpload}
+                    required
+                    style={{ color: "white" }}
+                  />
+                  {errorsFile.video || (
+                    <small style={{ color: "red" }}>{errorsFile.video}</small>
+                  )}
+                </div>
               </div>
-              <video
-                className="video-item"
+                <video
+                  className="video-item"
                 src={data.prevVideoUrl || movie.videoUrl}
-                controls
-              ></video>
+                  controls
+                ></video>
             </div>
           </div>
         )}
         <div className="selectedInputForm">
           <label>Nhập Tên Phim Tiếng Việt</label>
-          <input
-            type="text"
-            name="viTitle"
-            value={data.viTitle}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="viTitle"
+              value={data.viTitle}
+              onChange={handleChange}
+              required
+            />
+            {errors.viTitle || (
+              <small className="error">{errors.viTitle}</small>
+            )}
+          </div>
         </div>
         <div className="selectedInputForm">
           <label>Nhập Tên Phim Tiếng Anh</label>
-          <input
-            type="text"
-            name="enTitle"
-            value={data.enTitle}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="enTitle"
+              value={data.enTitle}
+              onChange={handleChange}
+              required
+            />
+            {errors.enTitle || (
+              <small className="error">{errors.enTitle}</small>
+            )}
+          </div>
         </div>
         <div className="selectedInputForm">
           <label>Nhập Mô Tả Phim</label>
-          <input
-            type="text"
-            name="description"
-            value={data.description}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="description"
+              value={data.description}
+              onChange={handleChange}
+              required
+            />
+            {errors.description || (
+              <small className="error">{errors.description}</small>
+            )}
+          </div>
         </div>
         <div className="selectedInputForm">
           <label>Năm Phát Hành:</label>
-          <input
-            type="text"
-            name="year"
-            value={data.year}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="year"
+              value={data.year}
+              onChange={handleChange}
+              required
+            />
+            {errors.year || <small className="error">{errors.year}</small>}
+          </div>
         </div>
         <div className="selectedInputForm">
           <label>Nhập Quốc Gia</label>
@@ -384,6 +466,7 @@ export const UpdateMovie = () => {
             onChange={handleChange}
             required
           >
+
             <option value="" disabled>
               Chọn Quốc Gia
             </option>
@@ -407,7 +490,7 @@ export const UpdateMovie = () => {
             }}
             required
           >
-            <option disabled selected>
+            <option value="" disabled>
               Chọn Phân Loại Phim
             </option>
             {categories.map((value) => (
@@ -416,6 +499,9 @@ export const UpdateMovie = () => {
               </option>
             ))}
           </select>
+          {errors.idCategory || (
+            <small className="error">{errors.idCategory}</small>
+          )}
         </div>
         <div className="selectedInputForm">
           <label>Nhập Thể Loại</label>
@@ -432,7 +518,6 @@ export const UpdateMovie = () => {
           />
         </div>
       </div>
-
       {showEpisode && (
         <div className="episodes">
           {data.episodes && (
