@@ -24,14 +24,33 @@
       display: flex;
       justify-content: space-between;
       margin: 10px 20px;
+      flex-basis: 50%;
+      flex-direction: column;
+      align-items: center;
+      .item-file {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        input {
+          color: black;
+        }
+      }
+      .video-episode-item {
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 300px;
+      }
+      .poster-item-episode {
+        margin: 15px;
+      
+        width: 50%;
+        height: auto;
+        align-items: center;
+      }
       label {
         color: black;
         font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-      }
-      .video-episode-item
-      {
-        width: 200px                                                                                                                                                                                                                                                                                                             ;
-        height: 300px;
       }
     }
   }
