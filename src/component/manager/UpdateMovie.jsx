@@ -6,6 +6,8 @@ import { axiosInstance } from "../../API/axiosConfig";
 import { countries } from "../../static-data/countries";
 import "../../style/update-movie.scss";
 import { DEFAULT_EPISODE, Episode } from "./Episode";
+import Select from "react-select";
+import { colors } from "@material-ui/core";
 
 export async function UpdateMovieLoader({ params }) {
   const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);
@@ -14,7 +16,6 @@ export async function UpdateMovieLoader({ params }) {
 
 export const UpdateMovie = () => {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState([]);
   const [showEpisode, setShowEpisode] = useState(false);
   const [suggestions, setSuggestion] = useState([]);
   const { movie } = useLoaderData();
@@ -36,6 +37,7 @@ export const UpdateMovie = () => {
     prevVideoUrl: "",
     idGenre: [],
     episodes: [],
+    genreSelectedData: [],
   });
 
   useEffect(() => {
@@ -53,9 +55,25 @@ export const UpdateMovie = () => {
     fetchCategories();
   }, []);
 
+  // useEffect(() => {
+  //   if (movie) {
+  //     const genres = movie.idGenre.map(id => suggestions.find(item => item.id === id));
+  //     setSelectedCategory(genres);
+  //   }
+  // }, [movie, suggestions]);
+
   const fetchData = (newData) => {
-    setData({ ...data, ...newData, idCategory: newData?.category?.id || [] }); // đây
-    // Handle load poster and video if necessary
+    setData({
+      ...data,
+      ...newData,
+      idCategory: newData?.category?.id,
+      idGenre: newData?.genres.map((item) => item?.id),
+      genreSelectedData: newData?.genres.map((item) => ({
+        label: item.name,
+        value: item,
+        key: item.id,
+      })),
+    });
   };
 
   const fetchCategories = async () => {
@@ -324,10 +342,10 @@ export const UpdateMovie = () => {
   };
 
   const handleGenreChange = (selectedItems) => {
-    setSelectedCategory(selectedItems);
     setData((prev) => ({
       ...prev,
       idGenre: selectedItems.map((item) => item.value.id),
+      genreSelectedData: selectedItems,
     }));
   };
 
@@ -481,7 +499,6 @@ export const UpdateMovie = () => {
         <div className="selectedInputForm">
           <label>Chọn Phân Loại Phim</label>
           <select
-            name="idCategory"
             value={data.idCategory}
             onChange={(e) => {
               handleChange(e, (formData) => {
@@ -505,16 +522,38 @@ export const UpdateMovie = () => {
         </div>
         <div className="selectedInputForm">
           <label>Nhập Thể Loại</label>
-          <MultiSelect
-            options={suggestions.map((item) => ({
-              label: item.name,
-              value: item,
-            }))}
-            value={selectedCategory}
+          {/* <MultiSelect
+          options={suggestions
+                .filter((suggestion) => !data.genreSelectedData.some((selected) => selected.value.id === suggestion.id))
+                .map((item) => ({
+                  label: item.name,
+                  value: item, 
+                }))}
+            value={data.genreSelectedData}
             onChange={handleGenreChange}
             labelledBy="Select"
             className="light custom-multi-select"
-            defaultIsOpen={false}
+          /> */}
+
+          <Select
+            isMulti
+            value={data.genreSelectedData}
+            onChange={handleGenreChange}
+            options={suggestions
+              .filter(
+                (suggestion) =>
+                  !data.genreSelectedData.some(
+                    (selected) => selected.value.id === suggestion.id
+                  )
+              )
+              .map((item) => ({
+                label: item.name,
+                value: item,
+              }))}
+            styles={{
+              option: (provided) => ({ ...provided, color: "black" }),
+              singleValue: (base) => ({ ...base, color: "black" }),
+            }}
           />
         </div>
       </div>
@@ -527,7 +566,7 @@ export const UpdateMovie = () => {
                   key={index}
                   episode={item}
                   index={index}
-                  formChanged={handleEpisodeChanged} // đây nè
+                  formChanged={handleEpisodeChanged} 
                 />
               ))}
             </>

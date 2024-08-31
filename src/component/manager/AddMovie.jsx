@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
@@ -64,8 +65,23 @@ export const AddMovie = () => {
   };
 
   const validateFile = (file, type) => {
-    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/svg+xml",
+      "image/webp",
+    ];
+    const validVideoTypes = [
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
+      "video/mov",
+      "video/avi",
+      "video/flv",
+      "video/mkv",
+      "video/3gp",
+    ];
 
     if (type === "poster") {
       return validImageTypes.includes(file.type);
@@ -78,7 +94,10 @@ export const AddMovie = () => {
     const { name, files } = e.target;
     const file = files[0];
 
+
     if (!file) {
+      alert("Không có tệp nào được chọn.");
+      return;
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
         [name]: "Không có tệp nào được chọn.",
@@ -98,23 +117,32 @@ export const AddMovie = () => {
         ...prevErrors,
         [name]:
           name === "poster"
-            ? "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF)."
-            : "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).",
+            ? "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP)."
+            : "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).",
       }));
       e.target.value = "";
       return;
     }
 
     const previewUrl = URL.createObjectURL(file);
-    setData((prev) => ({
-      ...prev,
-      [name]: file,
-      [`prev${name.charAt(0).toUpperCase() + name.slice(1)}Url`]: previewUrl,
-    }));
 
-    if (name === "video") setShowFileVideo(true);
-    if (name === "poster") setShowFilePoster(true);
+    if (name === "video") {
+      setShowFileVideo(true);
+      setData((prev) => ({
+        ...prev,
+        video: file,
+        prevVideoUrl: previewUrl,
+      }));
+    } else if (name === "poster") {
+      setShowFilePoster(true);
+      setData((prev) => ({
+        ...prev,
+        poster: file,
+        prevPosterUrl: previewUrl,
+      }));
+    }
   };
+
 
   const isSeries = () => data?.idCategory?.toString() === "1";
 
@@ -243,6 +271,8 @@ export const AddMovie = () => {
   const handleShowEpisode = (e) => {
     const isSeries = e.target.value === "1";
     setShowEpisode(isSeries);
+    // setShowUploadFileMovie(!isSeries);
+  
     if (isSeries) {
       setData((prev) => ({
         ...prev,
