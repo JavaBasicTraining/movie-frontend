@@ -11,7 +11,8 @@ const publicAPI = [
   "/api/v1/categories/list",
   "/api/v1/genre",
   "/api/v1/evaluations/numberOfReviews",
-  "/api/v1/evaluations/average/"
+  "/api/v1/evaluations/average/",
+  "/api/v1/episode/getEpisodeByMovieId"
 ];
 
 axiosInstance.interceptors.request.use(

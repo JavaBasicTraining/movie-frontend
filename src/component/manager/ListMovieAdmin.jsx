@@ -12,11 +12,6 @@ export const ListMovie = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
 
-  const category = [
-    { id: 1, name: "Việt Nam" },
-    { id: 2, name: "Mỹ" },
-  ];
-
   const countries = [
     { name: "Việt Nam", path: "viet-nam" },
     { name: "Mỹ", path: "my" },
