@@ -188,21 +188,12 @@ export const UpdateMovie = () => {
             : [],
         }
       );
-
-      // fetchData(response.data); cái này k có tác dụng gì hết
-
-      // upload poster nếu có poster file
       if (data.poster) {
         uploadFileMovie(response.data.id, "poster", data.poster);
       }
-
-      // chỉ upload video nếu k phải là phim bộ
       if (!isSeries(response.data.category) && data.video) {
         uploadFileMovie(response.data.id, "video", data.video);
       }
-
-      // lưu ý chỗ này, có thể lúc trước category là phim bộ, nhưng khi update thành category khác thì xóa episode đi
-      // phim bo mới dược update episodes
       if (isSeries(response.data.category)) {
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);

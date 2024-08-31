@@ -20,7 +20,7 @@ export const MovieDetail = () => {
   const navigate = useNavigate();
   const { movie } = useLoaderData();
   const [isShowTrailer, setIsShowTrailer] = useState(false);
-  const {user, isUser} = useFetchUser();
+  const {user, isUser, fetchUser} = useFetchUser();
   const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
   const [countRating, setCountRating] = useState(0);
@@ -33,12 +33,7 @@ export const MovieDetail = () => {
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
-      if(isUser.status === 401)
-      {
-        alert('Phiên bản hết hạn, vui lòng đăn nhập lại...')
-        navigate('/login');
-        return;
-      }
+      fetchUser();
      
     }
     window.addEventListener("keyup", handleKeyup);
