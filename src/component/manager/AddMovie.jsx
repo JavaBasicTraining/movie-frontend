@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
@@ -41,10 +42,8 @@ export const AddMovie = () => {
     fetchData();
     setShowFilePoster(false);
     setShowFileVideo(false);
-
- 
   }, []);
-  
+
   // useEffect(() => {
   //   if (data.video !== null || data.prevVideoUrl !== null) {
   //     setShowFileVideo(true);
@@ -77,9 +76,24 @@ export const AddMovie = () => {
   };
 
   const validateFile = (file, type) => {
-    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
-    
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/svg+xml",
+      "image/webp",
+    ];
+    const validVideoTypes = [
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
+      "video/mov",
+      "video/avi",
+      "video/flv",
+      "video/mkv",
+      "video/3gp",
+    ];
+
     if (type === "poster") {
       return validImageTypes.includes(file.type);
     } else if (type === "video") {
@@ -90,36 +104,34 @@ export const AddMovie = () => {
   const handleFileUpload = (e) => {
     const { name, files } = e.target;
     const file = files[0];
-  
-   
+
     if (!file) {
       alert("Không có tệp nào được chọn.");
-      return; 
+      return;
     }
-  
+
     if (name === "poster" && !validateFile(file, "poster")) {
-      alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).");
-      e.target.value = ""; 
-      return; 
-    } 
-  
-    
+      alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).");
+      e.target.value = "";
+      return;
+    }
+
     if (name === "video" && !validateFile(file, "video")) {
-      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).");
-      e.target.value = ""; 
-      return; 
+      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).");
+      e.target.value = "";
+      return;
     }
     const previewUrl = URL.createObjectURL(file);
-  
+
     if (name === "video") {
-      setShowFileVideo(true)
+      setShowFileVideo(true);
       setData((prev) => ({
         ...prev,
         video: file,
         prevVideoUrl: previewUrl,
       }));
     } else if (name === "poster") {
-      setShowFilePoster(true)
+      setShowFilePoster(true);
       setData((prev) => ({
         ...prev,
         poster: file,
@@ -127,9 +139,8 @@ export const AddMovie = () => {
       }));
     }
   };
-  
-  const isSeries = () => data?.idCategory?.toString() === "1";
 
+  const isSeries = () => data?.idCategory?.toString() === "1";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -147,7 +158,6 @@ export const AddMovie = () => {
         alert("Vui lòng nhập đầy đủ thông tin phim");
         return;
       }
-
 
       const newData = {
         ...data,
@@ -198,19 +208,18 @@ export const AddMovie = () => {
 
   const uploadFileMovie = async (id, type, file) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
     await axiosInstance.patch(
       `/api/v1/admin/movies/${id}?type=${type}`,
       formData
     );
   };
 
-
   const handleShowEpisode = (e) => {
     const isSeries = e.target.value === "1";
     setShowEpisode(isSeries);
     // setShowUploadFileMovie(!isSeries);
-  
+
     if (isSeries) {
       setData((prev) => ({
         ...prev,
@@ -223,8 +232,7 @@ export const AddMovie = () => {
       }));
     }
   };
-  
-  
+
   const handleEpisodeChanged = (episode, index) => {
     setData((prev) => {
       const episodes = [...prev.episodes];
@@ -370,7 +378,7 @@ export const AddMovie = () => {
             }}
             required
           >
-            <option value="" disabled >
+            <option value="" disabled>
               Chọn Phân Loại Phim
             </option>
             {categories.map((value) => (
@@ -413,7 +421,6 @@ export const AddMovie = () => {
           <button onClick={handleAddEpisode}>Thêm Tập Phim</button>
         </div>
       )}
-
 
       <button onClick={handleSubmit}>Thêm</button>
     </div>

@@ -38,7 +38,7 @@ export const Episode = ({ formChanged, episode, index }) => {
 
   const validateFile = (file, type) => {
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/mov"];
 
     if (type === "poster") {
       return validImageTypes.includes(file.type);
@@ -61,7 +61,7 @@ export const Episode = ({ formChanged, episode, index }) => {
     }
 
     if (name === "video" && !validateFile(file, "video")) {
-      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).");
+      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, Mov).");
       e.target.value = "";
       setShowFileVideo(false);
 
