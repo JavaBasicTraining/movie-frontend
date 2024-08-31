@@ -47,7 +47,6 @@ export const UpdateMovie = () => {
       setShowUploadFileMovie(false);
     }
 
-    // xử lý init data trong này hết
   }, [movie]);
 
   useEffect(() => {
@@ -55,12 +54,7 @@ export const UpdateMovie = () => {
     fetchCategories();
   }, []);
 
-  // useEffect(() => {
-  //   if (movie) {
-  //     const genres = movie.idGenre.map(id => suggestions.find(item => item.id === id));
-  //     setSelectedCategory(genres);
-  //   }
-  // }, [movie, suggestions]);
+
 
   const fetchData = (newData) => {
     setData({
@@ -178,51 +172,15 @@ export const UpdateMovie = () => {
   };
 
   const validateField = (name, value) => {
-    let fieldError = "";
-  
-    // Ensure value is a string
-    const stringValue = value ? value.toString() : "";
-  
-    switch (name) {
-      case "nameMovie":
-        if (!stringValue.trim()) {
-          fieldError = "Tên phim không được để trống";
-        }
-        break;
-      case "viTitle":
-        if (!stringValue.trim()) {
-          fieldError = "Tên phim tiếng Việt không được để trống";
-        }
-        break;
-      case "enTitle":
-        if (!stringValue.trim()) {
-          fieldError = "Tên phim tiếng Anh không được để trống";
-        }
-        break;
-      case "description":
-        if (!stringValue.trim()) {
-          fieldError = "Nội dung phim không được để trống";
-        }
-        break;
-      case "year":
-        if (!stringValue.trim()) {
-          fieldError = "Năm phát hành không được để trống";
-        } else if (isNaN(stringValue) || parseInt(stringValue) <= 0 || stringValue.length !== 4) {
-          fieldError = "Năm phát hành phải là một số dương hợp lệ với 4 chữ số";
-        }
-        break;
-      case "country":
-        if (!stringValue.trim()) {
-          fieldError = "Quốc gia không được để trống";
-        }
-        break;
-      default:
-        break;
+    let error = "";
+    if (!value.trim()) {
+      error = `(*) This field is required`;
+    } else if (name === "year" && (isNaN(value) || parseInt(value) <= 0 || value.length !== 4)) {
+      error = "Year must be a valid 4-digit number";
     }
-  
-    setErrors((prev) => ({ ...prev, [name]: fieldError }));
+    setErrors(prev => ({ ...prev, [name]: error }));
+    return !error;
   };
-  
 
   const validateForm = () => {
     let isValid = true;
@@ -235,9 +193,10 @@ export const UpdateMovie = () => {
       validateField(field, value);
     });
 
+    document.dispatchEvent(new CustomEvent("checkFormError"));
+
     return isValid;
   };
-
   const handleSubmit = async (e) => {
     if (!validateForm()) {
       return;

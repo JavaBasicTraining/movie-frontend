@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
 
 export const DEFAULT_EPISODE = {
   episodeCount: "",
@@ -17,7 +16,18 @@ export const Episode = ({ formChanged, episode, index }) => {
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [errorsFile, setErrorsFile] = useState({});
   const [errors, setErrors] = useState({});
+  const fields = ["episodeCount", "descriptions"];
 
+  useEffect(() => {
+    document.addEventListener("checkFormError", () => {
+      validateForm();
+    });
+    return () => {
+      document.removeEventListener("checkFormError", () => {
+        validateForm();
+      });
+    };
+  }, []);
 
   useEffect(() => {
     setData(episode);
@@ -27,7 +37,6 @@ export const Episode = ({ formChanged, episode, index }) => {
     if (episode.video) {
       setShowFileVideo(true);
     }
- 
   }, [episode]);
 
   const handleChange = (e) => {
@@ -37,54 +46,48 @@ export const Episode = ({ formChanged, episode, index }) => {
       [name]: value,
     };
     setData(newValue);
-    validateField(name, value);
-    if(validateForm )
-    {
-      return;
-    }else
-   {
     formChanged(newValue, index);
-   }
+    checkFieldError(name, value);
   };
 
-
-  const validateField = (name, value) => {
-    let fieldError = '';
-  
-    switch (name) {
-     
-      case 'episodeCount':
-        if (!value.trim()) {
-          fieldError = 'Tập phim không được để trống';
-        }
-        break;
-      case 'descriptions':
-        if (!value.trim()) {
-          fieldError = 'Nội dung phim không được để trống';
-        }
-        break;
-    
-      default:
-        break;
-    }
-  
-    setErrors((prev) => ({ ...prev, [name]: fieldError }));
+  const checkFieldError = (name, value) => {
+    let error = "";
+    if (!value.trim()) {
+      error = `(*) This field is required`;
+    } 
+    setErrors(prev => ({ ...prev, [name]: error }));
+    return !error;
   };
-  
   const validateForm = () => {
     let isValid = true;
-    const fields = ['episodeCount','descriptions'];
     fields.forEach((field) => {
       const value = data[field];
-      validateField(field, value);
-      if (errors[field]) isValid = false;
+      if (!value) {
+        isValid = false;
+      }
+      checkFieldError(field, value);
     });
     return isValid;
   };
 
   const validateFile = (file, type) => {
-    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/mov"];
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/svg+xml",
+      "image/webp",
+    ];
+    const validVideoTypes = [
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
+      "video/mov",
+      "video/avi",
+      "video/flv",
+      "video/mkv",
+      "video/3gp",
+    ];
 
     if (type === "poster") {
       return validImageTypes.includes(file.type);
@@ -93,10 +96,11 @@ export const Episode = ({ formChanged, episode, index }) => {
     }
     return false;
   };
+
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     const file = files[0];
-    validateField();
+
     if (!file) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
@@ -108,7 +112,7 @@ export const Episode = ({ formChanged, episode, index }) => {
     if (name === "poster" && !validateFile(file, "poster")) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
-        [name]: "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).",
+        [name]: "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).",
       }));
       e.target.value = "";
       setShowFilePoster(false);
@@ -117,7 +121,7 @@ export const Episode = ({ formChanged, episode, index }) => {
     if (name === "video" && !validateFile(file, "video")) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
-        [name]: "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).",
+        [name]: "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).",
       }));
       e.target.value = "";
       setShowFileVideo(false);
@@ -144,28 +148,41 @@ export const Episode = ({ formChanged, episode, index }) => {
     }
     formChanged(newData);
   };
+  
+
   return (
     <form className="episode-container">
       <div className="body-episode">
         <div className="selected-input-form-episode">
           <label>Tập:</label>
-        <div className="validate-episode" style={{color: "red", display: "flex", flexDirection:"column",fontSize:"12px"}}>
-        <input
-            type="text"
-            name="episodeCount"
-            value={data.episodeCount}
-            onChange={handleChange}
-            required
-          />
-             {errors.episodeCount || (
+          <div
+            className="validate-episode"
+            style={{
+              color: "red",
+              display: "flex",
+              flexDirection: "column",
+              fontSize: "12px",
+            }}
+          >
+            <input
+              type="text"
+              name="episodeCount"
+              value={data.episodeCount}
+              onChange={handleChange}
+              required
+            />
+            {errors.episodeCount || (
               <small className="error">{errors.episode}</small>
             )}
-        </div>
+          </div>
         </div>
         <div className="selected-input-form-episode-file">
           <div className="selected-input-form-episode">
             <label>Tải Poster</label>
-            <div className="validate-episode" style={{color: "red", display: "flex", flexDirection:"column"}}>
+            <div
+              className="validate-episode"
+              style={{ color: "red", display: "flex", flexDirection: "column" }}
+            >
               <input
                 type="file"
                 name="poster"
@@ -185,7 +202,10 @@ export const Episode = ({ formChanged, episode, index }) => {
         <div className="selected-input-form-episode-file">
           <div className="selected-input-form-episode">
             <label>Tải Phim </label>
-            <div className="validate-episode" style={{color: "red", display: "flex", flexDirection:"column"}} >
+            <div
+              className="validate-episode"
+              style={{ color: "red", display: "flex", flexDirection: "column" }}
+            >
               <input
                 type="file"
                 name="video"
@@ -193,9 +213,6 @@ export const Episode = ({ formChanged, episode, index }) => {
                 required
                 style={{ color: "black" }}
               />
-              {errorsFile.video || (
-                <small style={{ color: "red" }}>{errorsFile.video}</small>
-              )}
             </div>
 
             {showFileVideo && (
@@ -209,18 +226,26 @@ export const Episode = ({ formChanged, episode, index }) => {
         </div>
         <div className="selected-input-form-episode">
           <label>Nội dung:</label>
-         <div className="validate-episode" style={{color: "red", display: "flex", flexDirection:"column", fontSize:"12px"}}>
-         <input
-            type="text"
-            name="descriptions"
-            value={data.descriptions}
-            onChange={handleChange}
-            required
-          />
-             {errors.descriptions || (
+          <div
+            className="validate-episode"
+            style={{
+              color: "red",
+              display: "flex",
+              flexDirection: "column",
+              fontSize: "12px",
+            }}
+          >
+            <input
+              type="text"
+              name="descriptions"
+              value={data.descriptions}
+              onChange={handleChange}
+              required
+            />
+            {errors.descriptions || (
               <small className="error">{errors.descriptions}</small>
             )}
-         </div>
+          </div>
         </div>
       </div>
     </form>

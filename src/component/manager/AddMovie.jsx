@@ -31,6 +31,9 @@ export const AddMovie = () => {
     idGenre: [],
     episodes: [],
   });
+
+
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,14 +59,14 @@ export const AddMovie = () => {
   };
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
-    setData((prev) => {
+    setData(prev => {
       const updatedData = { ...prev, [name]: value };
       onSuccess?.(updatedData);
       validateField(name, value);
       return updatedData;
     });
   };
-
+  
   const validateFile = (file, type) => {
     const validImageTypes = [
       "image/jpeg",
@@ -96,8 +99,6 @@ export const AddMovie = () => {
 
 
     if (!file) {
-      alert("Không có tệp nào được chọn.");
-      return;
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
         [name]: "Không có tệp nào được chọn.",
@@ -146,47 +147,17 @@ export const AddMovie = () => {
 
   const isSeries = () => data?.idCategory?.toString() === "1";
 
+
+  
   const validateField = (name, value) => {
-    let fieldError = "";
-
-    switch (name) {
-      case "nameMovie":
-        if (!value.trim()) {
-          fieldError = "Tên phim không được để trống";
-        }
-        break;
-      case "viTitle":
-        if (!value.trim()) {
-          fieldError = "Tên phim tiếng Việt không được để trống";
-        }
-        break;
-      case "enTitle":
-        if (!value.trim()) {
-          fieldError = "Tên phim tiếng Anh không được để trống";
-        }
-        break;
-      case "description":
-        if (!value.trim()) {
-          fieldError = "Nội dung phim không được để trống";
-        }
-        break;
-      case "year":
-        if (!value.trim()) {
-          fieldError = "Năm phát hành không được để trống";
-        } else if (isNaN(value) || parseInt(value) <= 0 || value.length !== 4) {
-          fieldError = "Năm phát hành phải là một số dương hợp lệ với 4 chữ số";
-        }
-        break;
-      case "country":
-        if (!value.trim()) {
-          fieldError = "Quốc gia không được để trống";
-        }
-        break;
-      default:
-        break;
+    let error = "";
+    if (!value.trim()) {
+      error = `(*) This field is required`;
+    } else if (name === "year" && (isNaN(value) || parseInt(value) <= 0 || value.length !== 4)) {
+      error = "Year must be a valid 4-digit number";
     }
-
-    setErrors((prev) => ({ ...prev, [name]: fieldError }));
+    setErrors(prev => ({ ...prev, [name]: error }));
+    return !error;
   };
 
   const validateForm = () => {
@@ -199,6 +170,8 @@ export const AddMovie = () => {
       }
       validateField(field, value);
     });
+
+    document.dispatchEvent(new CustomEvent("checkFormError"));
 
     return isValid;
   };
