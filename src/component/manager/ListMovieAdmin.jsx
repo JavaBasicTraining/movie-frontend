@@ -3,8 +3,12 @@ import { useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
 import { Link } from "react-router-dom";
 
-export async function MovieManagerLoader({ params }) {
-  const response = await axiosInstance.get(`/api/v1/movies`, { params });
+export async function MovieManagerLoader({ params, request }) {
+  const searchParams = new URL(request.url).searchParams; 
+  const response = await axiosInstance.get(`/api/v1/movies`, {
+    params: searchParams
+  });
+
   return { movies: response.data ?? [] };
 }
 
@@ -12,10 +16,10 @@ export const ListMovie = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
 
-  const category = [
-    { id: 1, name: "Việt Nam" },
-    { id: 2, name: "Mỹ" },
-  ];
+  // const category = [
+  //   { id: 1, name: "Việt Nam" },
+  //   { id: 2, name: "Mỹ" },
+  // ];
 
   const countries = [
     { name: "Việt Nam", path: "viet-nam" },
@@ -55,27 +59,9 @@ export const ListMovie = () => {
     }
   };
 
-  const filterMovie = (params, name, subItems) =>
-    params.map((filter, index) => (
-      <div className="navbar-filter-list" key={index}>
-        <select
-          onChange={(e) => navigate(`/admin/movie/category/${e.target.value}`)}
-        >
-          <option>{name}</option>
-          {filter.name === name &&
-            subItems.map((category) => (
-              <option key={category.id} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-        </select>
-      </div>
-    ));
-
   const renderSelect = (items, paramName, placeholder) => {
     const handleSearchChange = (e) => {
       const params = new URLSearchParams(searchParams);
-      // set param mới
       params.set(paramName, e.target.value);
       setSearchParams(params);
     };
@@ -100,16 +86,14 @@ export const ListMovie = () => {
         <Link to="/admin/movie/new">
           <button>Add New</button>
         </Link>
-        {/* {filterMovie(jsonFilter, "Thể Loại", categories)}
-        {filterMovie(country, "Quốc Gia", "")} */}
-        {/* mỗi hàm có 3 params, giải thích từng params để lầm gì */}
+
         {renderSelect(
           categories.map((category) => ({
             label: category.name,
             value: category,
-          })), // giải thích ở đây
-          "category", // ...
-          "Chon the loai" // ...
+          })),
+          "genre",
+          "Chon the loai"
         )}
         {renderSelect(
           countries.map((country) => ({ label: country.name, value: country })),
