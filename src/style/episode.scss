@@ -1,4 +1,4 @@
-.episode-container {
+.episode-container{
   display: flex;
   width: 400px;
   background-color: white;
@@ -7,6 +7,9 @@
     display: flex;
     flex-direction: column;
     justify-items: center;
+    gap: 20px;
+    color: black;
+        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
     .selected-input-form-episode {
       width: 360px;
       display: flex;
@@ -43,7 +46,6 @@
       }
       .poster-item-episode {
         margin: 15px;
-      
         width: 50%;
         height: auto;
         align-items: center;

@@ -103,15 +103,12 @@ export const AddMovie = () => {
   };
 
   const formatValue = (value) => {
-    // format neu value la string
     if (value && typeof value === "string") {
       return value.trim();
     }
-    // format new value là số
-    //... sau này viết sau
 
     return value;
-  }
+  };
 
   const validateFile = (file, type) => {
     const validImageTypes = [
@@ -207,7 +204,7 @@ export const AddMovie = () => {
 
   const validateForm = () => {
     let isValid = true;
-    const fields = ["nameMovie", "viTitle", "enTitle", "description","year"];
+    const fields = ["nameMovie", "viTitle", "enTitle", "description", "year"];
     fields.forEach((field) => {
       const value = data[field];
       if (!value) {
@@ -376,7 +373,7 @@ export const AddMovie = () => {
     <div className="container-addmovie">
       {isEdit === false ? <h1>Thêm Phim Mới</h1> : <h1>Sửa Thông Tin Phim</h1>}
       <div className="form-addmovie">
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Tên Phim</label>
           <div className="validate">
             <input
@@ -391,9 +388,9 @@ export const AddMovie = () => {
             )}
           </div>
         </div>
-        <div className="selectedInputForm">
-          <div className="file-item">
-            <div className="selectedInputForm">
+        <div className="selected-input-form">
+          <div className="file-item-container">
+            <div className="file-item">
               <label>Tải Poster</label>
               <div className="validate">
                 <input
@@ -406,17 +403,21 @@ export const AddMovie = () => {
                 {errorsFile.poster || (
                   <small style={{ color: "red" }}>{errorsFile.poster}</small>
                 )}
+                {showFilePoster === true ? (
+                  <img
+                    className="poster-item"
+                    src={data.prevPosterUrl}
+                    alt=""
+                  />
+                ) : null}
               </div>
             </div>
-            {showFilePoster === true ? (
-              <img className="poster-item" src={data.prevPosterUrl} alt="" />
-            ) : null}
           </div>
         </div>
         {showEpisode || (
-          <div className="selectedInputForm">
-            <div className="file-item">
-              <div className="selectedInputForm">
+          <div className="selected-input-form">
+            <div className="file-item-container">
+              <div className="file-item">
                 <label>Tải Phim</label>
                 <div className="validate">
                   <input
@@ -441,7 +442,7 @@ export const AddMovie = () => {
             </div>
           </div>
         )}
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Tên Phim Tiếng Việt</label>
           <div className="validate">
             <input
@@ -456,7 +457,7 @@ export const AddMovie = () => {
             )}
           </div>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Tên Phim Tiếng Anh</label>
           <div className="validate">
             <input
@@ -471,7 +472,7 @@ export const AddMovie = () => {
             )}
           </div>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Mô Tả Phim</label>
           <div className="validate">
             <input
@@ -486,7 +487,7 @@ export const AddMovie = () => {
             )}
           </div>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Năm Phát Hành:</label>
           <div className="validate">
             <input
@@ -499,7 +500,7 @@ export const AddMovie = () => {
             {errors.year || <small className="error">{errors.year}</small>}
           </div>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Quốc Gia</label>
           <select
             name="country"
@@ -518,7 +519,7 @@ export const AddMovie = () => {
             ))}
           </select>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Chọn Phân Loại Phim</label>
           <select
             name="idCategory"
@@ -543,7 +544,7 @@ export const AddMovie = () => {
             <small className="error">{errors.idCategory}</small>
           )}
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Thể Loại</label>
           <MultiSelect
             options={suggestions.map((item) => ({
