@@ -1,22 +1,21 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { axiosInstance } from "../API/axiosConfig";
+import { useEffect, useState } from 'react';
+import { axiosInstance } from '../API/axiosConfig';
 
 const useAuth = () => {
-  const [isAuth, setAuth] = useState(null);
+  const [isAuth, setIsAuth] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token) {
-      setAuth(false);
+      setIsAuth(false);
     } else {
       axiosInstance
-        .get("api/authenticate")
-        .then((res) => {
-          setAuth(true);
+        .get('api/authenticate')
+        .then(() => {
+          setIsAuth(true);
         })
-        .catch((err) => {
-          setAuth(false);
+        .catch(() => {
+          setIsAuth(false);
         });
     }
   }, []);

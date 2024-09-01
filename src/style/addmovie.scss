@@ -1,40 +1,36 @@
 .container-addmovie {
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  color: white;
+  background-color: rgb(62, 51, 51);
+
+  .form-addmovie {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
-    gap: 20px;
-    color: white;
-    background-color: rgb(62, 51, 51);
+    justify-content: center;
+    width: 400px;
+    align-items: center;
+    gap: 10px;
 
+    .selectedInputForm {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
 
-    .form-addmovie {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        width: 400px;
-        align-items: center;
-        gap: 10px;
-
-        .selectedInputForm {
-
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
-
-            label {
-                color: white;
-                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
-            }
-        }
+      label {
+        color: white;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      }
     }
-    button{
-        width: auto;
-        height: 30px;
-    }
-
+  }
+  button {
+    width: auto;
+    height: 30px;
+  }
 }

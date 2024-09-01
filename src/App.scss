@@ -12,27 +12,18 @@
 @import url(./style/list-movie-admin.scss);
 @import url(./style/page.scss);
 
+root {
+  background: rgb(85, 83, 87) !important;
+}
 
-
-
-
-
-
-
-
-root{  background: rgb(85, 83, 87) !important;}
-
-.Page
-{
-    display: flex;
-    flex-direction: column;
-    width: 1200px;
-    margin: 0 auto;
-    background: rgb(85, 83, 87) !important;
-    
-  
+.Page {
+  display: flex;
+  flex-direction: column;
+  width: 1200px;
+  margin: 0 auto;
+  background: rgb(85, 83, 87) !important;
 }
 
 .h-fit {
-    height: fit-content;
+  height: fit-content;
 }

@@ -5,18 +5,16 @@
     },
     {
       "name": "Thể Loại",
-       "basePath": "http://localhost:3000"
+      "basePath": "http://localhost:3000"
     },
     {
       "name": "Phổ Biến"
-      },
-      {
+    },
+    {
       "name": "Phim Mới"
     },
     {
       "name": "Phim Chiếu Rạp"
     }
-   
   ]
-
 }

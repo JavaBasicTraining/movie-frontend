@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
-import { axiosInstance } from "../../API/axiosConfig";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useLoaderData, useNavigate, useSearchParams } from 'react-router-dom';
+import { axiosInstance } from '../../API/axiosConfig';
+import { Link } from 'react-router-dom';
 
 export async function MovieManagerLoader({ params, request }) {
-  const searchParams = new URL(request.url).searchParams; 
+  const searchParams = new URL(request.url).searchParams;
   const response = await axiosInstance.get(`/api/v1/movies`, {
-    params: searchParams
+    params: searchParams,
   });
 
   return { movies: response.data ?? [] };
@@ -16,19 +16,14 @@ export const ListMovie = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
 
-  // const category = [
-  //   { id: 1, name: "Việt Nam" },
-  //   { id: 2, name: "Mỹ" },
-  // ];
-
   const countries = [
-    { name: "Việt Nam", path: "viet-nam" },
-    { name: "Mỹ", path: "my" },
-    { name: "Thái Lan", path: "thai-lan" },
-    { name: "Nhật Bản", path: "nhat-ban" },
-    { name: "Hồng Kông", path: "hong-kong" },
-    { name: "Ấn Độ", path: "an-do" },
-    { name: "Úc", path: "uc" },
+    { name: 'Việt Nam', path: 'viet-nam' },
+    { name: 'Mỹ', path: 'my' },
+    { name: 'Thái Lan', path: 'thai-lan' },
+    { name: 'Nhật Bản', path: 'nhat-ban' },
+    { name: 'Hồng Kông', path: 'hong-kong' },
+    { name: 'Ấn Độ', path: 'an-do' },
+    { name: 'Úc', path: 'uc' },
   ];
 
   const { movies } = useLoaderData();
@@ -43,15 +38,15 @@ export const ListMovie = () => {
       const response = await axiosInstance.get(`/api/v1/genre`);
       setCategories(response.data);
     } catch (error) {
-      console.error("Error fetching genres:", error);
+      console.error('Error fetching genres:', error);
     }
   };
 
   const deleteMovie = async (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa phim này?")) {
+    if (window.confirm('Bạn có chắc chắn muốn xóa phim này?')) {
       try {
         await axiosInstance.delete(`/api/v1/admin/movies/${id}`);
-        alert("Xóa thành công");
+        alert('Xóa thành công');
         window.location.reload();
       } catch (error) {
         alert(`Lỗi khi xóa phim: ${error.message}`);
@@ -92,13 +87,16 @@ export const ListMovie = () => {
             label: category.name,
             value: category,
           })),
-          "genre",
-          "Chon the loai"
+          'genre',
+          'Chon the loai'
         )}
         {renderSelect(
-          countries.map((country) => ({ label: country.name, value: country })),
-          "country",
-          "Chon quoc gia"
+          countries.map((country) => ({
+            label: country.name,
+            value: country,
+          })),
+          'country',
+          'Chon quoc gia'
         )}
       </div>
       <table>

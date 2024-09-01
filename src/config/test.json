@@ -11,14 +11,14 @@
       ]
     },
     {
-        "label": "Hài Hước",
-        "value": [
-          {
-            "id": 1,
-            "name": "Hài Hước",
-            "description": "description 2"
-          }
-        ]
-      }
+      "label": "Hài Hước",
+      "value": [
+        {
+          "id": 1,
+          "name": "Hài Hước",
+          "description": "description 2"
+        }
+      ]
+    }
   ]
 }

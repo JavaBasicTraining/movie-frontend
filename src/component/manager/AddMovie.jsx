@@ -1,11 +1,10 @@
-
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { axiosInstance } from "../../API/axiosConfig";
-import qs from "qs";
-import { countries } from "../../static-data/countries";
-import { DEFAULT_EPISODE, Episode } from "./Episode";
-import { MultiSelect } from "react-multi-select-component";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../../API/axiosConfig';
+import qs from 'qs';
+import { countries } from '../../static-data/countries';
+import { DEFAULT_EPISODE, Episode } from './Episode';
+import { MultiSelect } from 'react-multi-select-component';
 
 export const AddMovie = () => {
   const [categories, setCategories] = useState([]);
@@ -17,24 +16,24 @@ export const AddMovie = () => {
   // const [showUploadFileMovie, setShowUploadFileMovie] = useState(true);
 
   const [data, setData] = useState({
-    nameMovie: "",
-    viTitle: "",
-    enTitle: "",
-    description: "",
-    country: "",
-    poster: "",
-    video: "",
+    nameMovie: '',
+    viTitle: '',
+    enTitle: '',
+    description: '',
+    country: '',
+    poster: '',
+    video: '',
     idCategory: [],
-    year: "",
-    prevPosterUrl: "",
-    prevVideoUrl: "",
+    year: '',
+    prevPosterUrl: '',
+    prevVideoUrl: '',
     idGenre: [],
     episodes: [],
   });
 
   const [uploadMovie, setUploadMovie] = useState({
-    poster: "",
-    video: "",
+    poster: '',
+    video: '',
   });
   const navigate = useNavigate();
 
@@ -62,7 +61,7 @@ export const AddMovie = () => {
       setCategories(categoriesResponse.data);
       setSuggestion(genreResponse.data ?? []);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -77,26 +76,26 @@ export const AddMovie = () => {
 
   const validateFile = (file, type) => {
     const validImageTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/svg+xml",
-      "image/webp",
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/svg+xml',
+      'image/webp',
     ];
     const validVideoTypes = [
-      "video/mp4",
-      "video/webm",
-      "video/ogg",
-      "video/mov",
-      "video/avi",
-      "video/flv",
-      "video/mkv",
-      "video/3gp",
+      'video/mp4',
+      'video/webm',
+      'video/ogg',
+      'video/mov',
+      'video/avi',
+      'video/flv',
+      'video/mkv',
+      'video/3gp',
     ];
 
-    if (type === "poster") {
+    if (type === 'poster') {
       return validImageTypes.includes(file.type);
-    } else if (type === "video") {
+    } else if (type === 'video') {
       return validVideoTypes.includes(file.type);
     }
     return false;
@@ -106,31 +105,35 @@ export const AddMovie = () => {
     const file = files[0];
 
     if (!file) {
-      alert("Không có tệp nào được chọn.");
+      alert('Không có tệp nào được chọn.');
       return;
     }
 
-    if (name === "poster" && !validateFile(file, "poster")) {
-      alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).");
-      e.target.value = "";
+    if (name === 'poster' && !validateFile(file, 'poster')) {
+      alert(
+        'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).'
+      );
+      e.target.value = '';
       return;
     }
 
-    if (name === "video" && !validateFile(file, "video")) {
-      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).");
-      e.target.value = "";
+    if (name === 'video' && !validateFile(file, 'video')) {
+      alert(
+        'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).'
+      );
+      e.target.value = '';
       return;
     }
     const previewUrl = URL.createObjectURL(file);
 
-    if (name === "video") {
+    if (name === 'video') {
       setShowFileVideo(true);
       setData((prev) => ({
         ...prev,
         video: file,
         prevVideoUrl: previewUrl,
       }));
-    } else if (name === "poster") {
+    } else if (name === 'poster') {
       setShowFilePoster(true);
       setData((prev) => ({
         ...prev,
@@ -140,22 +143,22 @@ export const AddMovie = () => {
     }
   };
 
-  const isSeries = () => data?.idCategory?.toString() === "1";
+  const isSeries = () => data?.idCategory?.toString() === '1';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const requiredFields = [
-        "nameMovie",
-        "viTitle",
-        "enTitle",
-        "description",
-        "idGenre",
+        'nameMovie',
+        'viTitle',
+        'enTitle',
+        'description',
+        'idGenre',
       ];
       const hasEmptyField = requiredFields.some((field) => !data[field]);
 
       if (hasEmptyField) {
-        alert("Vui lòng nhập đầy đủ thông tin phim");
+        alert('Vui lòng nhập đầy đủ thông tin phim');
         return;
       }
 
@@ -163,7 +166,7 @@ export const AddMovie = () => {
         ...data,
         episodes: data.episodes.map((episode) => ({
           ...episode,
-          tempId: "" + new Date().getTime(),
+          tempId: '' + new Date().getTime(),
         })),
       };
       const episodesMap = new Map(
@@ -175,11 +178,11 @@ export const AddMovie = () => {
         newData
       );
       if (!isSeries() && data.poster && data.video) {
-        uploadFileMovie(response.data.id, "poster", data.poster);
-        uploadFileMovie(response.data.id, "video", data.video);
+        uploadFileMovie(response.data.id, 'poster', data.poster);
+        uploadFileMovie(response.data.id, 'video', data.video);
       } else if (data.poster) {
         const formData = new FormData();
-        formData.append("file", data.poster);
+        formData.append('file', data.poster);
         const res = await axiosInstance.patch(
           `/api/v1/admin/movies/${response.data.id}?type=poster`,
           formData
@@ -188,8 +191,8 @@ export const AddMovie = () => {
           const episodeMap = episodesMap.get(item.tempId);
           if (episodeMap.poster && episodeMap.video) {
             const formDataEpisode = new FormData();
-            formDataEpisode.append("poster", episodeMap.poster);
-            formDataEpisode.append("video", episodeMap.video);
+            formDataEpisode.append('poster', episodeMap.poster);
+            formDataEpisode.append('video', episodeMap.video);
             await axiosInstance.patch(
               `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
               formDataEpisode
@@ -198,17 +201,17 @@ export const AddMovie = () => {
         }
       }
 
-      alert("Thêm phim mới thành công", response.data);
-      navigate("/admin");
+      alert('Thêm phim mới thành công', response.data);
+      navigate('/admin');
     } catch (error) {
-      alert("Lỗi");
-      console.error("Error submitting movie:", error);
+      alert('Lỗi');
+      console.error('Error submitting movie:', error);
     }
   };
 
   const uploadFileMovie = async (id, type, file) => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
     await axiosInstance.patch(
       `/api/v1/admin/movies/${id}?type=${type}`,
       formData
@@ -216,7 +219,7 @@ export const AddMovie = () => {
   };
 
   const handleShowEpisode = (e) => {
-    const isSeries = e.target.value === "1";
+    const isSeries = e.target.value === '1';
     setShowEpisode(isSeries);
     // setShowUploadFileMovie(!isSeries);
 

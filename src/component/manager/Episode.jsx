@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
+import React, { useEffect, useState } from 'react';
+import { axiosInstance } from '../../API/axiosConfig';
 
 export const DEFAULT_EPISODE = {
-  episodeCount: "",
-  video: "",
-  poster: "",
-  descriptions: "",
-  movieId: "",
-  prevPosterUrl: "",
-  prevVideoUrl: "",
+  episodeCount: '',
+  video: '',
+  poster: '',
+  descriptions: '',
+  movieId: '',
+  prevPosterUrl: '',
+  prevVideoUrl: '',
 };
 
 export const Episode = ({ formChanged, episode, index }) => {
@@ -37,12 +37,17 @@ export const Episode = ({ formChanged, episode, index }) => {
   };
 
   const validateFile = (file, type) => {
-    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/mov"];
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const validVideoTypes = [
+      'video/mp4',
+      'video/webm',
+      'video/ogg',
+      'video/mov',
+    ];
 
-    if (type === "poster") {
+    if (type === 'poster') {
       return validImageTypes.includes(file.type);
-    } else if (type === "video") {
+    } else if (type === 'video') {
       return validVideoTypes.includes(file.type);
     }
     return false;
@@ -51,18 +56,18 @@ export const Episode = ({ formChanged, episode, index }) => {
     const { name, files } = e.target;
     const file = files[0];
     if (!file) {
-      alert("Không có tệp nào được chọn.");
+      alert('Không có tệp nào được chọn.');
       return;
     }
-    if (name === "poster" && !validateFile(file, "poster")) {
-      alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).");
-      e.target.value = "";
+    if (name === 'poster' && !validateFile(file, 'poster')) {
+      alert('Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF).');
+      e.target.value = '';
       setShowFilePoster(false);
     }
 
-    if (name === "video" && !validateFile(file, "video")) {
-      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, Mov).");
-      e.target.value = "";
+    if (name === 'video' && !validateFile(file, 'video')) {
+      alert('Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, Mov).');
+      e.target.value = '';
       setShowFileVideo(false);
     }
     const previewUrl = URL.createObjectURL(file);
@@ -70,7 +75,7 @@ export const Episode = ({ formChanged, episode, index }) => {
     // copy data cũ
     let newData = { ...data };
 
-    if (name === "video") {
+    if (name === 'video') {
       setShowFileVideo(true);
       newData = {
         ...newData,
@@ -78,7 +83,7 @@ export const Episode = ({ formChanged, episode, index }) => {
         prevVideoUrl: previewUrl,
       };
       setData(newData);
-    } else if (name === "poster") {
+    } else if (name === 'poster') {
       setShowFilePoster(true);
       newData = {
         ...newData,
