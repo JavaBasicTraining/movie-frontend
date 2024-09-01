@@ -15,15 +15,15 @@ export async function MovieDetailLoader({ params }) {
   }
 }
 
-export const AddMovie = ({ value }) => {
+export const AddMovie = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [showEpisode, setShowEpisode] = useState(false);
-  const [suggestions, setSuggestion] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [showFileVideo, setShowFileVideo] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isEdit, setEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const { movie } = useLoaderData();
 
   const [errorsFile, setErrorsFile] = useState({});
@@ -46,7 +46,7 @@ export const AddMovie = ({ value }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setEdit(!!movie);
+    setIsEdit(!!movie);
   }, [movie]);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export const AddMovie = ({ value }) => {
         }),
       ]);
       setCategories(categoriesResponse.data);
-      setSuggestion(genreResponse.data ?? []);
+      setSuggestions(genreResponse.data ?? []);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
