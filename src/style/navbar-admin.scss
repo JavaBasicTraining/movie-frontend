@@ -7,6 +7,12 @@
   gap: 20px;
   overflow: hidden;
 
+  .item-navbar-admin
+  {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
 
   .list-navbar-admin {
     height: 100%;

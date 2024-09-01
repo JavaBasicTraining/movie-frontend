@@ -38,7 +38,7 @@ export const Episode = ({ formChanged, episode, index }) => {
 
   const validateFile = (file, type) => {
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+    const validVideoTypes = ["video/mp4", "video/webm", "video/ogg", "video/mov"];
 
     if (type === "poster") {
       return validImageTypes.includes(file.type);
@@ -61,10 +61,9 @@ export const Episode = ({ formChanged, episode, index }) => {
     }
 
     if (name === "video" && !validateFile(file, "video")) {
-      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG).");
+      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, Mov).");
       e.target.value = "";
       setShowFileVideo(false);
-
     }
     const previewUrl = URL.createObjectURL(file);
 
@@ -107,29 +106,33 @@ export const Episode = ({ formChanged, episode, index }) => {
           />
         </div>
         <div className="selectedInputFormEpisodeFile">
-          <label>Tải Poster </label>
-          <input
-            type="file"
-            name="poster"
-            onChange={handleFileChange}
-            required
-          />
+          <div className="item-file">
+            <label>Tải Poster </label>
+            <input
+              type="file"
+              name="poster"
+              onChange={handleFileChange}
+              required
+            />
+          </div>
           {showFilePoster && (
             <img
-              className="poster-item"
+              className="poster-item-episode"
               src={episode.posterUrl || data.prevPosterUrl}
               alt=""
             />
           )}
         </div>
         <div className="selectedInputFormEpisodeFile">
-          <label>Tải Phim </label>
-          <input
-            type="file"
-            name="video"
-            onChange={handleFileChange}
-            required
-          />
+          <div className="item-file">
+            <label>Tải Phim </label>
+            <input
+              type="file"
+              name="video"
+              onChange={handleFileChange}
+              required
+            />
+          </div>
           {(showFileVideo || episode.video) && (
             <video
               className="video-episode-item"
@@ -138,7 +141,7 @@ export const Episode = ({ formChanged, episode, index }) => {
             ></video>
           )}
         </div>
-        <div className="selectedInputFormEpisodeFile">
+        <div className="selectedInputFormEpisode">
           <label>Nội dung:</label>
           <input
             type="text"
