@@ -125,7 +125,6 @@ export const Episode = ({ formChanged, episode, index }) => {
       }));
       e.target.value = "";
       setShowFileVideo(false);
-      return;
     }
     const previewUrl = URL.createObjectURL(file);
     let newData = { ...data };
@@ -176,55 +175,43 @@ export const Episode = ({ formChanged, episode, index }) => {
             )}
           </div>
         </div>
-        <div className="selected-input-form-episode-file">
-          <div className="selected-input-form-episode">
-            <label>Tải Poster</label>
-            <div
-              className="validate-episode"
-              style={{ color: "red", display: "flex", flexDirection: "column" }}
-            >
-              <input
-                type="file"
-                name="poster"
-                onChange={handleFileChange}
-                required
-                style={{ color: "black" }}
-              />
-              {errorsFile.poster || (
-                <small style={{ color: "red" }}>{errorsFile.poster}</small>
-              )}
-            </div>
-            {showFilePoster === true ? (
-              <img className="poster-item" src={data.prevPosterUrl} alt="" />
-            ) : null}
+        <div className="selectedInputFormEpisodeFile">
+          <div className="item-file">
+            <label>Tải Poster </label>
+            <input
+              type="file"
+              name="poster"
+              onChange={handleFileChange}
+              required
+            />
           </div>
+          {showFilePoster && (
+            <img
+              className="poster-item-episode"
+              src={episode.posterUrl || data.prevPosterUrl}
+              alt=""
+            />
+          )}
         </div>
-        <div className="selected-input-form-episode-file">
-          <div className="selected-input-form-episode">
+        <div className="selectedInputFormEpisodeFile">
+          <div className="item-file">
             <label>Tải Phim </label>
-            <div
-              className="validate-episode"
-              style={{ color: "red", display: "flex", flexDirection: "column" }}
-            >
-              <input
-                type="file"
-                name="video"
-                onChange={handleFileChange}
-                required
-                style={{ color: "black" }}
-              />
-            </div>
-
-            {showFileVideo && (
-              <video
-                className="video-episode-item"
-                src={episode.videoUrl || data.prevVideoUrl}
-                controls
-              ></video>
-            )}
+            <input
+              type="file"
+              name="video"
+              onChange={handleFileChange}
+              required
+            />
           </div>
+          {(showFileVideo || episode.video) && (
+            <video
+              className="video-episode-item"
+              src={episode.videoUrl || data.prevVideoUrl}
+              controls
+            ></video>
+          )}
         </div>
-        <div className="selected-input-form-episode">
+        <div className="selectedInputFormEpisode">
           <label>Nội dung:</label>
           <div
             className="validate-episode"
