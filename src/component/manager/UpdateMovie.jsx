@@ -9,10 +9,10 @@ import { DEFAULT_EPISODE, Episode } from "./Episode";
 import Select from "react-select";
 import { colors } from "@material-ui/core";
 
-export async function UpdateMovieLoader({ params }) {
-  const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);
-  return { movie: res.data };
-}
+// export async function UpdateMovieLoader({ params }) {
+//   const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);
+//   return { movie: res.data };
+// }
 
 export const UpdateMovie = () => {
   const [categories, setCategories] = useState([]);
@@ -46,6 +46,8 @@ export const UpdateMovie = () => {
     if (movie?.category?.id === 1) {
       setShowUploadFileMovie(false);
     }
+
+    
 
   }, [movie]);
 

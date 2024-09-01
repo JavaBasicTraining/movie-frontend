@@ -1,13 +1,21 @@
-
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
 import qs from "qs";
 import { countries } from "../../static-data/countries";
 import { DEFAULT_EPISODE, Episode } from "./Episode";
 import { MultiSelect } from "react-multi-select-component";
 
-export const AddMovie = () => {
+export async function MovieDetailLoader({ params }) {
+  if (params.id) {
+    const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);
+    return { movie: res.data };
+  } else {
+    return { movie: null };
+  }
+}
+
+export const AddMovie = ({ value }) => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [showEpisode, setShowEpisode] = useState(false);
@@ -15,6 +23,9 @@ export const AddMovie = () => {
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [showFileVideo, setShowFileVideo] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isEdit, setEdit] = useState(false);
+  const { movie } = useLoaderData();
+
   const [errorsFile, setErrorsFile] = useState({});
   const [data, setData] = useState({
     nameMovie: "",
@@ -32,15 +43,25 @@ export const AddMovie = () => {
     episodes: [],
   });
 
-
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData();
-    setShowFilePoster(false);
-    setShowFileVideo(false);
-  }, []);
+    setEdit(!!movie);
+  }, [movie]);
+
+  useEffect(() => {
+    if (isEdit) {
+      fetchDataUpdate(movie);
+      setShowEpisode(movie?.category?.id === 1);
+      if (movie?.category?.id === 1) {
+        setShowFileVideo(false);
+      }
+    } else {
+      fetchData();
+      setShowFilePoster(false);
+      setShowFileVideo(false);
+    }
+  }, [isEdit]);
 
   const fetchData = async () => {
     try {
@@ -57,16 +78,41 @@ export const AddMovie = () => {
       console.error("Error fetching data:", error);
     }
   };
+
+  const fetchDataUpdate = (newData) => {
+    setData({
+      ...data,
+      ...newData,
+      idCategory: newData?.category?.id,
+      idGenre: newData?.genres.map((item) => item?.id),
+      genreSelectedData: newData?.genres.map((item) => ({
+        label: item.name,
+        value: item,
+        key: item.id,
+      })),
+    });
+  };
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
-    setData(prev => {
-      const updatedData = { ...prev, [name]: value };
+    setData((prev) => {
+      const updatedData = { ...prev, [name]: formatValue(value) };
       onSuccess?.(updatedData);
       validateField(name, value);
       return updatedData;
     });
   };
-  
+
+  const formatValue = (value) => {
+    // format neu value la string
+    if (value && typeof value === "string") {
+      return value.trim();
+    }
+    // format new value là số
+    //... sau này viết sau
+
+    return value;
+  }
+
   const validateFile = (file, type) => {
     const validImageTypes = [
       "image/jpeg",
@@ -96,7 +142,6 @@ export const AddMovie = () => {
   const handleFileUpload = (e) => {
     const { name, files } = e.target;
     const file = files[0];
-
 
     if (!file) {
       setErrorsFile((prevErrors) => ({
@@ -144,30 +189,31 @@ export const AddMovie = () => {
     }
   };
 
-
   const isSeries = () => data?.idCategory?.toString() === "1";
 
-
-  
   const validateField = (name, value) => {
     let error = "";
-    if (!value.trim()) {
+    if (!value) {
       error = `(*) This field is required`;
-    } else if (name === "year" && (isNaN(value) || parseInt(value) <= 0 || value.length !== 4)) {
+    } else if (
+      name === "year" &&
+      (isNaN(value) || parseInt(value) <= 0 || value.length !== 4)
+    ) {
       error = "Year must be a valid 4-digit number";
     }
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
     return !error;
   };
 
   const validateForm = () => {
     let isValid = true;
-    const fields = ["nameMovie", "viTitle", "enTitle", "description", "year"];
+    const fields = ["nameMovie", "viTitle", "enTitle", "description","year"];
     fields.forEach((field) => {
       const value = data[field];
       if (!value) {
         isValid = false;
       }
+      console.log(field, value);
       validateField(field, value);
     });
 
@@ -193,43 +239,89 @@ export const AddMovie = () => {
           newData.episodes.map((item) => [item.tempId, item])
         );
 
-        const response = await axiosInstance.post( 
-          `/api/v1/admin/movies`, 
-          
-          newData
-        );
-
-        if (!isSeries() && data.poster && data.video) {
-          uploadFileMovie(response.data.id, "poster", data.poster);
-          uploadFileMovie(response.data.id, "video", data.video);
-        } else if (data.poster) {
-          const formData = new FormData();
-          formData.append("file", data.poster);
-          const res = await axiosInstance.patch(
-            `/api/v1/admin/movies/${response.data.id}?type=poster`,
-            formData
-          );
-          for (const item of response.data.episodes) {
-            const episodeMap = episodesMap.get(item.tempId);
-            if (episodeMap.poster && episodeMap.video) {
-              const formDataEpisode = new FormData();
-              formDataEpisode.append("poster", episodeMap.poster);
-              formDataEpisode.append("video", episodeMap.video);
-              await axiosInstance.patch(
-                `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
-                formDataEpisode
-              );
-            }
-          }
+        if (!isEdit) {
+          apiCreate(newData, episodesMap);
+        } else {
+          apiUpdate(newData, episodesMap);
         }
-
-        alert("Thêm phim mới thành công", response.data);
-        navigate("/admin");
       } catch (error) {
         alert("Lỗi");
         console.error("Error submitting movie:", error);
       }
     }
+  };
+
+  const apiUpdate = async (newData, episodesMap) => {
+    const response = await axiosInstance.put(
+      `/api/v1/admin/movies/${movie.id}`,
+      {
+        ...newData,
+        poster: undefined,
+        video: undefined,
+        episodes: isSeries()
+          ? newData.episodes.map((episode) => ({
+              ...episode,
+              posterUrl: undefined,
+              videoUrl: undefined,
+            }))
+          : [],
+      }
+    );
+    if (data.poster) {
+      uploadFileMovie(response.data.id, "poster", data.poster);
+    }
+    if (!isSeries(response.data.category) && data.video) {
+      uploadFileMovie(response.data.id, "video", data.video);
+    }
+    if (isSeries(response.data.category)) {
+      for (const item of response.data.episodes) {
+        const episodeMap = episodesMap.get(item.tempId);
+        if (episodeMap.poster && episodeMap.video) {
+          const formDataEpisode = new FormData();
+          formDataEpisode.append("poster", episodeMap.poster);
+          formDataEpisode.append("video", episodeMap.video);
+          await axiosInstance.patch(
+            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
+            formDataEpisode
+          );
+        }
+      }
+    }
+    alert("Cập nhật thành công");
+  };
+
+  const apiCreate = async (newData, episodesMap) => {
+    const response = await axiosInstance.post(
+      `/api/v1/admin/movies`,
+
+      newData
+    );
+
+    if (!isSeries() && data.poster && data.video) {
+      uploadFileMovie(response.data.id, "poster", data.poster);
+      uploadFileMovie(response.data.id, "video", data.video);
+    } else if (data.poster) {
+      const formData = new FormData();
+      formData.append("file", data.poster);
+      const res = await axiosInstance.patch(
+        `/api/v1/admin/movies/${response.data.id}?type=poster`,
+        formData
+      );
+      for (const item of response.data.episodes) {
+        const episodeMap = episodesMap.get(item.tempId);
+        if (episodeMap.poster && episodeMap.video) {
+          const formDataEpisode = new FormData();
+          formDataEpisode.append("poster", episodeMap.poster);
+          formDataEpisode.append("video", episodeMap.video);
+          await axiosInstance.patch(
+            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
+            formDataEpisode
+          );
+        }
+      }
+    }
+    alert("Thêm phim mới thành công", response.data);
+    navigate("/admin");
   };
 
   const uploadFileMovie = async (id, type, file) => {
@@ -245,7 +337,7 @@ export const AddMovie = () => {
     const isSeries = e.target.value === "1";
     setShowEpisode(isSeries);
     // setShowUploadFileMovie(!isSeries);
-  
+
     if (isSeries) {
       setData((prev) => ({
         ...prev,
@@ -282,7 +374,7 @@ export const AddMovie = () => {
   };
   return (
     <div className="container-addmovie">
-      <h1>Thêm Phim Mới</h1>
+      {isEdit === false ? <h1>Thêm Phim Mới</h1> : <h1>Sửa Thông Tin Phim</h1>}
       <div className="form-addmovie">
         <div className="selectedInputForm">
           <label>Nhập Tên Phim</label>
@@ -415,7 +507,6 @@ export const AddMovie = () => {
             onChange={handleChange}
             required
           >
-
             <option value="" disabled>
               Chọn Quốc Gia
             </option>
@@ -486,7 +577,9 @@ export const AddMovie = () => {
         </div>
       )}
 
-      <button onClick={handleSubmit}>Thêm</button>
+      <button onClick={handleSubmit}>
+        {isEdit === false ? "Thêm" : "Sửa Thông Tin Phim "}
+      </button>
     </div>
   );
 };

@@ -100,16 +100,14 @@ export const ListMovie = () => {
         <Link to="/admin/movie/new">
           <button>Add New</button>
         </Link>
-        {/* {filterMovie(jsonFilter, "Thể Loại", categories)}
-        {filterMovie(country, "Quốc Gia", "")} */}
-        {/* mỗi hàm có 3 params, giải thích từng params để lầm gì */}
+
         {renderSelect(
           categories.map((category) => ({
             label: category.name,
             value: category,
-          })), // giải thích ở đây
-          "category", // ...
-          "Chon the loai" // ...
+          })),
+          "category",
+          "Chon the loai" 
         )}
         {renderSelect(
           countries.map((country) => ({ label: country.name, value: country })),
