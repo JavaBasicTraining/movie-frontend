@@ -27,14 +27,11 @@ export const HomePage = () => {
         event.preventDefault();
       }
       if (params === "") {
-        alert("Nhập tên phim bạn muốn xem!");
-        return;
-      } 
-      if (event.target) {
+     
+      navigate('/')
+      } else      if (event.target) {
         navigate(`/filter/${params}`);
       }
-      alert("Tìm kiếm thành công");
-  
     } catch (error) {
       
         navigate(`/filter/${params}`);

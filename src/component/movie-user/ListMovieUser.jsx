@@ -19,7 +19,7 @@ export async function CountryLoader({ params }) {
     movies: response.data ?? []
   };
 }
-z
+
 export const Movie = () => {
   const {movies} = useLoaderData();
 
