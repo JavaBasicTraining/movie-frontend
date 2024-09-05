@@ -1,60 +1,76 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import reportWebVitals from './reportWebVitals';
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
-import App from './App';
-import {CountryLoader, Movie, MovieLoader,} from './component/movie-user/ListMovieUser';
-import Register from './component/account/Register';
-import {Admin} from './component/manager/Admin';
-import Login from './component/account/Login';
-import {AddMovie} from './component/manager/AddMovie';
-import {ListMovie, MovieManagerLoader,} from './component/manager/ListMovieAdmin';
-import {UpdateMovie, UpdateMovieLoader,} from './component/manager/UpdateMovie';
-import {MovieDetail, posterMovieLoader,} from './component/movie-user/MovieDetail';
-import {filterMovieLoader, MovieVideo,} from './component/movie-user/MovieVideoSingle';
-import {filterMovieSeriesLoader, MovieVideoSeries,} from './component/movie-user/MovieVideoSeries';
-import {Page} from './component/movie-user/Page';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import App from "./App";
+import Login from "./component/account/Login";
+import Register from "./component/account/Register";
+import { AddMovie, MovieDetailLoader } from "./component/manager/AddMovie";
+import { Admin } from "./component/manager/Admin";
+import {
+  ListMovie,
+  MovieManagerLoader,
+} from "./component/manager/ListMovieAdmin";
+import {
+  CountryLoader,
+  Movie,
+  MovieLoader,
+} from "./component/movie-user/ListMovieUser";
+import {
+  MovieDetail,
+  posterMovieLoader,
+} from "./component/movie-user/MovieDetail";
+import {
+  filterMovieSeriesLoader,
+  MovieVideoSeries,
+} from "./component/movie-user/MovieVideoSeries";
+import {
+  filterMovieLoader,
+  MovieVideo,
+} from "./component/movie-user/MovieVideoSingle";
+import { Page } from "./component/movie-user/Page";
 import PrivateRoute from "./component/PrivateRoute";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
 
-// này là cách mới
+
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <App />,
     children: [
       {
-        path: '/',
+        path: "/",
         element: <Page />,
-        loader: MovieLoader,
+       loader: MovieLoader,
       },
+
       {
-        path: '/the-loai/:keyword?',
+        path: "/the-loai/:keyword?",
         element: <Movie />,
         loader: MovieLoader,
       },
       {
-        path: '/quoc-gia/:keyword',
+        path: "/quoc-gia/:keyword",
         element: <Movie />,
         loader: CountryLoader,
       },
       {
-        path: '/filter/:keyword',
+        path: "/filter/:keyword",
         element: <Movie />,
         loader: MovieLoader,
       },
       {
-        path: '/:name',
+        path: "/:name",
         element: <MovieDetail />,
         loader: posterMovieLoader,
       },
       {
-        path: '/xem-phim/:name',
+        path: "/xem-phim/:name",
         element: <MovieVideo />,
         loader: filterMovieLoader,
       },
       {
-        path: '/xem-phim-bo/:name',
+        path: "/xem-phim-bo/:name",
         element: <MovieVideoSeries />,
         loader: filterMovieSeriesLoader,
       },
@@ -62,32 +78,36 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/admin',
+    path: "/admin",
     element: <PrivateRoute />,
     children: [
       {
-        path: '/admin',
+        path: "/admin",
         element: <Admin />,
         children: [
           {
-            path: '/admin/movie/',
+            path: "/admin/movie/",
             element: <ListMovie />,
             loader: MovieManagerLoader,
           },
           {
-            path: '/admin/movie/category/:keyword',
+            path: "/admin/movie/category/:keyword",
             element: <ListMovie />,
             loader: MovieManagerLoader,
           },
           {
-            path: '/admin/movie/new',
+            path: "/admin/movie/new", // path đây// mục đích của e là để cho nó vào cái path edit mà
             element: <AddMovie />,
-            loader: MovieManagerLoader,
+            loader: MovieDetailLoader,
           },
           {
-            path: '/admin/movie/:id',
-            element: <UpdateMovie />,
-            loader: UpdateMovieLoader,
+            path: "/admin/movie/:id", // /admin/movie/:id khi vào path này, nó có cái id => edit, /admin/movie/new => tạo mới
+            // nó có 2 nút khác nhau, mình phải bấm nút nào nó mứ dô path đó chứ a, hiện tại 2 nút nó vô khác path r mà, c
+          // khác path đúng rồi a, khi e bấm edit thfi nó vô path này đúng rfoio, nhưng cái prop của e nó ko ăn nó nó ko loaddata vào input
+            // path đây khác, path nài thì vào đấy, nó dô path này nè a, nó check, nếu mình bấm edit thfi nó vô path này
+            // k cần, để biết cái nào là eddit thì dựa cái path thôi
+            element: <AddMovie value="Edit"/>, // cái chỗ này  e để nó mứ dô path update chứ a , sao sai router ta
+            loader: MovieDetailLoader,
           },
         ],
       },
@@ -95,16 +115,16 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
   },
   {
-    path: '/register',
+    path: "/register",
     element: <Register />,
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />
   </React.StrictMode>

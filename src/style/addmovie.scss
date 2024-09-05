@@ -15,22 +15,41 @@
     align-items: center;
     gap: 10px;
 
-    .selectedInputForm {
+    .selected-input-form {
       width: 100%;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      align-items: center;
       margin: 10px 0;
 
       label {
         color: white;
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+      }
+      .validate {
+        font-size: 12px;
+        color: red;
+        display: flex;
+        flex-direction: column;
       }
     }
   }
   button {
     width: auto;
     height: 30px;
+  }
+}
+.file-item-container {
+  flex-basis: 50%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  .file-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 28%;
+  width: 100%;
+  white-space: nowrap;
+  
   }
 }

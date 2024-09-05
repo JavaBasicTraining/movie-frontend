@@ -8,6 +8,7 @@ export const Page = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
+        
         const response = await axiosInstance.get(`/api/v1/movies`);
         setMovies(response.data);
       } catch (error) {
@@ -20,12 +21,17 @@ export const Page = () => {
 
   return (
     <div className="page-container">
+      
       <div className="nav-category">
         <h>Phim Đề Cử</h>
         <div class="article-item">
           {movies.map((item) => (
-            <Link to={`/${item.nameMovie}`}>
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+            
+            <Link to={`/${item.nameMovie}`} className="list-item-page">
+            <img key={item.id} src={item.posterUrl} alt={item.title} />
+              <span>{item.nameMovie}</span>
+              <span>{item.enTitle}</span>
+
             </Link>
           ))}
         </div>
@@ -35,8 +41,12 @@ export const Page = () => {
         <h>Phim Lẻ Mới Cập Nhật</h>
         <div class="article-item">
           {movies.map((item) => (
-            <Link to={`/${item.nameMovie}`}>
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+            <Link to={`/${item.nameMovie}`} className="list-item-page">
+             <img key={item.id} src={item.posterUrl} alt={item.title} />
+            <span>{item.nameMovie}</span>
+            <span>{item.enTitle}</span>
+
+
             </Link>
           ))}
         </div>
@@ -45,8 +55,11 @@ export const Page = () => {
         <h>Phim Bộ Mới Cập Nhật</h>
         <div class="article-item">
           {movies.map((item) => (
-            <Link to={`/${item.nameMovie}`}>
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+            <Link to={`/${item.nameMovie}`} className="list-item-page">
+          <img key={item.id} src={item.posterUrl} alt={item.title} />
+            <span>{item.nameMovie}</span>
+            <span>{item.enTitle}</span>
+
             </Link>
           ))}
         </div>
@@ -56,8 +69,11 @@ export const Page = () => {
         <h>Phim Hoạt Hình</h>
         <div class="article-item">
           {movies.map((item) => (
-            <Link to={`/${item.nameMovie}`}>
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+            <Link to={`/${item.nameMovie}`} className="list-item-page">
+               <img key={item.id} src={item.posterUrl} alt={item.title} />
+               <span>{item.nameMovie}</span>
+               <span>{item.enTitle}</span>
+
             </Link>
           ))}
         </div>
