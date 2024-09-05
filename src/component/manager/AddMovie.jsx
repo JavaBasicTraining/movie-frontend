@@ -1,21 +1,32 @@
-
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../API/axiosConfig";
 import qs from "qs";
 import { countries } from "../../static-data/countries";
 import { DEFAULT_EPISODE, Episode } from "./Episode";
 import { MultiSelect } from "react-multi-select-component";
 
+export async function MovieDetailLoader({ params }) {
+  if (params.id) {
+    const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);
+    return { movie: res.data };
+  } else {
+    return { movie: null };
+  }
+}
+
 export const AddMovie = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [showEpisode, setShowEpisode] = useState(false);
-  const [suggestions, setSuggestion] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [showFileVideo, setShowFileVideo] = useState(false);
-  // const [showUploadFileMovie, setShowUploadFileMovie] = useState(true);
+  const [errors, setErrors] = useState({});
+  const [isEdit, setIsEdit] = useState(false);
+  const { movie } = useLoaderData();
 
+  const [errorsFile, setErrorsFile] = useState({});
   const [data, setData] = useState({
     nameMovie: "",
     viTitle: "",
@@ -32,23 +43,25 @@ export const AddMovie = () => {
     episodes: [],
   });
 
-  const [uploadMovie, setUploadMovie] = useState({
-    poster: "",
-    video: "",
-  });
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData();
-    setShowFilePoster(false);
-    setShowFileVideo(false);
-  }, []);
+    setIsEdit(!!movie);
+  }, [movie]);
 
-  // useEffect(() => {
-  //   if (data.video !== null || data.prevVideoUrl !== null) {
-  //     setShowFileVideo(true);
-  //   }
-  // },[showFileVideo]);
+  useEffect(() => {
+    if (isEdit) {
+      fetchDataUpdate(movie);
+      setShowEpisode(movie?.category?.id === 1);
+      if (movie?.category?.id === 1) {
+        setShowFileVideo(false);
+      }
+    } else {
+      fetchData();
+      setShowFilePoster(false);
+      setShowFileVideo(false);
+    }
+  }, [isEdit]);
 
   const fetchData = async () => {
     try {
@@ -60,19 +73,41 @@ export const AddMovie = () => {
         }),
       ]);
       setCategories(categoriesResponse.data);
-      setSuggestion(genreResponse.data ?? []);
+      setSuggestions(genreResponse.data ?? []);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
+  const fetchDataUpdate = (newData) => {
+    setData({
+      ...data,
+      ...newData,
+      idCategory: newData?.category?.id,
+      idGenre: newData?.genres.map((item) => item?.id),
+      genreSelectedData: newData?.genres.map((item) => ({
+        label: item.name,
+        value: item,
+        key: item.id,
+      })),
+    });
+  };
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
     setData((prev) => {
-      const updatedData = { ...prev, [name]: value };
+      const updatedData = { ...prev, [name]: formatValue(value) };
       onSuccess?.(updatedData);
+      validateField(name, value);
       return updatedData;
     });
+  };
+
+  const formatValue = (value) => {
+    if (value && typeof value === "string") {
+      return value.trim();
+    }
+
+    return value;
   };
 
   const validateFile = (file, type) => {
@@ -106,21 +141,32 @@ export const AddMovie = () => {
     const file = files[0];
 
     if (!file) {
-      alert("Không có tệp nào được chọn.");
+      setErrorsFile((prevErrors) => ({
+        ...prevErrors,
+        [name]: "Không có tệp nào được chọn.",
+      }));
       return;
     }
 
-    if (name === "poster" && !validateFile(file, "poster")) {
-      alert("Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).");
+    let isValid = false;
+    if (name === "poster") {
+      isValid = validateFile(file, "poster");
+    } else if (name === "video") {
+      isValid = validateFile(file, "video");
+    }
+
+    if (!isValid) {
+      setErrorsFile((prevErrors) => ({
+        ...prevErrors,
+        [name]:
+          name === "poster"
+            ? "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP)."
+            : "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).",
+      }));
       e.target.value = "";
       return;
     }
 
-    if (name === "video" && !validateFile(file, "video")) {
-      alert("Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).");
-      e.target.value = "";
-      return;
-    }
     const previewUrl = URL.createObjectURL(file);
 
     if (name === "video") {
@@ -142,68 +188,137 @@ export const AddMovie = () => {
 
   const isSeries = () => data?.idCategory?.toString() === "1";
 
+  const validateField = (name, value) => {
+    let error = "";
+    if (!value) {
+      error = `(*) This field is required`;
+    } else if (
+      name === "year" &&
+      (isNaN(value) || parseInt(value) <= 0 || value.length !== 4)
+    ) {
+      error = "Year must be a valid 4-digit number";
+    }
+    setErrors((prev) => ({ ...prev, [name]: error }));
+    return !error;
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const fields = ["nameMovie", "viTitle", "enTitle", "description", "year"];
+    fields.forEach((field) => {
+      const value = data[field];
+      if (!value) {
+        isValid = false;
+      }
+      console.log(field, value);
+      validateField(field, value);
+    });
+
+    document.dispatchEvent(new CustomEvent("checkFormError"));
+
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const requiredFields = [
-        "nameMovie",
-        "viTitle",
-        "enTitle",
-        "description",
-        "idGenre",
-      ];
-      const hasEmptyField = requiredFields.some((field) => !data[field]);
-
-      if (hasEmptyField) {
-        alert("Vui lòng nhập đầy đủ thông tin phim");
-        return;
-      }
-
-      const newData = {
-        ...data,
-        episodes: data.episodes.map((episode) => ({
-          ...episode,
-          tempId: "" + new Date().getTime(),
-        })),
-      };
-      const episodesMap = new Map(
-        newData.episodes.map((item) => [item.tempId, item])
-      );
-
-      const response = await axiosInstance.post(
-        `/api/v1/admin/movies/createWithEpisode`,
-        newData
-      );
-      if (!isSeries() && data.poster && data.video) {
-        uploadFileMovie(response.data.id, "poster", data.poster);
-        uploadFileMovie(response.data.id, "video", data.video);
-      } else if (data.poster) {
-        const formData = new FormData();
-        formData.append("file", data.poster);
-        const res = await axiosInstance.patch(
-          `/api/v1/admin/movies/${response.data.id}?type=poster`,
-          formData
+    if (!validateForm()) {
+      return;
+    } else {
+      try {
+        const newData = {
+          ...data,
+          episodes: data.episodes.map((episode) => ({
+            ...episode,
+            tempId: "" + new Date().getTime(),
+          })),
+        };
+        const episodesMap = new Map(
+          newData.episodes.map((item) => [item.tempId, item])
         );
-        for (const item of response.data.episodes) {
-          const episodeMap = episodesMap.get(item.tempId);
-          if (episodeMap.poster && episodeMap.video) {
-            const formDataEpisode = new FormData();
-            formDataEpisode.append("poster", episodeMap.poster);
-            formDataEpisode.append("video", episodeMap.video);
-            await axiosInstance.patch(
-              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
-              formDataEpisode
-            );
-          }
+
+        if (!isEdit) {
+          apiCreate(newData, episodesMap);
+        } else {
+          apiUpdate(newData, episodesMap);
+        }
+      } catch (error) {
+        alert("Lỗi");
+        console.error("Error submitting movie:", error);
+      }
+    }
+  };
+
+  const apiUpdate = async (newData, episodesMap) => {
+    const response = await axiosInstance.put(
+      `/api/v1/admin/movies/${movie.id}`,
+      {
+        ...newData,
+        poster: undefined,
+        video: undefined,
+        episodes: isSeries()
+          ? newData.episodes.map((episode) => ({
+              ...episode,
+              posterUrl: undefined,
+              videoUrl: undefined,
+            }))
+          : [],
+      }
+    );
+    if (data.poster) {
+      uploadFileMovie(response.data.id, "poster", data.poster);
+    }
+    if (!isSeries(response.data.category) && data.video) {
+      uploadFileMovie(response.data.id, "video", data.video);
+    }
+    if (isSeries(response.data.category)) {
+      for (const item of response.data.episodes) {
+        const episodeMap = episodesMap.get(item.tempId);
+        if (episodeMap.poster && episodeMap.video) {
+          const formDataEpisode = new FormData();
+          formDataEpisode.append("poster", episodeMap.poster);
+          formDataEpisode.append("video", episodeMap.video);
+          await axiosInstance.patch(
+            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
+            formDataEpisode
+          );
         }
       }
-
-      alert("Thêm phim mới thành công", response.data);
-      navigate("/admin");
-    } catch (error) {
-      alert("Lỗi");
-      console.error("Error submitting movie:", error);
     }
+    alert("Cập nhật thành công");
+  };
+
+  const apiCreate = async (newData, episodesMap) => {
+    const response = await axiosInstance.post(
+      `/api/v1/admin/movies`,
+
+      newData
+    );
+
+    if (!isSeries() && data.poster && data.video) {
+      uploadFileMovie(response.data.id, "poster", data.poster);
+      uploadFileMovie(response.data.id, "video", data.video);
+    } else if (data.poster) {
+      const formData = new FormData();
+      formData.append("file", data.poster);
+      const res = await axiosInstance.patch(
+        `/api/v1/admin/movies/${response.data.id}?type=poster`,
+        formData
+      );
+      for (const item of response.data.episodes) {
+        const episodeMap = episodesMap.get(item.tempId);
+        if (episodeMap.poster && episodeMap.video) {
+          const formDataEpisode = new FormData();
+          formDataEpisode.append("poster", episodeMap.poster);
+          formDataEpisode.append("video", episodeMap.video);
+          await axiosInstance.patch(
+            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
+            formDataEpisode
+          );
+        }
+      }
+    }
+    alert("Thêm phim mới thành công", response.data);
+    navigate("/admin");
   };
 
   const uploadFileMovie = async (id, type, file) => {
@@ -256,46 +371,66 @@ export const AddMovie = () => {
   };
   return (
     <div className="container-addmovie">
-      <h1>Thêm Phim Mới</h1>
+      {isEdit === false ? <h1>Thêm Phim Mới</h1> : <h1>Sửa Thông Tin Phim</h1>}
       <div className="form-addmovie">
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Tên Phim</label>
-          <input
-            type="text"
-            name="nameMovie"
-            value={data.nameMovie}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="nameMovie"
+              value={data.nameMovie}
+              onChange={handleChange}
+              required
+            />
+            {errors.nameMovie || (
+              <small className="error">{errors.nameMovie}</small>
+            )}
+          </div>
         </div>
-        <div>
-          <div className="file-item">
-            <div className="selectedInputForm">
+        <div className="selected-input-form">
+          <div className="file-item-container">
+            <div className="file-item">
               <label>Tải Poster</label>
-              <input
-                type="file"
-                name="poster"
-                onChange={handleFileUpload}
-                required
-              />
+              <div className="validate">
+                <input
+                  type="file"
+                  name="poster"
+                  onChange={handleFileUpload}
+                  required
+                  style={{ color: "white" }}
+                />
+                {errorsFile.poster || (
+                  <small style={{ color: "red" }}>{errorsFile.poster}</small>
+                )}
+                {showFilePoster === true ? (
+                  <img
+                    className="poster-item"
+                    src={data.prevPosterUrl}
+                    alt=""
+                  />
+                ) : null}
+              </div>
             </div>
-
-            {showFilePoster === true ? (
-              <img className="poster-item" src={data.prevPosterUrl} alt="" />
-            ) : null}
           </div>
         </div>
         {showEpisode || (
-          <div className="selectedInputForm">
-            <div className="file-item">
-              <div className="selectedInputForm">
+          <div className="selected-input-form">
+            <div className="file-item-container">
+              <div className="file-item">
                 <label>Tải Phim</label>
-                <input
-                  type="file"
-                  name="video"
-                  onChange={handleFileUpload}
-                  required
-                />
+                <div className="validate">
+                  <input
+                    type="file"
+                    name="video"
+                    onChange={handleFileUpload}
+                    required
+                    style={{ color: "white" }}
+                  />
+                  {errorsFile.video || (
+                    <small style={{ color: "red" }}>{errorsFile.video}</small>
+                  )}
+                </div>
               </div>
               {showFileVideo === true ? (
                 <video
@@ -307,47 +442,65 @@ export const AddMovie = () => {
             </div>
           </div>
         )}
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Tên Phim Tiếng Việt</label>
-          <input
-            type="text"
-            name="viTitle"
-            value={data.viTitle}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="viTitle"
+              value={data.viTitle}
+              onChange={handleChange}
+              required
+            />
+            {errors.viTitle || (
+              <small className="error">{errors.viTitle}</small>
+            )}
+          </div>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Tên Phim Tiếng Anh</label>
-          <input
-            type="text"
-            name="enTitle"
-            value={data.enTitle}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="enTitle"
+              value={data.enTitle}
+              onChange={handleChange}
+              required
+            />
+            {errors.enTitle || (
+              <small className="error">{errors.enTitle}</small>
+            )}
+          </div>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Mô Tả Phim</label>
-          <input
-            type="text"
-            name="description"
-            value={data.description}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="description"
+              value={data.description}
+              onChange={handleChange}
+              required
+            />
+            {errors.description || (
+              <small className="error">{errors.description}</small>
+            )}
+          </div>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Năm Phát Hành:</label>
-          <input
-            type="text"
-            name="year"
-            value={data.year}
-            onChange={handleChange}
-            required
-          />
+          <div className="validate">
+            <input
+              type="text"
+              name="year"
+              value={data.year}
+              onChange={handleChange}
+              required
+            />
+            {errors.year || <small className="error">{errors.year}</small>}
+          </div>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Quốc Gia</label>
           <select
             name="country"
@@ -366,7 +519,7 @@ export const AddMovie = () => {
             ))}
           </select>
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Chọn Phân Loại Phim</label>
           <select
             name="idCategory"
@@ -387,8 +540,11 @@ export const AddMovie = () => {
               </option>
             ))}
           </select>
+          {errors.idCategory || (
+            <small className="error">{errors.idCategory}</small>
+          )}
         </div>
-        <div className="selectedInputForm">
+        <div className="selected-input-form">
           <label>Nhập Thể Loại</label>
           <MultiSelect
             options={suggestions.map((item) => ({
@@ -422,7 +578,9 @@ export const AddMovie = () => {
         </div>
       )}
 
-      <button onClick={handleSubmit}>Thêm</button>
+      <button onClick={handleSubmit}>
+        {isEdit === false ? "Thêm" : "Sửa Thông Tin Phim "}
+      </button>
     </div>
   );
 };
