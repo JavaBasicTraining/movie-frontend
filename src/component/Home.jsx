@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HiOutlineFilm } from "react-icons/hi";
 import { SearchOutlined } from "@ant-design/icons";
-import { axiosInstance } from "../API/axiosConfig";
 import { useNavigate } from "react-router-dom";
 
 export const HomePage = () => {
   const navigate = useNavigate();
-
   const [name, setName] = useState("");
+
   const handleChange = (e) => {
     setName(e.target.value);
   };
@@ -19,7 +18,15 @@ export const HomePage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.setItem("tokenCleared", "true"); 
   };
+
+  useEffect(() => {
+    const tokenCleared = localStorage.getItem("tokenCleared");
+    if (!tokenCleared) {
+      handleLogout();
+    }
+  }, []);
 
   const filterMovie = async (event, params) => {
     try {
@@ -33,13 +40,11 @@ export const HomePage = () => {
         navigate(`/filter/${params}`);
       }
     } catch (error) {
-      
-        navigate(`/filter/${params}`);
-       return null;
-
+      navigate(`/filter/${params}`);
+      return null;
     }
   };
-  
+
   return (
     <div className="home-page">
       <div className="header">
