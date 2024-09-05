@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../../API/axiosConfig';
+
 export const NavbarAdmin = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);

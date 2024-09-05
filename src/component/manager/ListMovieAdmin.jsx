@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useLoaderData, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import { axiosInstance } from '../../API/axiosConfig';
-import { Link } from 'react-router-dom';
 
 export async function MovieManagerLoader({ params, request }) {
   const searchParams = new URL(request.url).searchParams;

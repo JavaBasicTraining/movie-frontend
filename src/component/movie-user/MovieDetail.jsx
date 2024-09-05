@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { StarFilled, StarOutlined, StarTwoTone } from "@ant-design/icons";
-import { jwtDecode } from "jwt-decode";
-import useFetchUser from "../../hook/useFetchUser";
+import React, { useEffect, useState } from 'react';
+import { axiosInstance } from '../../API/axiosConfig';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { StarFilled, StarOutlined } from '@ant-design/icons';
+import { jwtDecode } from 'jwt-decode';
+import useFetchUser from '../../hook/useFetchUser';
 
 export async function posterMovieLoader({ params }) {
   const response = await axiosInstance.get(
@@ -20,7 +20,7 @@ export const MovieDetail = () => {
   const navigate = useNavigate();
   const { movie } = useLoaderData();
   const [isShowTrailer, setIsShowTrailer] = useState(false);
-  const {user, isUser, fetchUser} = useFetchUser();
+  const { user, isUser, fetchUser } = useFetchUser();
   const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
   const [countRating, setCountRating] = useState(0);
@@ -36,7 +36,6 @@ export const MovieDetail = () => {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
       fetchUser();
-     
     }
     window.addEventListener('keyup', handleKeyup);
     return () => {

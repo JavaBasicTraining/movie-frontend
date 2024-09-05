@@ -47,16 +47,12 @@
 // //       setShowUploadFileMovie(false);
 // //     }
 
-    
-
 // //   }, [movie]);
 
 // //   useEffect(() => {
 // //     fetchGenre();
 // //     fetchCategories();
 // //   }, []);
-
-
 
 // //   const fetchData = (newData) => {
 // //     setData({
@@ -497,7 +493,7 @@
 // //                 .filter((suggestion) => !data.genreSelectedData.some((selected) => selected.value.id === suggestion.id))
 // //                 .map((item) => ({
 // //                   label: item.name,
-// //                   value: item, 
+// //                   value: item,
 // //                 }))}
 // //             value={data.genreSelectedData}
 // //             onChange={handleGenreChange}
@@ -536,7 +532,7 @@
 // //                   key={index}
 // //                   episode={item}
 // //                   index={index}
-// //                   formChanged={handleEpisodeChanged} 
+// //                   formChanged={handleEpisodeChanged}
 // //                 />
 // //               ))}
 // //             </>
