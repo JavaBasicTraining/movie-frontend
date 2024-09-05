@@ -1,40 +1,55 @@
 .container-addmovie {
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  color: white;
+  background-color: rgb(62, 51, 51);
+
+  .form-addmovie {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
-    gap: 20px;
-    color: white;
-    background-color: rgb(62, 51, 51);
+    justify-content: center;
+    width: 400px;
+    align-items: center;
+    gap: 10px;
 
+    .selected-input-form {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin: 10px 0;
 
-    .form-addmovie {
+      label {
+        color: white;
+        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+      }
+      .validate {
+        font-size: 12px;
+        color: red;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        width: 400px;
-        align-items: center;
-        gap: 10px;
-
-        .selectedInputForm {
-
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
-
-            label {
-                color: white;
-                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
-            }
-        }
+      }
     }
-    button{
-        width: auto;
-        height: 30px;
-    }
-
+  }
+  button {
+    width: auto;
+    height: 30px;
+  }
+}
+.file-item-container {
+  flex-basis: 50%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  .file-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 28%;
+  width: 100%;
+  white-space: nowrap;
+  
+  }
 }

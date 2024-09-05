@@ -4,8 +4,7 @@ import useAuth from "../../hook/useAuth";
 import { useEffect } from "react";
 
 async function login(username, password) {
-
-const loginUrl = "http://localhost:8081/api/account/login";
+  const loginUrl = "http://localhost:8081/api/account/login";
   try {
     const response = await axios.post(loginUrl, {
       username: username,
@@ -45,13 +44,11 @@ export default function Login() {
 
   async function handleLogin() {
     const username = document.getElementById("username").value;
-
     const password = document.getElementById("password").value;
     const token = await login(username, password);
     if (token) {
       const user = await getUser(token);
       if (user && user.authorities.includes("admin")) {
-      
         alert("Đăng Nhập Tài Khoản Admin Thành Công!!!");
         navigate("/admin/movie");
       } else {
@@ -66,6 +63,11 @@ export default function Login() {
     }
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleLogin();
+    }
+  };
   const getUser = async (token) => {
     try {
       const res = await axios.get("http://localhost:8081/api/account/info", {
@@ -90,25 +92,25 @@ export default function Login() {
             type="text"
             id="username"
             placeholder="Tên đăng nhập"
+            onKeyDown={handleKeyDown}
             required
           />
           <input
             type="password"
             id="password"
             placeholder="Mật khẩu"
+            onKeyDown={handleKeyDown}
             required
           />
           <button onClick={handleLogin}>Đăng nhập</button>
           <Link className="color-label" to="/register">
-            {" "}
             Bạn chưa có tài khoản?
           </Link>
           <Link className="color-label" to="/">
-          
             Trở về trang chủ
           </Link>
           <Link className="color-label" to="https://www.facebook.com/login">
-          Đăng Nhập Bằng FaceBook
+            Đăng Nhập Bằng FaceBook
           </Link>
         </div>
       </div>
