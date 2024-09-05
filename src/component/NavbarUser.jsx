@@ -34,9 +34,6 @@ export const NavbarUser = () => {
       return (
         
         <div className="nav-item">
-          {
-            
-          }
           <span
             className="nav-item-name"
             onClick={() => {

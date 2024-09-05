@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { LikeOutlined, ShareAltOutlined } from "@ant-design/icons";
-import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from 'react';
+import { axiosInstance } from '../../API/axiosConfig';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { jwtDecode } from 'jwt-decode';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
@@ -15,7 +15,7 @@ export async function filterMovieLoader({ params }) {
 }
 
 export const MovieVideo = () => {
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const { movie } = useLoaderData();
   const [user, setUser] = useState([]);
   const [jwt, setJwt] = useState(null);
@@ -28,12 +28,12 @@ export const MovieVideo = () => {
       setUser(response.data ?? []);
       console.log(response);
     } catch (error) {
-      console.error("Error fetching user:", error);
+      console.error('Error fetching user:', error);
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
@@ -50,27 +50,27 @@ export const MovieVideo = () => {
   };
 
   const handleKeyDown = async (event) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       event.preventDefault();
 
       if (jwt) {
         const request = new FormData();
-        request.append("content", comment.content);
-        request.append("idUser", user.id);
-        request.append("idMovies", movie.id);
+        request.append('content', comment.content);
+        request.append('idUser', user.id);
+        request.append('idMovies', movie.id);
 
         try {
           const response = await axiosInstance.post(
             `/api/v1/comment/create`,
             request
           );
-          alert("Comment Thành Công!!!");
+          alert('Comment Thành Công!!!');
         } catch (error) {
-          console.error("Error posting comment:", error);
-          alert("Có lỗi xảy ra khi đăng bình luận.");
+          console.error('Error posting comment:', error);
+          alert('Có lỗi xảy ra khi đăng bình luận.');
         }
       } else {
-        alert("Bạn phải đăng nhập");
+        alert('Bạn phải đăng nhập');
       }
     }
   };
@@ -97,7 +97,7 @@ export const MovieVideo = () => {
             className="input"
             type="text"
             name="content"
-            value={comment.content || ""}
+            value={comment.content || ''}
             placeholder="Nhập bình luận của bạn..."
             onChange={handleChange}
             onKeyDown={handleKeyDown}

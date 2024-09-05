@@ -1,7 +1,8 @@
 import axios from "axios";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../../hook/useAuth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import useFetchUser from "../../hook/useFetchUser";
 
 async function login(username, password) {
 
@@ -36,27 +37,38 @@ const loginUrl = "http://localhost:8081/api/account/login";
 export default function Login() {
   const navigate = useNavigate();
   const isAuth = useAuth();
+  const [token, setToken] = useState(null);
+  const { user, isUser, fetchUser } = useFetchUser(token);
 
   useEffect(() => {
-    if (isAuth) {
-      navigate("/"); // đăng nhập thành công rồi thì khi vào login nó tự động redireact trang khác
+    if (isAuth && isUser) {
+      navigate("/");
+    } else if (!isUser) {
+      navigate("/login");
     }
   }, [isAuth]);
 
   async function handleLogin() {
     const username = document.getElementById("username").value;
-
     const password = document.getElementById("password").value;
     const token = await login(username, password);
     if (token) {
-      const user = await getUser(token);
-      if (user && user.authorities.includes("admin")) {
-      
-        alert("Đăng Nhập Tài Khoản Admin Thành Công!!!");
-        navigate("/admin/movie");
-      } else {
-        navigate("/");
-      }
+      setToken(token);
+      // cách 1
+      await fetchUser(
+        // onSuccess, e chưa rành cái onsuccess này a, cái này từu đặt thôi, có nghĩa là truyền vào thẳng mọt cái hàm luôn
+        // mục đích để nó chạy sau hàm response bên trong ham fetchUser, nó sẽ giống như vầy
+        (userFetched) => {
+          // viết vầy nó đồng code, đợi response xong nó chạy tiếp
+          if (userFetched && userFetched.authorities.includes("admin")) {
+            alert("Đăng Nhập Tài Khoản Admin Thành Công!!!");
+            navigate("/admin/movie");
+          } else {
+            navigate("/");
+          }
+        }
+      ); // này bất đồng bộ mà, nó sẽ chạy xong nó chạy dòng dưới luôn, k có đợi response
+      // nên lúc này usser nó null, sao biết nó bất đồng bộ a
     } else if (username === "" || password === "") {
       alert("Vui lòng nhập đầy đủ user password");
     } else {
@@ -66,6 +78,11 @@ export default function Login() {
     }
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleLogin();
+    }
+  };
   const getUser = async (token) => {
     try {
       const res = await axios.get("http://localhost:8081/api/account/info", {
@@ -90,25 +107,25 @@ export default function Login() {
             type="text"
             id="username"
             placeholder="Tên đăng nhập"
+            onKeyDown={handleKeyDown}
             required
           />
           <input
             type="password"
             id="password"
             placeholder="Mật khẩu"
+            onKeyDown={handleKeyDown}
             required
           />
           <button onClick={handleLogin}>Đăng nhập</button>
           <Link className="color-label" to="/register">
-            {" "}
             Bạn chưa có tài khoản?
           </Link>
           <Link className="color-label" to="/">
-          
             Trở về trang chủ
           </Link>
           <Link className="color-label" to="https://www.facebook.com/login">
-          Đăng Nhập Bằng FaceBook
+            Đăng Nhập Bằng FaceBook
           </Link>
         </div>
       </div>

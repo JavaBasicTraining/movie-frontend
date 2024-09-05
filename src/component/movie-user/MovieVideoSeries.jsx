@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { LikeOutlined, ShareAltOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from 'react';
+import { axiosInstance } from '../../API/axiosConfig';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 
 export async function filterMovieSeriesLoader({ params }) {
   const response = await axiosInstance.get(
@@ -14,13 +14,13 @@ export async function filterMovieSeriesLoader({ params }) {
 }
 
 export const MovieVideoSeries = () => {
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const { movie } = useLoaderData();
   const [selectEpisode, setSelectEpisode] = useState([]);
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
 
   const isLoggedIn = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     return token !== null;
   };
 
@@ -35,15 +35,15 @@ export const MovieVideoSeries = () => {
       );
       setSelectEpisode(response.data);
     } catch (error) {
-      console.error("Error fetching episodes:", error);
+      console.error('Error fetching episodes:', error);
     }
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       event.preventDefault();
       if (isLoggedIn()) {
-        alert("Comment Thành Công!!!");
+        alert('Comment Thành Công!!!');
       } else {
         alert(`Bạn phải đăng nhập`);
       }
@@ -62,7 +62,7 @@ export const MovieVideoSeries = () => {
       );
       setCurrentEpisodeIndex(response.data);
     } catch (error) {
-      console.error("Error fetching episode:", error);
+      console.error('Error fetching episode:', error);
     }
   };
 
