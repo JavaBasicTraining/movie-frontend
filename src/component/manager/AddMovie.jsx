@@ -264,7 +264,8 @@ export const AddMovie = () => {
           <div className="file-item">
             <div className="selectedInputForm">
               <label>Tải Poster</label>
-              <input
+            <div>
+            <input
                 type="file"
                 name="poster"
                 onChange={handleFileUpload}
@@ -276,6 +277,7 @@ export const AddMovie = () => {
               <img className="poster-item" src={data.prevPosterUrl} alt="" />
             ) : null}
           </div>
+            </div>
         </div>
         {showEpisode || (
           <div className="selectedInputForm">
