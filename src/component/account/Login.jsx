@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import useFetchUser from "../../hook/useFetchUser";
 
 async function login(username, password) {
-  const loginUrl = "http://localhost:8081/api/account/login";
+
+const loginUrl = "http://localhost:8081/api/account/login";
   try {
     const response = await axios.post(loginUrl, {
       username: username,
@@ -76,6 +77,26 @@ export default function Login() {
       );
     }
   }
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleLogin();
+    }
+  };
+  const getUser = async (token) => {
+    try {
+      const res = await axios.get("http://localhost:8081/api/account/info", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return res.data;
+    } catch (err) {
+      return null;
+    }
+  };
+
   return (
     <div className="form">
       <div className="body">
@@ -86,17 +107,18 @@ export default function Login() {
             type="text"
             id="username"
             placeholder="Tên đăng nhập"
+            onKeyDown={handleKeyDown}
             required
           />
           <input
             type="password"
             id="password"
             placeholder="Mật khẩu"
+            onKeyDown={handleKeyDown}
             required
           />
           <button onClick={handleLogin}>Đăng nhập</button>
           <Link className="color-label" to="/register">
-            {" "}
             Bạn chưa có tài khoản?
           </Link>
           <Link className="color-label" to="/">
