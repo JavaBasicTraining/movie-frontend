@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { axiosInstance } from '../../API/axiosConfig';
+import { Link } from 'react-router-dom';
 
 export const Page = () => {
   const [movies, setMovies] = useState([]);
@@ -12,7 +12,7 @@ export const Page = () => {
         const response = await axiosInstance.get(`/api/v1/movies`);
         setMovies(response.data);
       } catch (error) {
-        console.error("Failed to fetch movies", error);
+        console.error('Failed to fetch movies', error);
       }
     };
 
@@ -37,7 +37,7 @@ export const Page = () => {
         </div>
       </div>
 
-      <div  className="nav-category">
+      <div className="nav-category">
         <h>Phim Lẻ Mới Cập Nhật</h>
         <div class="article-item">
           {movies.map((item) => (
@@ -51,7 +51,7 @@ export const Page = () => {
           ))}
         </div>
       </div>
-      <div  className="nav-category">
+      <div className="nav-category">
         <h>Phim Bộ Mới Cập Nhật</h>
         <div class="article-item">
           {movies.map((item) => (
@@ -65,7 +65,7 @@ export const Page = () => {
         </div>
       </div>
 
-      <div  className="nav-category">
+      <div className="nav-category">
         <h>Phim Hoạt Hình</h>
         <div class="article-item">
           {movies.map((item) => (
