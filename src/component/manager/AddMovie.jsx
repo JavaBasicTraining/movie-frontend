@@ -32,10 +32,7 @@ export const AddMovie = () => {
     episodes: [],
   });
 
-  const [uploadMovie, setUploadMovie] = useState({
-    poster: "",
-    video: "",
-  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,12 +40,6 @@ export const AddMovie = () => {
     setShowFilePoster(false);
     setShowFileVideo(false);
   }, []);
-
-  // useEffect(() => {
-  //   if (data.video !== null || data.prevVideoUrl !== null) {
-  //     setShowFileVideo(true);
-  //   }
-  // },[showFileVideo]);
 
   const fetchData = async () => {
     try {
@@ -122,7 +113,6 @@ export const AddMovie = () => {
       return;
     }
     const previewUrl = URL.createObjectURL(file);
-
     if (name === "video") {
       setShowFileVideo(true);
       setData((prev) => ({
@@ -139,9 +129,7 @@ export const AddMovie = () => {
       }));
     }
   };
-
   const isSeries = () => data?.idCategory?.toString() === "1";
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -158,7 +146,6 @@ export const AddMovie = () => {
         alert("Vui lòng nhập đầy đủ thông tin phim");
         return;
       }
-
       const newData = {
         ...data,
         episodes: data.episodes.map((episode) => ({
@@ -171,7 +158,7 @@ export const AddMovie = () => {
       );
 
       const response = await axiosInstance.post(
-        `/api/v1/admin/movies/createWithEpisode`,
+        `/api/v1/admin/movies`,
         newData
       );
       if (!isSeries() && data.poster && data.video) {

@@ -57,7 +57,7 @@ const router = createBrowserRouter([
       {
         path: "/quoc-gia/:keyword",
         element: <Movie />,
-        loader: CountryLoader,
+        loader: MovieLoader,
       },
       {
         path: "/filter/:keyword",
