@@ -15,7 +15,7 @@ export async function filterMovieSeriesLoader({ params }) {
 }
 
 export const MovieVideoSeries = () => {
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const { movie } = useLoaderData();
   const [selectEpisode, setSelectEpisode] = useState([]);
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
@@ -47,7 +47,7 @@ export const MovieVideoSeries = () => {
       );
       setSelectEpisode(response.data);
     } catch (error) {
-      console.error("Error fetching episodes:", error);
+      console.error('Error fetching episodes:', error);
     }
   };
 
@@ -119,7 +119,7 @@ export const MovieVideoSeries = () => {
       );
       setCurrentEpisodeIndex(response.data);
     } catch (error) {
-      console.error("Error fetching episode:", error);
+      console.error('Error fetching episode:', error);
     }
   };
 

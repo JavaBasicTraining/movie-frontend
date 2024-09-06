@@ -2,9 +2,11 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+
   .header-container {
     display: flex;
     flex-direction: column;
+
     .header {
       display: flex;
       justify-items: center;
@@ -15,25 +17,37 @@
           width: 100px;
         }
       }
+
       span {
         font-weight: bold;
       }
+
       a {
         font-size: 25px;
         color: white;
       }
     }
+
     video {
       display: flex;
       width: 100%;
       align-items: center;
       justify-content: center;
+<<<<<<< HEAD
+=======
+
+      video {
+        width: 100%;
+      }
+>>>>>>> dev
     }
+
     .like-share {
       display: flex;
 
       gap: 5px;
       border: none;
+
       button {
         background-color: blue;
         color: white;
@@ -43,14 +57,17 @@
       }
     }
   }
+
   .body {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 10px;
+
     .comment {
       display: flex;
       flex-direction: column;
+<<<<<<< HEAD
       .show-comment {
         display: flex;
         flex-direction: column;
@@ -78,6 +95,8 @@
           font-family: "Lora", serif;
         }
       }
+=======
+>>>>>>> dev
 
       span {
         font-size: 30px;
@@ -91,6 +110,7 @@
         height: auto;
       }
     }
+
     button {
       font-size: 20px;
     }

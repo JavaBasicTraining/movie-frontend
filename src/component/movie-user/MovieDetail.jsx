@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { StarFilled, StarOutlined, StarTwoTone } from "@ant-design/icons";
-import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from 'react';
+import { axiosInstance } from '../../API/axiosConfig';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { StarFilled, StarOutlined } from '@ant-design/icons';
+import { jwtDecode } from 'jwt-decode';
+import useFetchUser from '../../hook/useFetchUser';
 
 export async function posterMovieLoader({ params }) {
   const response = await axiosInstance.get(
@@ -19,25 +20,26 @@ export const MovieDetail = () => {
   const navigate = useNavigate();
   const { movie } = useLoaderData();
   const [isShowTrailer, setIsShowTrailer] = useState(false);
-  const [user, setUser] = useState([]);
+  const { user, isUser, fetchUser } = useFetchUser();
   const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
   const [countRating, setCountRating] = useState(0);
   const evaluationsNumberReview = async (params) => {
-    const response = await axiosInstance.get(`/api/v1/evaluations/numberOfReviews/${params}`)
+    const response = await axiosInstance.get(
+      `/api/v1/evaluations/numberOfReviews/${params}`
+    );
     setCountRating(response.data);
   };
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
-      getUser();
-     
+      fetchUser();
     }
-    window.addEventListener("keyup", handleKeyup);
+    window.addEventListener('keyup', handleKeyup);
     return () => {
-      window.removeEventListener("keyup", handleKeyup);
+      window.removeEventListener('keyup', handleKeyup);
     };
   }, []);
 
@@ -47,7 +49,7 @@ export const MovieDetail = () => {
   }, [average, rating]);
 
   const handleKeyup = (e) => {
-    if (e.code === "Escape") {
+    if (e.code === 'Escape') {
       setIsShowTrailer(false);
     }
   };
@@ -58,25 +60,15 @@ export const MovieDetail = () => {
     );
     setAverage(response.data);
   };
-
-  const getUser = async () => {
-    try {
-      const response = await axiosInstance.get(`/api/account/info`);
-      setUser(response.data ?? []);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-    }
-  };
-
   const handleClick = async (index) => {
     try {
       setRating(index);
-      evaluationsNumberReview(movie.id)
+      evaluationsNumberReview(movie.id);
       if (jwt) {
         const response = await axiosInstance.get(
           `/api/v1/evaluations/evaluations/user/${user.id}/movie/${movie.id}`
         );
-        if (response.status === 200 && response.data !== "") {
+        if (response.status === 200 && response.data !== '') {
           const request = {
             star: index,
             userId: user.id,
@@ -109,29 +101,27 @@ export const MovieDetail = () => {
         navigate(`/login`);
       }
     } catch (error) {
-      alert("Lỗi" + error);
+      alert('Lỗi' + error);
     }
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: 'relative' }}>
       <div className="container">
         <div className="header">
           <div className="content">
             <div className="btn-poster">
               <img className="poster" src={movie.posterUrl} alt="" />
               <div className="list-btn">
-                {movie.category.id ===  1 ? (
+                {movie.category.id === 1 ? (
                   <button
-                  onClick={() => navigate(`/xem-phim-bo/${movie.nameMovie}`)}
-
+                    onClick={() => navigate(`/xem-phim-bo/${movie.nameMovie}`)}
                   >
                     Xem Phim
                   </button>
                 ) : (
                   <button
-                  onClick={() => navigate(`/xem-phim/${movie.nameMovie}`)}
-
+                    onClick={() => navigate(`/xem-phim/${movie.nameMovie}`)}
                   >
                     Xem Phim
                   </button>
@@ -154,7 +144,7 @@ export const MovieDetail = () => {
                       onClick={() => {
                         handleClick(index);
                       }}
-                      style={index <= rating ? { color: "#fadb14" } : {}}
+                      style={index <= rating ? { color: '#fadb14' } : {}}
                       key={index}
                     />
                   );
@@ -165,7 +155,8 @@ export const MovieDetail = () => {
               <span>Quốc Gia: {movie.country}</span>
               <span>Năm Phát Hành: {movie.year} </span>
               <span>
-                Thể Loại: {movie.genres.map((category) => category.name).join(", ")}
+                Thể Loại:{' '}
+                {movie.genres.map((category) => category.name).join(', ')}
               </span>
             </div>
           </div>
@@ -181,26 +172,26 @@ export const MovieDetail = () => {
       {isShowTrailer && (
         <div
           style={{
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
             zIndex: 9999,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            width: "100%",
-            height: "100%",
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            width: '100%',
+            height: '100%',
           }}
         >
           <div
             style={{
-              position: "absolute",
+              position: 'absolute',
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              width: "100%",
-              height: "100%",
+              width: '100%',
+              height: '100%',
             }}
             onClick={() => setIsShowTrailer(false)}
           ></div>
@@ -209,11 +200,11 @@ export const MovieDetail = () => {
             src={movie.videoUrl}
             controls
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "50%",
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '50%',
             }}
           ></video>
         </div>

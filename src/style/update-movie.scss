@@ -12,6 +12,7 @@
 
 .custom-multi-select {
   width: 100%;
+
   .dropdown-container {
     .select-item {
       color: black !important;
@@ -30,6 +31,7 @@
 .selectedInputForm {
   display: flex;
   gap: 24px;
+
   label {
     min-width: 200px;
     text-align: left;
@@ -51,12 +53,13 @@
   align-items: center;
   flex-direction: column;
   justify-content: space-between;
-  
+
   .poster-item {
     margin-left: auto;
     width: 150px;
     height: 200px;
   }
+
   .video-item {
     margin-left: auto;
     width: 300px;

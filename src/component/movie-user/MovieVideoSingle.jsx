@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
-import { useLoaderData } from "react-router-dom";
-import { LikeOutlined, ShareAltOutlined } from "@ant-design/icons";
-import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from 'react';
+import { axiosInstance } from '../../API/axiosConfig';
+import { useLoaderData } from 'react-router-dom';
+import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { jwtDecode } from 'jwt-decode';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies/name/${params.name}`);
@@ -24,12 +24,12 @@ export const MovieVideo = () => {
       const response = await axiosInstance.get(`/api/account/getUser`, { params: { userName } });
       setUser(response.data ?? {});
     } catch (error) {
-      console.error("Error fetching user:", error);
+      console.error('Error fetching user:', error);
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
@@ -92,7 +92,7 @@ export const MovieVideo = () => {
   };
 
   const handleKeyDown = async (event) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       event.preventDefault();
       if (jwt) {
         const request = new FormData();
@@ -106,11 +106,11 @@ export const MovieVideo = () => {
           fetchComment();
           setComment(""); // Clear comment input after posting
         } catch (error) {
-          console.error("Error posting comment:", error);
-          alert("Có lỗi xảy ra khi đăng bình luận.");
+          console.error('Error posting comment:', error);
+          alert('Có lỗi xảy ra khi đăng bình luận.');
         }
       } else {
-        alert("Bạn phải đăng nhập");
+        alert('Bạn phải đăng nhập');
       }
     }
   };
@@ -168,7 +168,8 @@ export const MovieVideo = () => {
           <input
             className="input"
             type="text"
-            value={comment}
+            name="content"
+            value={comment.content || ''}
             placeholder="Nhập bình luận của bạn..."
             onChange={handleCommentChange}
             onKeyDown={handleKeyDown}
