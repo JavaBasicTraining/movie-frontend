@@ -1,35 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
-import { useLoaderData } from "react-router-dom";
-import { LikeOutlined, ShareAltOutlined } from "@ant-design/icons";
-import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from 'react';
+import { axiosInstance } from '../../API/axiosConfig';
+import { useLoaderData } from 'react-router-dom';
+import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { jwtDecode } from 'jwt-decode';
 
 export async function filterMovieLoader({ params }) {
-  const response = await axiosInstance.get(`/api/v1/movies/name/${params.name}`);
+  const response = await axiosInstance.get(
+    `/api/v1/movies/name/${params.name}`
+  );
   return { movie: response.data };
 }
 
 export const MovieVideo = () => {
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const [listComment, setListComment] = useState([]);
   const { movie } = useLoaderData();
   const [user, setUser] = useState({});
   const [jwt, setJwt] = useState(null);
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
-  const [editCommentContent, setEditCommentContent] = useState("");
+  const [editCommentContent, setEditCommentContent] = useState('');
 
   const fetchUser = async (userName) => {
     try {
-      const response = await axiosInstance.get(`/api/account/getUser`, { params: { userName } });
+      const response = await axiosInstance.get(`/api/account/getUser`, {
+        params: { userName },
+      });
       setUser(response.data ?? {});
     } catch (error) {
-      console.error("Error fetching user:", error);
+      console.error('Error fetching user:', error);
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
@@ -42,10 +46,10 @@ export const MovieVideo = () => {
   const fetchComment = async () => {
     try {
       const params = new URLSearchParams({ movieId: movie.id });
-      const response = await axiosInstance.get("/api/v1/comment", { params });
+      const response = await axiosInstance.get('/api/v1/comment', { params });
       setListComment(response.data);
     } catch (error) {
-      console.error("Error fetching comments:", error);
+      console.error('Error fetching comments:', error);
     }
   };
 
@@ -54,7 +58,7 @@ export const MovieVideo = () => {
   };
 
   const handleKeyDownUpdateComment = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleUpdateComment();
     }
@@ -74,9 +78,9 @@ export const MovieVideo = () => {
         });
         fetchComment();
         setEditCommentId(null);
-        setEditCommentContent("");
+        setEditCommentContent('');
       } catch (error) {
-        console.error("Có lỗi xảy ra khi cập nhật bình luận:", error);
+        console.error('Có lỗi xảy ra khi cập nhật bình luận:', error);
       }
     }
   };
@@ -84,33 +88,33 @@ export const MovieVideo = () => {
   const handleDelete = async (commentId) => {
     try {
       await axiosInstance.delete(`/api/v1/comment/delete/${commentId}`);
-      alert("Xóa Thành Công!!");
+      alert('Xóa Thành Công!!');
       fetchComment();
     } catch (error) {
-      console.error("Có lỗi xảy ra khi xóa bình luận:", error);
+      console.error('Có lỗi xảy ra khi xóa bình luận:', error);
     }
   };
 
   const handleKeyDown = async (event) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       event.preventDefault();
       if (jwt) {
         const request = new FormData();
-        request.append("content", comment);
-        request.append("idUser", user.id);
-        request.append("idMovie", movie.id);
-        request.append("user", user.userName);
+        request.append('content', comment);
+        request.append('idUser', user.id);
+        request.append('idMovie', movie.id);
+        request.append('user', user.userName);
 
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
           fetchComment();
-          setComment(""); // Clear comment input after posting
+          setComment(''); // Clear comment input after posting
         } catch (error) {
-          console.error("Error posting comment:", error);
-          alert("Có lỗi xảy ra khi đăng bình luận.");
+          console.error('Error posting comment:', error);
+          alert('Có lỗi xảy ra khi đăng bình luận.');
         }
       } else {
-        alert("Bạn phải đăng nhập");
+        alert('Bạn phải đăng nhập');
       }
     }
   };
@@ -150,15 +154,23 @@ export const MovieVideo = () => {
                     />
                     <div>
                       <button onClick={handleUpdateComment}>Lưu</button>
-                      <button onClick={() => setEditCommentId(null)}>Hủy</button>
+                      <button onClick={() => setEditCommentId(null)}>
+                        Hủy
+                      </button>
                     </div>
                   </div>
                 ) : (
                   <div className="edit-comment">
                     <label>{value.content}</label>
                     <div className="choose-update-delete">
-                      <button onClick={() => handleEditClick(value.id, value.content)}>Chỉnh Sửa</button>
-                      <button onClick={() => handleDelete(value.id)}>Xóa</button> 
+                      <button
+                        onClick={() => handleEditClick(value.id, value.content)}
+                      >
+                        Chỉnh Sửa
+                      </button>
+                      <button onClick={() => handleDelete(value.id)}>
+                        Xóa
+                      </button>
                     </div>
                   </div>
                 )}
