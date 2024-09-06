@@ -22,34 +22,96 @@
       justify-content: space-between;
       margin: 10px 0;
 
-      label {
-        color: white;
-        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-      }
-      .validate {
-        font-size: 12px;
-        color: red;
+      .dropdown-container {
         display: flex;
         flex-direction: column;
+        width: 180px;
+        height: auto;
+
+
+        .dropdown-heading {
+          width: 100%;
+          margin-left: 1px;
+         
+
+          .dropdown-heading-value {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+
+            span {
+              color: black;
+            }
+          }
+        }
+
+        .clear-selected-button {
+          color: black !important;
+        }
+
+      }
+
+      .selected-item {
+        width: 180px;
+        white-space: nowrap;
+        overflow: hidden;
+        margin-left: 70px;
+      }
+
+      .file-item-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .file-item {
+          display: flex;
+          flex-direction: column;
+          gap: 28%;
+          width: 100%;
+          white-space: nowrap;
+
+          .prev-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+          }
+
+          .file-system {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            gap: 39%;
+
+            .validate {
+              font-size: 12px;
+              color: red;
+              display: flex;
+              flex-direction: column;
+              white-space: normal;
+            }
+          }
+
+        }
+
+        input {
+          width: 180px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          color: white
+        }
       }
     }
+
+    label {
+      color: white;
+      font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+    }
   }
+
   button {
     width: auto;
     height: 30px;
-  }
-}
-.file-item-container {
-  flex-basis: 50%;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  .file-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 28%;
-  width: 100%;
-  white-space: nowrap;
-  
   }
 }

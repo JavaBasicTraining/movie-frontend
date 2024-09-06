@@ -5,6 +5,7 @@ import qs from "qs";
 import { countries } from "../../static-data/countries";
 import { DEFAULT_EPISODE, Episode } from "./Episode";
 import { MultiSelect } from "react-multi-select-component";
+import { colors } from "@material-ui/core";
 
 export async function MovieDetailLoader({ params }) {
   if (params.id) {
@@ -151,8 +152,10 @@ export const AddMovie = () => {
     let isValid = false;
     if (name === "poster") {
       isValid = validateFile(file, "poster");
+      setShowFilePoster(false)
     } else if (name === "video") {
       isValid = validateFile(file, "video");
+      setShowFileVideo(false)
     }
 
     if (!isValid) {
@@ -257,10 +260,10 @@ export const AddMovie = () => {
         video: undefined,
         episodes: isSeries()
           ? newData.episodes.map((episode) => ({
-              ...episode,
-              posterUrl: undefined,
-              videoUrl: undefined,
-            }))
+            ...episode,
+            posterUrl: undefined,
+            videoUrl: undefined,
+          }))
           : [],
       }
     );
@@ -391,18 +394,21 @@ export const AddMovie = () => {
         <div className="selected-input-form">
           <div className="file-item-container">
             <div className="file-item">
-              <label>Tải Poster</label>
-              <div className="validate">
-                <input
-                  type="file"
-                  name="poster"
-                  onChange={handleFileUpload}
-                  required
-                  style={{ color: "white" }}
-                />
-                {errorsFile.poster || (
-                  <small style={{ color: "red" }}>{errorsFile.poster}</small>
-                )}
+              <div className="file-system">
+                <label>Tải Poster</label>
+                <div className="validate">
+                  <input
+                    type="file"
+                    name="poster"
+                    onChange={handleFileUpload}
+                    required
+                  />
+                  {errorsFile.poster || (
+                    <small style={{ color: "red" }}>{errorsFile.poster}</small>
+                  )}
+                </div>
+              </div>
+              <div className="prev-item">
                 {showFilePoster === true ? (
                   <img
                     className="poster-item"
@@ -418,27 +424,30 @@ export const AddMovie = () => {
           <div className="selected-input-form">
             <div className="file-item-container">
               <div className="file-item">
-                <label>Tải Phim</label>
-                <div className="validate">
-                  <input
-                    type="file"
-                    name="video"
-                    onChange={handleFileUpload}
-                    required
-                    style={{ color: "white" }}
-                  />
-                  {errorsFile.video || (
-                    <small style={{ color: "red" }}>{errorsFile.video}</small>
-                  )}
+                <div className="file-system">
+                  <label>Tải Phim</label>
+                  <div className="validate">
+                    <input
+                      type="file"
+                      name="video"
+                      onChange={handleFileUpload}
+                      required
+                    />
+                    {errorsFile.video || (
+                      <small style={{ color: "red" }}>{errorsFile.video}</small>
+                    )}
+                  </div>
                 </div>
               </div>
-              {showFileVideo === true ? (
-                <video
-                  className="video-item"
-                  src={data.prevVideoUrl}
-                  controls
-                ></video>
-              ) : null}
+              <div className="prev-item">
+                {showFileVideo === true ? (
+                  <video
+                    className="video-item"
+                    src={data.prevVideoUrl}
+                    controls
+                  ></video>
+                ) : null}
+              </div>
             </div>
           </div>
         )}
@@ -503,6 +512,7 @@ export const AddMovie = () => {
         <div className="selected-input-form">
           <label>Nhập Quốc Gia</label>
           <select
+            className="selected-item"
             name="country"
             value={data.country}
             onChange={handleChange}
@@ -519,9 +529,10 @@ export const AddMovie = () => {
             ))}
           </select>
         </div>
-        <div className="selected-input-form">
+        <div class="selected-input-form">
           <label>Chọn Phân Loại Phim</label>
           <select
+            className="selected-item"
             name="idCategory"
             value={data.idCategory}
             onChange={(e) => {
