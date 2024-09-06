@@ -2,7 +2,6 @@
   display: flex;
   width: 400px;
   background-color: white;
-
   .body-episode {
     width: 100%;
     display: flex;
@@ -10,8 +9,7 @@
     justify-items: center;
     gap: 20px;
     color: black;
-    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     .selected-input-form-episode {
       width: 360px;
       display: flex;
@@ -19,13 +17,11 @@
       justify-content: space-between;
       align-items: center;
       margin: 10px 20px;
-
       label {
         color: black;
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
       }
     }
-
     .selected-input-form-episode-file {
       width: auto;
       display: flex;
@@ -34,31 +30,26 @@
       flex-basis: 50%;
       flex-direction: column;
       align-items: center;
-
       .item-file {
         display: flex;
         justify-content: space-between;
         width: 100%;
-
         input {
           color: black;
         }
       }
-
       .video-episode-item {
         align-items: center;
         justify-content: center;
         width: 100%;
         height: 300px;
       }
-
       .poster-item-episode {
         margin: 15px;
         width: 50%;
         height: auto;
         align-items: center;
       }
-
       label {
         color: black;
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
