@@ -66,13 +66,13 @@ export const MovieDetail = () => {
       evaluationsNumberReview(movie.id);
       if (jwt) {
         const response = await axiosInstance.get(
-          `/api/v1/evaluations/evaluations/user/${user.id}/movie/${movie.id}`
+          `/api/v1/evaluations/user/${user.id}/movie/${movie.id}`
         );
         if (response.status === 200 && response.data !== '') {
           const request = {
             star: index,
             userId: user.id,
-            movieId: movie.id,
+            movieId: movie.id,  
           };
           await axiosInstance.put(
             `/api/v1/evaluations/${response.data.id}`,
