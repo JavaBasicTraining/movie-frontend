@@ -24,11 +24,11 @@
 
   .article-item {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; 
     gap: 30px;
 
     .list-item-page {
-      flex: 1 1 18%;
+      flex: 1 1 18%; 
       max-width: 18%;
       overflow-y: auto;
       display: flex;
@@ -38,17 +38,15 @@
       font-weight: bold;
 
       text-decoration: none;
-
       :hover {
         color: blue;
         font-weight: bold;
         text-decoration: underline;
-
+       
 
       }
-
       img {
-        width: 100%;
+        width: 100%; 
         height: 300px;
       }
     }

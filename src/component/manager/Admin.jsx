@@ -1,9 +1,9 @@
-import { Outlet } from 'react-router-dom';
+import {  Outlet } from "react-router-dom";
 
-import { NavbarAdmin } from './NavbarAdmin';
+import { NavbarAdmin } from "./NavbarAdmin";
 
-import { useState } from 'react';
-import { UnorderedListOutlined } from '@ant-design/icons';
+import { useState } from "react";
+import { UnorderedListOutlined } from "@ant-design/icons";
 
 export const Admin = () => {
   const [showNavbar, setShowNavbar] = useState(false);
@@ -15,8 +15,7 @@ export const Admin = () => {
   return (
     <div className="admin-container">
       <div className={`menu-navbar ${showNavbar ? 'navbar-show' : ''}`}>
-        <NavbarAdmin />
-      </div>
+        <NavbarAdmin /></div>
 
       <div className="right-container">
         <div className="header">

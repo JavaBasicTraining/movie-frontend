@@ -1,13 +1,13 @@
-import React from 'react';
-import { axiosInstance } from '../../API/axiosConfig';
-import { Link, useLoaderData } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { axiosInstance } from "../../API/axiosConfig";
+import { Link, useLoaderData } from "react-router-dom";
 
 export async function MovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies`, {
     params: params,
   });
   return {
-    movies: response.data ?? [],
+    movies: response.data ?? []
   };
 }
 
@@ -16,15 +16,16 @@ export async function CountryLoader({ params }) {
     params: params,
   });
   return {
-    movies: response.data ?? [],
+    movies: response.data ?? []
   };
 }
 
 export const Movie = () => {
-  const { movies } = useLoaderData();
+  const {movies} = useLoaderData();
 
   return (
     <div className="container">
+     
       {
         <div className="item">
           {movies?.map((item) => (

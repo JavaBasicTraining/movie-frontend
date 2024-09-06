@@ -1,18 +1,15 @@
-import axios from 'axios';
+import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8081',
+  baseURL: "http://localhost:8081",
 });
 
 const publicAPI = [
-  '/api/v1/movies',
-  '/api/v1/account/login',
-  '/api/v1/account/register',
-  '/api/v1/categories/list',
-  '/api/v1/genre',
-  '/api/v1/evaluations/numberOfReviews',
-  '/api/v1/evaluations/average/',
-  '/api/v1/episode/getEpisodeByMovieId',
+  "/api/v1/movies",
+  "/api/v1/account/login",
+  "/api/v1/account/register",
+  "/api/v1/categories/list",
+  "/api/v1/genre",
 ];
 
 axiosInstance.interceptors.request.use(
@@ -22,7 +19,7 @@ axiosInstance.interceptors.request.use(
       return config;
     }
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

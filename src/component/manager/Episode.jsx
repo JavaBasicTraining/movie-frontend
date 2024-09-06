@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 export const DEFAULT_EPISODE = {
-  episodeCount: '',
-  video: '',
-  poster: '',
-  descriptions: '',
-  movieId: '',
-  prevPosterUrl: '',
-  prevVideoUrl: '',
+  episodeCount: "",
+  video: "",
+  poster: "",
+  descriptions: "",
+  movieId: "",
+  prevPosterUrl: "",
+  prevVideoUrl: "",
 };
 
 export const Episode = ({ formChanged, episode, index }) => {
@@ -16,14 +16,14 @@ export const Episode = ({ formChanged, episode, index }) => {
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [errorsFile, setErrorsFile] = useState({});
   const [errors, setErrors] = useState({});
-  const fields = ['episodeCount', 'descriptions'];
+  const fields = ["episodeCount", "descriptions"];
 
   useEffect(() => {
-    document.addEventListener('checkFormError', () => {
+    document.addEventListener("checkFormError", () => {
       validateForm();
     });
     return () => {
-      document.removeEventListener('checkFormError', () => {
+      document.removeEventListener("checkFormError", () => {
         validateForm();
       });
     };
@@ -51,11 +51,11 @@ export const Episode = ({ formChanged, episode, index }) => {
   };
 
   const checkFieldError = (name, value) => {
-    let error = '';
+    let error = "";
     if (!value.trim()) {
       error = `(*) This field is required`;
-    }
-    setErrors((prev) => ({ ...prev, [name]: error }));
+    } 
+    setErrors(prev => ({ ...prev, [name]: error }));
     return !error;
   };
   const validateForm = () => {
@@ -72,26 +72,26 @@ export const Episode = ({ formChanged, episode, index }) => {
 
   const validateFile = (file, type) => {
     const validImageTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'image/svg+xml',
-      'image/webp',
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/svg+xml",
+      "image/webp",
     ];
     const validVideoTypes = [
-      'video/mp4',
-      'video/webm',
-      'video/ogg',
-      'video/mov',
-      'video/avi',
-      'video/flv',
-      'video/mkv',
-      'video/3gp',
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
+      "video/mov",
+      "video/avi",
+      "video/flv",
+      "video/mkv",
+      "video/3gp",
     ];
 
-    if (type === 'poster') {
+    if (type === "poster") {
       return validImageTypes.includes(file.type);
-    } else if (type === 'video') {
+    } else if (type === "video") {
       return validVideoTypes.includes(file.type);
     }
     return false;
@@ -104,33 +104,31 @@ export const Episode = ({ formChanged, episode, index }) => {
     if (!file) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
-        [name]: 'Không có tệp nào được chọn.',
+        [name]: "Không có tệp nào được chọn.",
       }));
       return;
     }
 
-    if (name === 'poster' && !validateFile(file, 'poster')) {
+    if (name === "poster" && !validateFile(file, "poster")) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
-        [name]:
-          'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).',
+        [name]: "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).",
       }));
-      e.target.value = '';
+      e.target.value = "";
       setShowFilePoster(false);
       return;
     }
-    if (name === 'video' && !validateFile(file, 'video')) {
+    if (name === "video" && !validateFile(file, "video")) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
-        [name]:
-          'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).',
+        [name]: "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).",
       }));
-      e.target.value = '';
+      e.target.value = "";
       setShowFileVideo(false);
     }
     const previewUrl = URL.createObjectURL(file);
     let newData = { ...data };
-    if (name === 'video') {
+    if (name === "video") {
       setShowFileVideo(true);
       newData = {
         ...newData,
@@ -138,7 +136,7 @@ export const Episode = ({ formChanged, episode, index }) => {
         prevVideoUrl: previewUrl,
       };
       setData(newData);
-    } else if (name === 'poster') {
+    } else if (name === "poster") {
       setShowFilePoster(true);
       newData = {
         ...newData,
@@ -149,6 +147,7 @@ export const Episode = ({ formChanged, episode, index }) => {
     }
     formChanged(newData);
   };
+  
 
   return (
     <form className="episode-container">
@@ -158,10 +157,10 @@ export const Episode = ({ formChanged, episode, index }) => {
           <div
             className="validate-episode"
             style={{
-              color: 'red',
-              display: 'flex',
-              flexDirection: 'column',
-              fontSize: '12px',
+              color: "red",
+              display: "flex",
+              flexDirection: "column",
+              fontSize: "12px",
             }}
           >
             <input
@@ -217,10 +216,10 @@ export const Episode = ({ formChanged, episode, index }) => {
           <div
             className="validate-episode"
             style={{
-              color: 'red',
-              display: 'flex',
-              flexDirection: 'column',
-              fontSize: '12px',
+              color: "red",
+              display: "flex",
+              flexDirection: "column",
+              fontSize: "12px",
             }}
           >
             <input
