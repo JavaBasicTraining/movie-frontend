@@ -160,8 +160,8 @@ export const AddMovie = () => {
         ...prevErrors,
         [name]:
           name === 'poster'
-            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).'
-            : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).',
+            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).' && setShowFilePoster (false)
+            : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).'  && setShowFileVideo (false),
       }));
       e.target.value = '';
       return;
@@ -204,7 +204,7 @@ export const AddMovie = () => {
 
   const validateForm = () => {
     let isValid = true;
-    const fields = ['nameMovie', 'viTitle', 'enTitle', 'description', 'year'];
+    const fields = ['nameMovie', 'viTitle', 'enTitle', 'description', 'year', 'country', 'idCategory','idGenre'];
     fields.forEach((field) => {
       const value = data[field];
       if (!value) {
@@ -403,15 +403,16 @@ export const AddMovie = () => {
                 {errorsFile.poster || (
                   <small style={{ color: 'red' }}>{errorsFile.poster}</small>
                 )}
-                {showFilePoster === true ? (
+              
+              </div>
+            </div>
+            {showFilePoster === true ? (
                   <img
                     className="poster-item"
                     src={data.prevPosterUrl}
                     alt=""
                   />
                 ) : null}
-              </div>
-            </div>
           </div>
         </div>
         {showEpisode || (
@@ -502,6 +503,7 @@ export const AddMovie = () => {
         </div>
         <div className="selected-input-form">
           <label>Nhập Quốc Gia</label>
+          <div className='validate'>
           <select
             name="country"
             value={data.country}
@@ -518,10 +520,14 @@ export const AddMovie = () => {
               </option>
             ))}
           </select>
+          {errors.country || <small className="error">{errors.country}</small>}
+
+          </div>
         </div>
         <div className="selected-input-form">
           <label>Chọn Phân Loại Phim</label>
-          <select
+        <div  className='validate'>
+        <select
             name="idCategory"
             value={data.idCategory}
             onChange={(e) => {
@@ -544,6 +550,7 @@ export const AddMovie = () => {
             <small className="error">{errors.idCategory}</small>
           )}
         </div>
+        </div>
         <div className="selected-input-form">
           <label>Nhập Thể Loại</label>
           <MultiSelect
@@ -558,6 +565,8 @@ export const AddMovie = () => {
             defaultIsOpen={false}
           />
         </div>
+        {errors.idGenre || <small className="error">{errors.idGenre}</small>}
+
       </div>
 
       {showEpisode && (
