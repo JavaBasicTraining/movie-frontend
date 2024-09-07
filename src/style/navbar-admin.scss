@@ -21,11 +21,13 @@
     flex-direction: column;
     gap: 20px;
   }
+
   .logo {
     height: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
+
     img {
       padding: 10px 25px;
       width: 100%;
@@ -49,12 +51,14 @@
       cursor: pointer;
     }
   }
+
   .navbar-admin-container {
     display: flex;
     gap: 20px;
     flex-direction: column;
     height: 100%;
     width: 100%;
+
     .admin-nav-item {
       position: relative;
       width: 150px;
@@ -77,14 +81,17 @@
         font-weight: bold;
         background-color: rgb(62, 61, 65);
         color: white;
+
         .item-icon {
           display: flex;
           justify-content: space-between;
         }
+
         .admin-link-item {
           color: white;
           text-decoration: none;
         }
+
         &:hover {
           transition: 0.5s;
           background-color: black;

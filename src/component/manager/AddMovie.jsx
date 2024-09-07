@@ -35,8 +35,6 @@ export const AddMovie = () => {
     country: '',
     poster: '',
     video: '',
-    posterVariable: '',
-    videoVariable: '',
     idCategory: [],
     year: '',
     prevPosterUrl: '',
@@ -171,7 +169,15 @@ export const AddMovie = () => {
       return;
     }
     const previewUrl = URL.createObjectURL(file);
-    if (name === 'poster') {
+
+    if (name === 'video') {
+      setShowFileVideo(true);
+      setData((prev) => ({
+        ...prev,
+        video: file,
+        prevVideoUrl: previewUrl,
+      }));
+    } else if (name === 'poster') {
       setShowFilePoster(true);
       setData((prev) => ({ ...prev, poster: file, prevPosterUrl: previewUrl }));
     } else if (name === 'video') {
@@ -188,9 +194,9 @@ export const AddMovie = () => {
       error = `(*) This field is required`;
     } else if (
       name === 'year' &&
-      (isNaN(value) || parseInt(value, 10) <= 0 || value.length !== 4)
+      (isNaN(value) || parseInt(value) <= 0 || value.length !== 4)
     ) {
-      error = 'Year must be a  valid 4-digit number';
+      error = 'Year must be a valid 4-digit number';
     }
     setErrors((prev) => ({ ...prev, [name]: error }));
     return !error;

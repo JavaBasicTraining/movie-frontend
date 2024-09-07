@@ -1,5 +1,3 @@
-import React from 'react';
-
 // export const countries = () => {
 //   const countryData = {
 //     name: "Quốc Gia",

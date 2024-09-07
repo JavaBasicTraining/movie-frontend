@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { axiosInstance } from '../../API/axiosConfig';
 import { Link, useLoaderData } from 'react-router-dom';
 
