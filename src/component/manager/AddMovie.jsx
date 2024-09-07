@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { axiosInstance } from "../../API/axiosConfig";
-import qs from "qs";
-import { countries } from "../../static-data/countries";
-import { DEFAULT_EPISODE, Episode } from "./Episode";
-import { MultiSelect } from "react-multi-select-component";
-import { colors } from "@material-ui/core";
+import React, { useEffect, useState } from 'react';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../../API/axiosConfig';
+import qs from 'qs';
+import { countries } from '../../static-data/countries';
+import { DEFAULT_EPISODE, Episode } from './Episode';
+import { MultiSelect } from 'react-multi-select-component';
 
 export async function MovieDetailLoader({ params }) {
   if (params.id) {
@@ -29,17 +28,19 @@ export const AddMovie = () => {
 
   const [errorsFile, setErrorsFile] = useState({});
   const [data, setData] = useState({
-    nameMovie: "",
-    viTitle: "",
-    enTitle: "",
-    description: "",
-    country: "",
-    poster: "",
-    video: "",
+    nameMovie: '',
+    viTitle: '',
+    enTitle: '',
+    description: '',
+    country: '',
+    poster: '',
+    video: '',
+    posterVariable: '',
+    videoVariable: '',
     idCategory: [],
-    year: "",
-    prevPosterUrl: "",
-    prevVideoUrl: "",
+    year: '',
+    prevPosterUrl: '',
+    prevVideoUrl: '',
     idGenre: [],
     episodes: [],
   });
@@ -76,7 +77,7 @@ export const AddMovie = () => {
       setCategories(categoriesResponse.data);
       setSuggestions(genreResponse.data ?? []);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -104,7 +105,7 @@ export const AddMovie = () => {
   };
 
   const formatValue = (value) => {
-    if (value && typeof value === "string") {
+    if (value && typeof value === 'string') {
       return value.trim();
     }
 
@@ -113,26 +114,26 @@ export const AddMovie = () => {
 
   const validateFile = (file, type) => {
     const validImageTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/svg+xml",
-      "image/webp",
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/svg+xml',
+      'image/webp',
     ];
     const validVideoTypes = [
-      "video/mp4",
-      "video/webm",
-      "video/ogg",
-      "video/mov",
-      "video/avi",
-      "video/flv",
-      "video/mkv",
-      "video/3gp",
+      'video/mp4',
+      'video/webm',
+      'video/ogg',
+      'video/mov',
+      'video/avi',
+      'video/flv',
+      'video/mkv',
+      'video/3gp',
     ];
 
-    if (type === "poster") {
+    if (type === 'poster') {
       return validImageTypes.includes(file.type);
-    } else if (type === "video") {
+    } else if (type === 'video') {
       return validVideoTypes.includes(file.type);
     }
     return false;
@@ -144,62 +145,52 @@ export const AddMovie = () => {
     if (!file) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
-        [name]: "Không có tệp nào được chọn.",
+        [name]: 'Không có tệp nào được chọn.',
       }));
+      setData((prev) => ({ ...prev, [name]: '' }));
       return;
     }
 
     let isValid = false;
-    if (name === "poster") {
-      isValid = validateFile(file, "poster");
-      setShowFilePoster(false)
-    } else if (name === "video") {
-      isValid = validateFile(file, "video");
-      setShowFileVideo(false)
+    if (name === 'poster') {
+      isValid = validateFile(file, 'poster');
+    } else if (name === 'video') {
+      isValid = validateFile(file, 'video');
     }
 
     if (!isValid) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
         [name]:
-          name === "poster"
-            ? "Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP)."
-            : "Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).",
+          name === 'poster'
+            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).'
+            : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).',
       }));
-      e.target.value = "";
+      e.target.value = '';
+      name === 'poster' ? setShowFilePoster(false) : setShowFileVideo(false);
       return;
     }
-
     const previewUrl = URL.createObjectURL(file);
-
-    if (name === "video") {
-      setShowFileVideo(true);
-      setData((prev) => ({
-        ...prev,
-        video: file,
-        prevVideoUrl: previewUrl,
-      }));
-    } else if (name === "poster") {
+    if (name === 'poster') {
       setShowFilePoster(true);
-      setData((prev) => ({
-        ...prev,
-        poster: file,
-        prevPosterUrl: previewUrl,
-      }));
+      setData((prev) => ({ ...prev, poster: file, prevPosterUrl: previewUrl }));
+    } else if (name === 'video') {
+      setShowFileVideo(true);
+      setData((prev) => ({ ...prev, video: file, prevVideoUrl: previewUrl }));
     }
   };
 
-  const isSeries = () => data?.idCategory?.toString() === "1";
+  const isSeries = () => data?.idCategory?.toString() === '1';
 
   const validateField = (name, value) => {
-    let error = "";
-    if (!value) {
+    let error = '';
+    if (!value || value.length === 0) {
       error = `(*) This field is required`;
     } else if (
-      name === "year" &&
-      (isNaN(value) || parseInt(value) <= 0 || value.length !== 4)
+      name === 'year' &&
+      (isNaN(value) || parseInt(value, 10) <= 0 || value.length !== 4)
     ) {
-      error = "Year must be a valid 4-digit number";
+      error = 'Year must be a  valid 4-digit number';
     }
     setErrors((prev) => ({ ...prev, [name]: error }));
     return !error;
@@ -207,17 +198,26 @@ export const AddMovie = () => {
 
   const validateForm = () => {
     let isValid = true;
-    const fields = ["nameMovie", "viTitle", "enTitle", "description", "year"];
+    const fields = [
+      'nameMovie',
+      'viTitle',
+      'enTitle',
+      'description',
+      'year',
+      'country',
+      'idCategory',
+      'idGenre',
+    ];
+
     fields.forEach((field) => {
       const value = data[field];
+      validateField(field, value);
       if (!value) {
         isValid = false;
       }
-      console.log(field, value);
-      validateField(field, value);
     });
 
-    document.dispatchEvent(new CustomEvent("checkFormError"));
+    document.dispatchEvent(new CustomEvent('checkFormError'));
 
     return isValid;
   };
@@ -232,7 +232,7 @@ export const AddMovie = () => {
           ...data,
           episodes: data.episodes.map((episode) => ({
             ...episode,
-            tempId: "" + new Date().getTime(),
+            tempId: '' + new Date().getTime(),
           })),
         };
         const episodesMap = new Map(
@@ -245,8 +245,8 @@ export const AddMovie = () => {
           apiUpdate(newData, episodesMap);
         }
       } catch (error) {
-        alert("Lỗi");
-        console.error("Error submitting movie:", error);
+        alert('Lỗi');
+        console.error('Error submitting movie:', error);
       }
     }
   };
@@ -260,26 +260,26 @@ export const AddMovie = () => {
         video: undefined,
         episodes: isSeries()
           ? newData.episodes.map((episode) => ({
-            ...episode,
-            posterUrl: undefined,
-            videoUrl: undefined,
-          }))
+              ...episode,
+              posterUrl: undefined,
+              videoUrl: undefined,
+            }))
           : [],
       }
     );
     if (data.poster) {
-      uploadFileMovie(response.data.id, "poster", data.poster);
+      uploadFileMovie(response.data.id, 'poster', data.poster);
     }
     if (!isSeries(response.data.category) && data.video) {
-      uploadFileMovie(response.data.id, "video", data.video);
+      uploadFileMovie(response.data.id, 'video', data.video);
     }
     if (isSeries(response.data.category)) {
       for (const item of response.data.episodes) {
         const episodeMap = episodesMap.get(item.tempId);
         if (episodeMap.poster && episodeMap.video) {
           const formDataEpisode = new FormData();
-          formDataEpisode.append("poster", episodeMap.poster);
-          formDataEpisode.append("video", episodeMap.video);
+          formDataEpisode.append('poster', episodeMap.poster);
+          formDataEpisode.append('video', episodeMap.video);
           await axiosInstance.patch(
             `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
             formDataEpisode
@@ -287,7 +287,7 @@ export const AddMovie = () => {
         }
       }
     }
-    alert("Cập nhật thành công");
+    alert('Cập nhật thành công');
   };
 
   const apiCreate = async (newData, episodesMap) => {
@@ -298,11 +298,11 @@ export const AddMovie = () => {
     );
 
     if (!isSeries() && data.poster && data.video) {
-      uploadFileMovie(response.data.id, "poster", data.poster);
-      uploadFileMovie(response.data.id, "video", data.video);
+      uploadFileMovie(response.data.id, 'poster', data.poster);
+      uploadFileMovie(response.data.id, 'video', data.video);
     } else if (data.poster) {
       const formData = new FormData();
-      formData.append("file", data.poster);
+      formData.append('file', data.poster);
       const res = await axiosInstance.patch(
         `/api/v1/admin/movies/${response.data.id}?type=poster`,
         formData
@@ -311,8 +311,8 @@ export const AddMovie = () => {
         const episodeMap = episodesMap.get(item.tempId);
         if (episodeMap.poster && episodeMap.video) {
           const formDataEpisode = new FormData();
-          formDataEpisode.append("poster", episodeMap.poster);
-          formDataEpisode.append("video", episodeMap.video);
+          formDataEpisode.append('poster', episodeMap.poster);
+          formDataEpisode.append('video', episodeMap.video);
           await axiosInstance.patch(
             `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
             formDataEpisode
@@ -320,13 +320,13 @@ export const AddMovie = () => {
         }
       }
     }
-    alert("Thêm phim mới thành công", response.data);
-    navigate("/admin");
+    alert('Thêm phim mới thành công', response.data);
+    navigate('/admin');
   };
 
   const uploadFileMovie = async (id, type, file) => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
     await axiosInstance.patch(
       `/api/v1/admin/movies/${id}?type=${type}`,
       formData
@@ -334,7 +334,7 @@ export const AddMovie = () => {
   };
 
   const handleShowEpisode = (e) => {
-    const isSeries = e.target.value === "1";
+    const isSeries = e.target.value === '1';
     setShowEpisode(isSeries);
     // setShowUploadFileMovie(!isSeries);
 
@@ -366,6 +366,18 @@ export const AddMovie = () => {
     }));
   };
   const handleGenreChange = (selectedItems) => {
+    if (!selectedItems || selectedItems.length === 0) {
+      setErrors({
+        ...errors,
+        idGenre: 'Error',
+      });
+    } else {
+      setErrors({
+        ...errors,
+        idGenre: null,
+      });
+    }
+
     setSelectedCategory(selectedItems);
     setData((prev) => ({
       ...prev,
@@ -392,62 +404,64 @@ export const AddMovie = () => {
           </div>
         </div>
         <div className="selected-input-form">
-          <div className="file-item-container">
+          <dAiv className="file-item-container">
             <div className="file-item">
-              <div className="file-system">
-                <label>Tải Poster</label>
-                <div className="validate">
-                  <input
-                    type="file"
-                    name="poster"
-                    onChange={handleFileUpload}
-                    required
-                  />
-                  {errorsFile.poster || (
-                    <small style={{ color: "red" }}>{errorsFile.poster}</small>
-                  )}
-                </div>
-              </div>
-              <div className="prev-item">
-                {showFilePoster === true ? (
-                  <img
-                    className="poster-item"
-                    src={data.prevPosterUrl}
-                    alt=""
-                  />
-                ) : null}
+              <label>Tải Poster</label>
+              <div className="validate">
+                <input
+                  type="file"
+                  name="poster"
+                  onChange={handleFileUpload}
+                  required
+                  style={{ color: 'white' }}
+                />
+                {errorsFile.poster || (
+                  <small style={{ color: 'red' }}>{errorsFile.poster}</small>
+                )}
               </div>
             </div>
-          </div>
+            {isEdit === false ? (
+              showFilePoster === true ? (
+                <img className="poster-item" src={data.prevPosterUrl} alt="" />
+              ) : null
+            ) : (
+              <img
+                className="poster-item"
+                src={data.prevPosterUrl || movie.posterUrl}
+                alt=""
+              />
+            )}
+          </dAiv>
         </div>
         {showEpisode || (
           <div className="selected-input-form">
             <div className="file-item-container">
               <div className="file-item">
-                <div className="file-system">
-                  <label>Tải Phim</label>
-                  <div className="validate">
-                    <input
-                      type="file"
-                      name="video"
-                      onChange={handleFileUpload}
-                      required
-                    />
-                    {errorsFile.video || (
-                      <small style={{ color: "red" }}>{errorsFile.video}</small>
-                    )}
-                  </div>
+                <label>Tải Phim</label>
+                <div className="validate">
+                  <input
+                    type="file"
+                    name="video"
+                    onChange={handleFileUpload}
+                    required
+                    style={{ color: 'white', marginLeft: '8px' }}
+                  />
+                  {errorsFile.video || (
+                    <small style={{ color: 'red' }}>{errorsFile.video}</small>
+                  )}
                 </div>
               </div>
-              <div className="prev-item">
-                {showFileVideo === true ? (
-                  <video
-                    className="video-item"
-                    src={data.prevVideoUrl}
-                    controls
-                  ></video>
-                ) : null}
-              </div>
+              {isEdit === false ? (
+                showFileVideo === true ? (
+                  <video src={data.prevVideoUrl} controls></video>
+                ) : null
+              ) : (
+                <video
+              
+                src={data.prevVideoUrl || movie.videoUrl}
+                  controls
+                ></video>
+              )}
             </div>
           </div>
         )}
@@ -511,63 +525,74 @@ export const AddMovie = () => {
         </div>
         <div className="selected-input-form">
           <label>Nhập Quốc Gia</label>
-          <select
-            className="selected-item"
-            name="country"
-            value={data.country}
-            onChange={handleChange}
-            required
-          >
-            <option value="" disabled>
-              Chọn Quốc Gia
-            </option>
-            ,
-            {countries.map((value) => (
-              <option key={value} value={value}>
-                {value}
+          <div className="validate">
+            <select
+              className="selected-item"
+              name="country"
+              value={data.country}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>
+                Chọn Quốc Gia
               </option>
-            ))}
-          </select>
+              {countries.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+            {errors.country || (
+              <small className="error">{errors.country}</small>
+            )}
+          </div>
         </div>
-        <div class="selected-input-form">
+        <div className="selected-input-form">
           <label>Chọn Phân Loại Phim</label>
-          <select
-            className="selected-item"
-            name="idCategory"
-            value={data.idCategory}
-            onChange={(e) => {
-              handleChange(e, (formData) => {
-                handleShowEpisode(e, formData);
-              });
-            }}
-            required
-          >
-            <option value="" disabled>
-              Chọn Phân Loại Phim
-            </option>
-            {categories.map((value) => (
-              <option key={value.id} value={value.id}>
-                {value.name}
+          <div className="validate">
+            <select
+              className="selected-item"
+              name="idCategory"
+              value={data.idCategory}
+              onChange={(e) => {
+                handleChange(e, (formData) => {
+                  handleShowEpisode(e, formData);
+                });
+              }}
+              required
+            >
+              <option value="" disabled>
+                Chọn Phân Loại Phim
               </option>
-            ))}
-          </select>
-          {errors.idCategory || (
-            <small className="error">{errors.idCategory}</small>
-          )}
+              {categories.map((value) => (
+                <option key={value.id} value={value.id}>
+                  {value.name}
+                </option>
+              ))}
+            </select>
+            {errors.idCategory || (
+              <small className="error">{errors.idCategory}</small>
+            )}
+          </div>
         </div>
         <div className="selected-input-form">
           <label>Nhập Thể Loại</label>
-          <MultiSelect
-            options={suggestions.map((item) => ({
-              label: item.name,
-              value: item,
-            }))}
-            value={selectedCategory}
-            onChange={handleGenreChange}
-            labelledBy="Select"
-            className="light custom-multi-select"
-            defaultIsOpen={false}
-          />
+          <div className="validate">
+            <MultiSelect
+              options={suggestions.map((item) => ({
+                label: item.name,
+                value: item,
+              }))}
+              value={selectedCategory}
+              onChange={handleGenreChange}
+              labelledBy="Select"
+              className="light custom-multi-select"
+              defaultIsOpen={false}
+            />
+            {errors.idGenre || (
+              <small className="error">{errors.idGenre}</small>
+            )}
+          </div>
         </div>
       </div>
 
@@ -588,9 +613,8 @@ export const AddMovie = () => {
           <button onClick={handleAddEpisode}>Thêm Tập Phim</button>
         </div>
       )}
-
       <button onClick={handleSubmit}>
-        {isEdit === false ? "Thêm" : "Sửa Thông Tin Phim "}
+        {isEdit === false ? 'Thêm' : 'Sửa Thông Tin Phim '}
       </button>
     </div>
   );

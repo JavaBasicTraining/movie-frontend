@@ -5,14 +5,14 @@ export const axiosInstance = axios.create({
 });
 
 const publicAPI = [
-  "/api/v1/movies",
-  "/api/v1/account/login",
-  "/api/v1/account/register",
-  "/api/v1/categories/list",
-  "/api/v1/genre",
-  "/api/v1/evaluations/numberOfReviews",
-  "/api/v1/evaluations/average/",
-  "/api/v1/episode/getEpisodeByMovieId"
+  '/api/v1/movies',
+  '/api/v1/account/login',
+  '/api/v1/account/register',
+  '/api/v1/categories/list',
+  '/api/v1/genre',
+  '/api/v1/evaluations/numberOfReviews',
+  '/api/v1/evaluations/average/',
+  '/api/v1/episode/getEpisodeByMovieId',
 ];
 
 axiosInstance.interceptors.request.use(

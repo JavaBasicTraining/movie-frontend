@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { HiOutlineFilm } from "react-icons/hi";
-import { SearchOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { HiOutlineFilm } from 'react-icons/hi';
+import { SearchOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 export const HomePage = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
 
   const handleChange = (e) => {
     setName(e.target.value);
   };
 
   const isLoggedIn = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     return token !== null;
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.setItem("tokenCleared", "true"); 
+    localStorage.removeItem('token');
+    localStorage.setItem('tokenCleared', 'true');
   };
 
   useEffect(() => {
-    const tokenCleared = localStorage.getItem("tokenCleared");
+    const tokenCleared = localStorage.getItem('tokenCleared');
     if (!tokenCleared) {
       handleLogout();
     }
@@ -30,13 +30,12 @@ export const HomePage = () => {
 
   const filterMovie = async (event, params) => {
     try {
-      if (event && event.key === "Enter") {
+      if (event && event.key === 'Enter') {
         event.preventDefault();
       }
-      if (params === "") {
-     
-      navigate('/')
-      } else      if (event.target) {
+      if (params === '') {
+        navigate('/');
+      } else if (event.target) {
         navigate(`/filter/${params}`);
       }
     } catch (error) {
@@ -65,7 +64,7 @@ export const HomePage = () => {
               value={name}
               onChange={handleChange}
               onKeyDown={(event) => {
-                if (event.key === "Enter") {
+                if (event.key === 'Enter') {
                   filterMovie(event, name);
                 }
               }}

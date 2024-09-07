@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { axiosInstance } from "../API/axiosConfig";
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../API/axiosConfig';
 
 const useFetchUser = (token) => {
   const [user, setUser] = useState(null);
@@ -8,7 +8,7 @@ const useFetchUser = (token) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  console.log("user: ", user);
+  console.log('user: ', user);
 
   useEffect(() => {
     if (token) {
@@ -16,11 +16,12 @@ const useFetchUser = (token) => {
     }
   }, [token, location.pathname]);
 
-  const fetchUser = async (onSuccess) => { /// async \\oke a
+  const fetchUser = async (onSuccess) => {
+    /// async \\oke a
     try {
-      const response = await axiosInstance.get("/api/account/info");
-      // sau khi response xong nó chạy hàm này onSuccess = 
-      onSuccess?.(response.data) // truyền nguyên hàm vô, thì lúc này onSuccess nó là hàm ở dưới
+      const response = await axiosInstance.get('/api/account/info');
+      // sau khi response xong nó chạy hàm này onSuccess =
+      onSuccess?.(response.data); // truyền nguyên hàm vô, thì lúc này onSuccess nó là hàm ở dưới
       // (userFetched) => {
       //   // viết vầy nó đồng code, đợi response xong nó chạy tiếp
       //   if (userFetched && userFetched.authorities.includes("admin")) {
@@ -33,11 +34,11 @@ const useFetchUser = (token) => {
       setUser(response.data);
       setIsUser(true);
     } catch (error) {
-      if (error?.response?.status === 401 && location.pathname !== "/login") {
+      if (error?.response?.status === 401 && location.pathname !== '/login') {
         setIsUser(false);
-        alert("Phiên bản hết hạn, vui lòng đăng nhập lại");
-        localStorage.removeItem("token");
-        navigate("/login");
+        alert('Phiên bản hết hạn, vui lòng đăng nhập lại');
+        localStorage.removeItem('token');
+        navigate('/login');
       }
     }
   };

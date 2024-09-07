@@ -1,12 +1,11 @@
-import axios from "axios";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import useAuth from "../../hook/useAuth";
-import { useEffect, useState } from "react";
-import useFetchUser from "../../hook/useFetchUser";
+import axios from 'axios';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import useAuth from '../../hook/useAuth';
+import { useEffect, useState } from 'react';
+import useFetchUser from '../../hook/useFetchUser';
 
 async function login(username, password) {
-
-const loginUrl = "http://localhost:8081/api/account/login";
+  const loginUrl = 'http://localhost:8081/api/account/login';
   try {
     const response = await axios.post(loginUrl, {
       username: username,
@@ -15,20 +14,20 @@ const loginUrl = "http://localhost:8081/api/account/login";
 
     if (response.status === 200) {
       const token = response.data.id_token;
-      localStorage.setItem("token", token);
+      localStorage.setItem('token', token);
       return token;
     } else {
-      console.error("Đăng nhập không thành công:", response.status);
+      console.error('Đăng nhập không thành công:', response.status);
 
       return null;
     }
   } catch (error) {
     if (error.response) {
-      console.error("Lỗi đăng nhập:", error.response.data);
+      console.error('Lỗi đăng nhập:', error.response.data);
     } else if (error.request) {
-      console.error("Không nhận được phản hồi từ server:", error.request);
+      console.error('Không nhận được phản hồi từ server:', error.request);
     } else {
-      console.error("Lỗi khác:", error.message);
+      console.error('Lỗi khác:', error.message);
     }
     return null;
   }
@@ -42,15 +41,15 @@ export default function Login() {
 
   useEffect(() => {
     if (isAuth && isUser) {
-      navigate("/");
+      navigate('/');
     } else if (!isUser) {
-      navigate("/login");
+      navigate('/login');
     }
   }, [isAuth]);
 
   async function handleLogin() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
     const token = await login(username, password);
     if (token) {
       setToken(token);
@@ -60,32 +59,32 @@ export default function Login() {
         // mục đích để nó chạy sau hàm response bên trong ham fetchUser, nó sẽ giống như vầy
         (userFetched) => {
           // viết vầy nó đồng code, đợi response xong nó chạy tiếp
-          if (userFetched && userFetched.authorities.includes("admin")) {
-            alert("Đăng Nhập Tài Khoản Admin Thành Công!!!");
-            navigate("/admin/movie");
+          if (userFetched && userFetched.authorities.includes('admin')) {
+            alert('Đăng Nhập Tài Khoản Admin Thành Công!!!');
+            navigate('/admin/movie');
           } else {
-            navigate("/");
+            navigate('/');
           }
         }
       ); // này bất đồng bộ mà, nó sẽ chạy xong nó chạy dòng dưới luôn, k có đợi response
       // nên lúc này usser nó null, sao biết nó bất đồng bộ a
-    } else if (username === "" || password === "") {
-      alert("Vui lòng nhập đầy đủ user password");
+    } else if (username === '' || password === '') {
+      alert('Vui lòng nhập đầy đủ user password');
     } else {
       alert(
-        "Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập và mật khẩu."
+        'Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập và mật khẩu.'
       );
     }
   }
 
   const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleLogin();
     }
   };
   const getUser = async (token) => {
     try {
-      const res = await axios.get("http://localhost:8081/api/account/info", {
+      const res = await axios.get('http://localhost:8081/api/account/info', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
