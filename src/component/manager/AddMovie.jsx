@@ -410,51 +410,52 @@ export const AddMovie = () => {
           </div>
         </div>
         <div className="selected-input-form">
-          <dAiv className="file-item-container">
+          <div className="file-item-container">
             <div className="file-item">
-              <label>Tải Poster</label>
-              <div className="validate">
-                <input
-                  type="file"
-                  name="poster"
-                  onChange={handleFileUpload}
-                  required
-                  style={{ color: 'white' }}
-                />
-                {errorsFile.poster || (
-                  <small style={{ color: 'red' }}>{errorsFile.poster}</small>
-                )}
+              <div className="file-system">
+                <label>Tải Poster</label>
+                <div className="validate">
+                  <input
+                    type="file"
+                    name="poster"
+                    onChange={handleFileUpload}
+                    required
+                  />
+                  {errorsFile.poster || (
+                    <small style={{ color: 'red' }}>{errorsFile.poster}</small>
+                  )}
+                </div>
               </div>
             </div>
             {isEdit === false ? (
               showFilePoster === true ? (
-                <img className="poster-item" src={data.prevPosterUrl} alt="" />
+                <img src={data.prevPosterUrl} alt="" />
               ) : null
             ) : (
-              <img
-                className="poster-item"
-                src={data.prevPosterUrl || movie.posterUrl}
-                alt=""
-              />
+              <img src={data.prevPosterUrl || movie.posterUrl} alt="" />
             )}
-          </dAiv>
+          </div>
         </div>
         {showEpisode || (
           <div className="selected-input-form">
             <div className="file-item-container">
               <div className="file-item">
-                <label>Tải Phim</label>
-                <div className="validate">
+                <div className="file-system">
+                  <label>Tải Phim</label>
+                  <div className="validate">
+                  <div className='validate-video'>
                   <input
-                    type="file"
-                    name="video"
-                    onChange={handleFileUpload}
-                    required
-                    style={{ color: 'white', marginLeft: '8px' }}
-                  />
-                  {errorsFile.video || (
-                    <small style={{ color: 'red' }}>{errorsFile.video}</small>
-                  )}
+                      type="file"
+                      name="video"
+                      onChange={handleFileUpload}
+                      required
+                     
+                    />
+                    {errorsFile.video || (
+                      <small>{errorsFile.video}</small>
+                    )}
+                  </div>
+                  </div>
                 </div>
               </div>
               {isEdit === false ? (
@@ -463,8 +464,7 @@ export const AddMovie = () => {
                 ) : null
               ) : (
                 <video
-              
-                src={data.prevVideoUrl || movie.videoUrl}
+                  src={data.prevVideoUrl || movie.videoUrl}
                   controls
                 ></video>
               )}

@@ -24,7 +24,7 @@
 
       label {
         color: white;
-        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
       }
 
       .validate {
@@ -35,6 +35,10 @@
         display: flex;
         flex-direction: column;
         white-space: normal;
+     .validate-video
+     {
+      margin-left: 8px;
+     }
       }
 
       .dropdown-container {
@@ -47,7 +51,6 @@
           color: black;
         }
         .dropdown-heading .dropdown-heading-value {
-        
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
             'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
             'Helvetica Neue', sans-serif;
@@ -70,8 +73,21 @@
         justify-content: center;
         align-items: center;
         gap: 15px;
-        video{
+
+        .file-item {
+          display: flex;
+          justify-content: space-between;
+          gap: 28%;
           width: 100%;
+          white-space: nowrap;
+        }
+        .file-system {
+          display: flex;
+          gap: 67%;
+        }
+        video {
+          width: 100%;
+          height: auto;
         }
         .poster-item {
           width: 50%;
@@ -79,22 +95,8 @@
           max-height: 300px;
           align-items: center;
         }
-        .file-item {
-          display: flex;
-          gap: 40.5%;
-          width: 100%;
-          white-space: nowrap;
-        
-
-
-          .file-system {
-            display: flex;
-            width: 100%;
-            justify-content: space-between;
-            gap: 39%;
-          }
-        }
-
+        flex-direction: column;
+        width: 100%;
         input {
           width: 175px;
           white-space: nowrap;
@@ -114,21 +116,5 @@
   button {
     width: auto;
     height: 30px;
-  }
-}
-
-.file-item-container {
-  flex-basis: 50%;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-
-  .file-item {
-    display: flex;
-    justify-content: space-between;
-    gap: 28%;
-    width: 100%;
-    white-space: nowrap;
-
   }
 }
