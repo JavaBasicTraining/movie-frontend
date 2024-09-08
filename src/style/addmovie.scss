@@ -81,6 +81,9 @@
           width: 100%;
           white-space: nowrap;
         }
+        img{
+          max-width: 400px;
+        }
         .file-system {
           display: flex;
           gap: 67%;
@@ -88,12 +91,15 @@
         video {
           width: 100%;
           height: auto;
+          max-width: 400px;
+
         }
         .poster-item {
           width: 50%;
           height: auto;
           max-height: 300px;
           align-items: center;
+          max-width: 400px;
         }
         flex-direction: column;
         width: 100%;

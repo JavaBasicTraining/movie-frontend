@@ -139,7 +139,7 @@ export const AddMovie = () => {
   const handleFileUpload = (e) => {
     const { name, files } = e.target;
     const file = files[0];
-
+  
     if (!file) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
@@ -148,14 +148,14 @@ export const AddMovie = () => {
       setData((prev) => ({ ...prev, [name]: '' }));
       return;
     }
-
+  
     let isValid = false;
     if (name === 'poster') {
       isValid = validateFile(file, 'poster');
     } else if (name === 'video') {
       isValid = validateFile(file, 'video');
     }
-
+  
     if (!isValid) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
@@ -168,8 +168,15 @@ export const AddMovie = () => {
       name === 'poster' ? setShowFilePoster(false) : setShowFileVideo(false);
       return;
     }
+  
+    // Xóa thông báo lỗi nếu file hợp lệ
+    setErrorsFile((prevErrors) => ({
+      ...prevErrors,
+      [name]: '', // Xóa lỗi tương ứng
+    }));
+  
     const previewUrl = URL.createObjectURL(file);
-
+  
     if (name === 'video') {
       setShowFileVideo(true);
       setData((prev) => ({
@@ -185,7 +192,7 @@ export const AddMovie = () => {
       setData((prev) => ({ ...prev, video: file, prevVideoUrl: previewUrl }));
     }
   };
-
+  
   const isSeries = () => data?.idCategory?.toString() === '1';
 
   const validateField = (name, value) => {
