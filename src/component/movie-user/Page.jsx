@@ -47,6 +47,9 @@ export const Page = () => {
             <Link to={`/${item.nameMovie}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
+                <div className='icon-play'>
+                <PlayCircleOutlined />
+                </div>
               </div>
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
@@ -61,14 +64,14 @@ export const Page = () => {
             <Link to={`/${item.nameMovie}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
-             
+                <div className='icon-play'>
+                <PlayCircleOutlined />
+                </div>
               </div>
          
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
-              <div className='icon-play'>
-                <PlayCircleOutlined />
-                </div>
+             
             </Link>
           ))}
         </div>
@@ -81,6 +84,9 @@ export const Page = () => {
             <Link to={`/${item.nameMovie}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
+                <div className='icon-play'>
+                <PlayCircleOutlined />
+                </div>
               </div>
 
               <span>{item.nameMovie}</span>
