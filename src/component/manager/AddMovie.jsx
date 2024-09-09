@@ -5,6 +5,8 @@ import qs from 'qs';
 import { countries } from '../../static-data/countries';
 import { DEFAULT_EPISODE, Episode } from './Episode';
 import { MultiSelect } from 'react-multi-select-component';
+import CustomIcon, { iconRegistry } from '../CustomIcon';
+import FileUploadInput from '../FileUploadInput';
 
 export async function MovieDetailLoader({ params }) {
   if (params.id) {
@@ -417,33 +419,46 @@ export const AddMovie = () => {
           </div>
         </div>
         <div className="selected-input-form">
-          <div className="file-item-container">
-            <div className="file-item">
-              <div className="file-system">
-                <label>Tải Poster</label>
-                <div className="validate">
-                  <input
-                    type="file"
-                    name="poster"
-                    onChange={handleFileUpload}
-                    required
-                  />
-                  {errorsFile.poster || (
-                    <small style={{ color: 'red' }}>{errorsFile.poster}</small>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className='img-container'>
-              {isEdit === false ? (
-                showFilePoster === true ? (
-                  <img src={data.prevPosterUrl} alt="" />
-                ) : null
-              ) : (
-                <img src={data.prevPosterUrl || movie.posterUrl} alt="" />
-              )}
-            </div>
-          </div>
+          {/*<div className="file-item-container">*/}
+          {/*  <div className="file-item">*/}
+          {/*    <div className="file-system">*/}
+          {/*      <label className="poster-label" htmlFor="poster">*/}
+          {/*        <CustomIcon icon={iconRegistry.upload} color="white" />*/}
+          {/*        Tải Poster*/}
+          {/*      </label>*/}
+          {/*      <div className="validate">*/}
+          {/*        <input*/}
+          {/*          id="poster"*/}
+          {/*          type="file"*/}
+          {/*          name="poster"*/}
+          {/*          onChange={handleFileUpload}*/}
+          {/*          required*/}
+          {/*          style={{ display: 'none' }}*/}
+          {/*          accept="image/*"*/}
+          {/*        />*/}
+          {/*        {errorsFile.poster || (*/}
+          {/*          <small style={{ color: 'red' }}>{errorsFile.poster}</small>*/}
+          {/*        )}*/}
+          {/*      </div>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*  <div className="img-container">*/}
+          {/*    {isEdit === false ? (*/}
+          {/*      showFilePoster === true ? (*/}
+          {/*        <img src={data.prevPosterUrl} alt="" />*/}
+          {/*      ) : null*/}
+          {/*    ) : (*/}
+          {/*      <img src={data.prevPosterUrl || movie.posterUrl} alt="" />*/}
+          {/*    )}*/}
+          {/*  </div>*/}
+          {/*</div>*/}
+
+          <FileUploadInput
+            id="poster"
+            name="poster"
+            onChange={handleFileUpload}
+            required
+          />
         </div>
         {showEpisode || (
           <div className="selected-input-form">
