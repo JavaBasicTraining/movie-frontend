@@ -35,10 +35,9 @@
         display: flex;
         flex-direction: column;
         white-space: normal;
-     .validate-video
-     {
-      margin-left: 8px;
-     }
+        .validate-video {
+          margin-left: 8px;
+        }
       }
 
       .dropdown-container {
@@ -72,7 +71,6 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 15px;
 
         .file-item {
           display: flex;
@@ -81,8 +79,14 @@
           width: 100%;
           white-space: nowrap;
         }
-        img{
-          max-width: 400px;
+        .img-container {
+          width: 100%; 
+          height: calc(100% * 4 / 3);
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
         }
         .file-system {
           display: flex;
@@ -92,7 +96,6 @@
           width: 100%;
           height: auto;
           max-width: 400px;
-
         }
         .poster-item {
           width: 50%;

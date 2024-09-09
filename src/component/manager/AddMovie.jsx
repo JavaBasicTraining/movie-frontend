@@ -139,7 +139,7 @@ export const AddMovie = () => {
   const handleFileUpload = (e) => {
     const { name, files } = e.target;
     const file = files[0];
-  
+
     if (!file) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
@@ -148,14 +148,14 @@ export const AddMovie = () => {
       setData((prev) => ({ ...prev, [name]: '' }));
       return;
     }
-  
+
     let isValid = false;
     if (name === 'poster') {
       isValid = validateFile(file, 'poster');
     } else if (name === 'video') {
       isValid = validateFile(file, 'video');
     }
-  
+
     if (!isValid) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
@@ -168,15 +168,15 @@ export const AddMovie = () => {
       name === 'poster' ? setShowFilePoster(false) : setShowFileVideo(false);
       return;
     }
-  
+
     // Xóa thông báo lỗi nếu file hợp lệ
     setErrorsFile((prevErrors) => ({
       ...prevErrors,
       [name]: '', // Xóa lỗi tương ứng
     }));
-  
+
     const previewUrl = URL.createObjectURL(file);
-  
+
     if (name === 'video') {
       setShowFileVideo(true);
       setData((prev) => ({
@@ -192,7 +192,7 @@ export const AddMovie = () => {
       setData((prev) => ({ ...prev, video: file, prevVideoUrl: previewUrl }));
     }
   };
-  
+
   const isSeries = () => data?.idCategory?.toString() === '1';
 
   const validateField = (name, value) => {
@@ -434,13 +434,15 @@ export const AddMovie = () => {
                 </div>
               </div>
             </div>
-            {isEdit === false ? (
-              showFilePoster === true ? (
-                <img src={data.prevPosterUrl} alt="" />
-              ) : null
-            ) : (
-              <img src={data.prevPosterUrl || movie.posterUrl} alt="" />
-            )}
+            <div className='img-container'>
+              {isEdit === false ? (
+                showFilePoster === true ? (
+                  <img src={data.prevPosterUrl} alt="" />
+                ) : null
+              ) : (
+                <img src={data.prevPosterUrl || movie.posterUrl} alt="" />
+              )}
+            </div>
           </div>
         </div>
         {showEpisode || (
@@ -450,18 +452,15 @@ export const AddMovie = () => {
                 <div className="file-system">
                   <label>Tải Phim</label>
                   <div className="validate">
-                  <div className='validate-video'>
-                  <input
-                      type="file"
-                      name="video"
-                      onChange={handleFileUpload}
-                      required
-                     
-                    />
-                    {errorsFile.video || (
-                      <small>{errorsFile.video}</small>
-                    )}
-                  </div>
+                    <div className="validate-video">
+                      <input
+                        type="file"
+                        name="video"
+                        onChange={handleFileUpload}
+                        required
+                      />
+                      {errorsFile.video || <small>{errorsFile.video}</small>}
+                    </div>
                   </div>
                 </div>
               </div>

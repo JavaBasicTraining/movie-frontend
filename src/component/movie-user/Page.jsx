@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../../API/axiosConfig';
 import { Link } from 'react-router-dom';
+import { PlayCircleOutlined } from '@ant-design/icons';
 
 export const Page = () => {
   const [movies, setMovies] = useState([]);
@@ -25,7 +26,13 @@ export const Page = () => {
         <div class="article-item">
           {movies.map((item) => (
             <Link to={`/${item.nameMovie}`} className="list-item-page">
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+              <div className="img-item">
+                <img key={item.id} src={item.posterUrl} alt={item.title} />
+                <div className='icon-play'>
+                <PlayCircleOutlined />
+                </div>
+              </div>
+
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
             </Link>
@@ -38,7 +45,9 @@ export const Page = () => {
         <div class="article-item">
           {movies.map((item) => (
             <Link to={`/${item.nameMovie}`} className="list-item-page">
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+              <div className="img-item">
+                <img key={item.id} src={item.posterUrl} alt={item.title} />
+              </div>
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
             </Link>
@@ -50,9 +59,16 @@ export const Page = () => {
         <div class="article-item">
           {movies.map((item) => (
             <Link to={`/${item.nameMovie}`} className="list-item-page">
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+              <div className="img-item">
+                <img key={item.id} src={item.posterUrl} alt={item.title} />
+             
+              </div>
+         
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
+              <div className='icon-play'>
+                <PlayCircleOutlined />
+                </div>
             </Link>
           ))}
         </div>
@@ -63,7 +79,10 @@ export const Page = () => {
         <div class="article-item">
           {movies.map((item) => (
             <Link to={`/${item.nameMovie}`} className="list-item-page">
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+              <div className="img-item">
+                <img key={item.id} src={item.posterUrl} alt={item.title} />
+              </div>
+
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
             </Link>

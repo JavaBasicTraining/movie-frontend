@@ -17,14 +17,22 @@
 
       .poster {
         width: 100%;
-        height: 300px;
         display: flex;
         flex-direction: column;
-
-        img {
-          object-fit: cover;
-          width: 100%;
-          height: 100%;
+        .img-item-filter {
+          overflow: hidden;
+          img {
+            width: 100%;
+            height: 300px;
+            max-width: 200px;
+            object-fit: cover;
+            transition: 0.3s;
+          }
+          img:hover {
+            overflow: hidden;
+            transform: scale(1.2);
+            filter: brightness(0.6);
+          }
         }
       }
 
