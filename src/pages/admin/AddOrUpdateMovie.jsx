@@ -4,8 +4,9 @@ import { axiosInstance } from '../../API/axiosConfig';
 import qs from 'qs';
 import { countries } from '../../static-data/countries';
 import { DEFAULT_EPISODE, Episode } from '../../component/Episode';
-import { MultiSelect } from 'react-multi-select-component';
 import FileUploadInput from '../../component/FileUploadInput/FileUploadInput';
+import TextField from '../../component/TextField';
+import SelectField from '../../component/SelectField';
 
 export async function MovieDetailLoader({ params }) {
   if (params.id) {
@@ -403,56 +404,108 @@ export const AddOrUpdateMovie = () => {
     <div className="container-addmovie">
       {isEdit === false ? <h1>Thêm Phim Mới</h1> : <h1>Sửa Thông Tin Phim</h1>}
       <div className="form-addmovie">
-        <div className="selected-input-form">
-          <label>Nhập Tên Phim</label>
-          <div className="validate">
-            <input
-              type="text"
-              name="nameMovie"
-              value={data.nameMovie}
-              onChange={handleChange}
-              required
-            />
-            {errors.nameMovie || (
-              <small className="error">{errors.nameMovie}</small>
-            )}
-          </div>
-        </div>
-        <div className="selected-input-form">
-          {/*<div className="file-item-container">*/}
-          {/*  <div className="file-item">*/}
-          {/*    <div className="file-system">*/}
-          {/*      <label className="poster-label" htmlFor="poster">*/}
-          {/*        <CustomIcon icon={iconRegistry.upload} color="white" />*/}
-          {/*        Tải Poster*/}
-          {/*      </label>*/}
-          {/*      <div className="validate">*/}
-          {/*        <input*/}
-          {/*          id="poster"*/}
-          {/*          type="file"*/}
-          {/*          name="poster"*/}
-          {/*          onChange={handleFileUpload}*/}
-          {/*          required*/}
-          {/*          style={{ display: 'none' }}*/}
-          {/*          accept="image/*"*/}
-          {/*        />*/}
-          {/*        {errorsFile.poster || (*/}
-          {/*          <small style={{ color: 'red' }}>{errorsFile.poster}</small>*/}
-          {/*        )}*/}
-          {/*      </div>*/}
-          {/*    </div>*/}
-          {/*  </div>*/}
-          {/*  <div className="img-container">*/}
-          {/*    {isEdit === false ? (*/}
-          {/*      showFilePoster === true ? (*/}
-          {/*        <img src={data.prevPosterUrl} alt="" />*/}
-          {/*      ) : null*/}
-          {/*    ) : (*/}
-          {/*      <img src={data.prevPosterUrl || movie.posterUrl} alt="" />*/}
-          {/*    )}*/}
-          {/*  </div>*/}
-          {/*</div>*/}
+        <TextField
+          label="Nhập Tên Phim"
+          fullWidth={true}
+          helperText={errors.nameMovie}
+          type="text"
+          name="nameMovie"
+          value={data.nameMovie}
+          onChange={handleChange}
+          required
+        />
 
+        <TextField
+          label="Nhập Tên Phim Tiếng Việt"
+          fullWidth={true}
+          helperText={errors.viTitle}
+          type="text"
+          name="viTitle"
+          value={data.viTitle}
+          onChange={handleChange}
+          required
+        />
+
+        <TextField
+          label="Nhập Tên Phim Tiếng Anh"
+          fullWidth={true}
+          helperText={errors.enTitle}
+          type="text"
+          name="enTitle"
+          value={data.enTitle}
+          onChange={handleChange}
+          required
+        />
+
+        <TextField
+          label="Nhập Mô Tả Phim"
+          fullWidth={true}
+          helperText={errors.description}
+          type="text"
+          name="description"
+          value={data.description}
+          onChange={handleChange}
+          required
+        />
+
+        <TextField
+          label="Năm Phát Hành"
+          fullWidth={true}
+          helperText={errors.year}
+          type="text"
+          name="year"
+          value={data.year}
+          onChange={handleChange}
+          required
+        />
+
+        <SelectField
+          label="Nhập Quốc Gia"
+          fullWidth={true}
+          helperText={errors.country}
+          name="country"
+          value={data.country}
+          onChange={handleChange}
+          items={countries.map((country) => ({
+            value: country,
+            label: country,
+          }))}
+          required
+        />
+
+        <SelectField
+          label="Chọn Phân Loại Phim"
+          fullWidth={true}
+          helperText={errors.idCategory}
+          name="idCategory"
+          value={data.idCategory}
+          onChange={(e) => {
+            handleChange(e, (formData) => {
+              handleShowEpisode(e, formData);
+            });
+          }}
+          required
+          items={categories.map((category) => ({
+            value: category.id,
+            label: category.name,
+          }))}
+        />
+
+        <SelectField
+          label="Nhập Thể Loại"
+          fullWidth={true}
+          helperText={errors.idGenre}
+          value={selectedCategory}
+          onChange={handleGenreChange}
+          labelledBy="Select"
+          items={suggestions.map((item) => ({
+            label: item.name,
+            value: item,
+          }))}
+          multiple={true}
+        />
+
+        <div className="selected-input-form">
           <FileUploadInput
             id="poster"
             name="poster"
@@ -466,167 +519,23 @@ export const AddOrUpdateMovie = () => {
             required
           />
         </div>
+
         {showEpisode || (
           <div className="selected-input-form">
-            <div className="file-item-container">
-              <div className="file-item">
-                <div className="file-system">
-                  <label>Tải Phim</label>
-                  <div className="validate">
-                    <div className="validate-video">
-                      <input
-                        type="file"
-                        name="video"
-                        onChange={handleFileUpload}
-                        required
-                      />
-                      {errorsFile.video || <small>{errorsFile.video}</small>}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {isEdit === false ? (
-                showFileVideo === true ? (
-                  <video src={data.prevVideoUrl} controls></video>
-                ) : null
-              ) : (
-                <video
-                  src={data.prevVideoUrl || movie.videoUrl}
-                  controls
-                ></video>
-              )}
-            </div>
+            <FileUploadInput
+              id="video"
+              name="video"
+              label="Tải Video"
+              onChange={handleFileUpload}
+              source={{
+                value: data.prevVideoUrl || movie.videoUrl,
+                type: 'video',
+              }}
+              helperText={errorsFile.video}
+              required
+            />
           </div>
         )}
-        <div className="selected-input-form">
-          <label>Nhập Tên Phim Tiếng Việt</label>
-          <div className="validate">
-            <input
-              type="text"
-              name="viTitle"
-              value={data.viTitle}
-              onChange={handleChange}
-              required
-            />
-            {errors.viTitle || (
-              <small className="error">{errors.viTitle}</small>
-            )}
-          </div>
-        </div>
-        <div className="selected-input-form">
-          <label>Nhập Tên Phim Tiếng Anh</label>
-          <div className="validate">
-            <input
-              type="text"
-              name="enTitle"
-              value={data.enTitle}
-              onChange={handleChange}
-              required
-            />
-            {errors.enTitle || (
-              <small className="error">{errors.enTitle}</small>
-            )}
-          </div>
-        </div>
-        <div className="selected-input-form">
-          <label>Nhập Mô Tả Phim</label>
-          <div className="validate">
-            <input
-              type="text"
-              name="description"
-              value={data.description}
-              onChange={handleChange}
-              required
-            />
-            {errors.description || (
-              <small className="error">{errors.description}</small>
-            )}
-          </div>
-        </div>
-        <div className="selected-input-form">
-          <label>Năm Phát Hành:</label>
-          <div className="validate">
-            <input
-              type="text"
-              name="year"
-              value={data.year}
-              onChange={handleChange}
-              required
-            />
-            {errors.year || <small className="error">{errors.year}</small>}
-          </div>
-        </div>
-        <div className="selected-input-form">
-          <label>Nhập Quốc Gia</label>
-          <div className="validate">
-            <select
-              className="selected-item"
-              name="country"
-              value={data.country}
-              onChange={handleChange}
-              required
-            >
-              <option value="" disabled>
-                Chọn Quốc Gia
-              </option>
-              {countries.map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-            {errors.country || (
-              <small className="error">{errors.country}</small>
-            )}
-          </div>
-        </div>
-        <div className="selected-input-form">
-          <label>Chọn Phân Loại Phim</label>
-          <div className="validate">
-            <select
-              className="selected-item"
-              name="idCategory"
-              value={data.idCategory}
-              onChange={(e) => {
-                handleChange(e, (formData) => {
-                  handleShowEpisode(e, formData);
-                });
-              }}
-              required
-            >
-              <option value="" disabled>
-                Chọn Phân Loại Phim
-              </option>
-              {categories.map((value) => (
-                <option key={value.id} value={value.id}>
-                  {value.name}
-                </option>
-              ))}
-            </select>
-            {errors.idCategory || (
-              <small className="error">{errors.idCategory}</small>
-            )}
-          </div>
-        </div>
-        <div className="selected-input-form">
-          <label>Nhập Thể Loại</label>
-          <div className="validate">
-            <MultiSelect
-              options={suggestions.map((item) => ({
-                label: item.name,
-                value: item,
-              }))}
-              value={selectedCategory}
-              onChange={handleGenreChange}
-              labelledBy="Select"
-              className="light custom-multi-select"
-              defaultIsOpen={false}
-            />
-            {errors.idGenre || (
-              <small className="error">{errors.idGenre}</small>
-            )}
-          </div>
-        </div>
       </div>
 
       {showEpisode && (
@@ -646,6 +555,7 @@ export const AddOrUpdateMovie = () => {
           <button onClick={handleAddEpisode}>Thêm Tập Phim</button>
         </div>
       )}
+
       <button onClick={handleSubmit}>
         {isEdit === false ? 'Thêm' : 'Sửa Thông Tin Phim '}
       </button>

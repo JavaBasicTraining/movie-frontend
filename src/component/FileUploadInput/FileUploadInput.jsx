@@ -23,7 +23,7 @@ function FileUploadInput(props) {
 
   return (
     <div className="FileUploadInput">
-      <label className="FileUploadInput__label" htmlFor="poster">
+      <label className="FileUploadInput__label" htmlFor={props.name}>
         <CustomIcon icon={iconRegistry.upload} color="white" />
         {label}
       </label>
@@ -44,7 +44,7 @@ function FileUploadInput(props) {
           {preview.type.includes('image') && <ImagePreview preview={preview} />}
 
           {preview.type.includes('video') && (
-            <video className="image-view__img" src={preview.value} controls />
+            <video className="video-preview" src={preview.value} controls />
           )}
         </div>
       )}

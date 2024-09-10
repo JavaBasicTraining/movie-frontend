@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import './App.scss';
-import { HomePage } from './component/Home';
+import { HomePage } from './pages/Home';
 import { NavbarUser } from './component/NavbarUser';
 
 function App() {
