@@ -5,7 +5,7 @@ import { NavbarUser } from './component/NavbarUser';
 
 function App() {
   return (
-    <div className="Page">
+    <div className="App">
       <HomePage />
       <NavbarUser />
       <Outlet />

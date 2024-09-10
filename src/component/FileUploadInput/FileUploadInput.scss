@@ -1,0 +1,33 @@
+.FileUploadInput {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+
+  &__label {
+    border: 1px dashed gray;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+
+    &:hover {
+      background: rgba(128, 128, 128, 0.5);
+    }
+  }
+
+  &__input {
+    display: none;
+  }
+
+  &__helper-text {
+    color: var(--error);
+  }
+
+  &__preview {
+
+  }
+}
