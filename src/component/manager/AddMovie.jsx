@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../../API/axiosConfig';
 import qs from 'qs';
@@ -44,6 +44,23 @@ export const AddMovie = () => {
   });
 
   const navigate = useNavigate();
+  const posterRef = useRef();
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      updatePosterHeight();
+    });
+
+    return () => {
+      window.removeEventListener('resize', () => {
+        updatePosterHeight();
+      });
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    updatePosterHeight();
+  }, [data.poster]);
 
   useEffect(() => {
     setIsEdit(!!movie);
@@ -62,6 +79,13 @@ export const AddMovie = () => {
       setShowFileVideo(false);
     }
   }, [isEdit]);
+
+  const updatePosterHeight = () => {
+    if (posterRef?.current) {
+      const height = (posterRef.current.clientWidth * 4) / 3;
+      posterRef.current.style.height = height !== 0 ? `${height}px` : 'auto';
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -122,11 +146,12 @@ export const AddMovie = () => {
       'video/mp4',
       'video/webm',
       'video/ogg',
-      'video/mov',
+      'video/quicktime',
       'video/avi',
       'video/flv',
       'video/mkv',
       'video/3gp',
+      'video/vnd.dlna.mpeg-tts',
     ];
 
     if (type === 'poster') {
@@ -162,17 +187,16 @@ export const AddMovie = () => {
         [name]:
           name === 'poster'
             ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).'
-            : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).',
+            : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI, FLV, MKV, 3GP).',
       }));
       e.target.value = '';
       name === 'poster' ? setShowFilePoster(false) : setShowFileVideo(false);
       return;
     }
 
-    // Xóa thông báo lỗi nếu file hợp lệ
     setErrorsFile((prevErrors) => ({
       ...prevErrors,
-      [name]: '', // Xóa lỗi tương ứng
+      [name]: '',
     }));
 
     const previewUrl = URL.createObjectURL(file);
@@ -187,9 +211,6 @@ export const AddMovie = () => {
     } else if (name === 'poster') {
       setShowFilePoster(true);
       setData((prev) => ({ ...prev, poster: file, prevPosterUrl: previewUrl }));
-    } else if (name === 'video') {
-      setShowFileVideo(true);
-      setData((prev) => ({ ...prev, video: file, prevVideoUrl: previewUrl }));
     }
   };
 
@@ -417,65 +438,59 @@ export const AddMovie = () => {
           </div>
         </div>
         <div className="selected-input-form">
-          <div className="file-item-container">
-            <div className="file-item">
-              <div className="file-system">
-                <label>Tải Poster</label>
-                <div className="validate">
-                  <input
-                    type="file"
-                    name="poster"
-                    onChange={handleFileUpload}
-                    required
-                  />
-                  {errorsFile.poster || (
-                    <small style={{ color: 'red' }}>{errorsFile.poster}</small>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className='img-container'>
-              {isEdit === false ? (
-                showFilePoster === true ? (
-                  <img src={data.prevPosterUrl} alt="" />
-                ) : null
-              ) : (
-                <img src={data.prevPosterUrl || movie.posterUrl} alt="" />
-              )}
-            </div>
+          <label>Tải Poster</label>
+          <div className="validate">
+            <input
+              type="file"
+              name="poster"
+              onChange={handleFileUpload}
+              required
+            />
+            {errorsFile.poster || (
+              <small style={{ color: 'red' }}>{errorsFile.poster}</small>
+            )}
           </div>
         </div>
+        {isEdit === false ? (
+          showFilePoster === true ? (
+            <img
+              className="poster"
+              ref={posterRef}
+              src={data.prevPosterUrl}
+              alt=""
+            />
+          ) : null
+        ) : (
+          <img
+            className="poster"
+            ref={posterRef}
+            src={data.prevPosterUrl || movie.posterUrl}
+            alt=""
+          />
+        )}
         {showEpisode || (
-          <div className="selected-input-form">
-            <div className="file-item-container">
-              <div className="file-item">
-                <div className="file-system">
-                  <label>Tải Phim</label>
-                  <div className="validate">
-                    <div className="validate-video">
-                      <input
-                        type="file"
-                        name="video"
-                        onChange={handleFileUpload}
-                        required
-                      />
-                      {errorsFile.video || <small>{errorsFile.video}</small>}
-                    </div>
-                  </div>
-                </div>
+          <>
+            <div className="selected-input-form">
+              <label>Tải Phim</label>
+              <div className="validate">
+                <input
+                  type="file"
+                  name="video"
+                  onChange={handleFileUpload}
+                  required
+                />
+                {errorsFile.video || <small>{errorsFile.video}</small>}
               </div>
-              {isEdit === false ? (
-                showFileVideo === true ? (
-                  <video src={data.prevVideoUrl} controls></video>
-                ) : null
-              ) : (
-                <video
-                  src={data.prevVideoUrl || movie.videoUrl}
-                  controls
-                ></video>
-              )}
             </div>
-          </div>
+
+            {isEdit === false ? (
+              showFileVideo === true ? (
+                <video src={data.prevVideoUrl} controls></video>
+              ) : null
+            ) : (
+              <video src={data.prevVideoUrl || movie.videoUrl} controls></video>
+            )}
+          </>
         )}
         <div className="selected-input-form">
           <label>Nhập Tên Phim Tiếng Việt</label>
@@ -554,6 +569,7 @@ export const AddMovie = () => {
                 </option>
               ))}
             </select>
+
             {errors.country || (
               <small className="error">{errors.country}</small>
             )}
