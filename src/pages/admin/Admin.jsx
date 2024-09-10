@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 
-import { NavbarAdmin } from './NavbarAdmin';
+import { NavbarAdmin } from '../../component/NavbarAdmin';
 
 import { useState } from 'react';
 import { UnorderedListOutlined } from '@ant-design/icons';

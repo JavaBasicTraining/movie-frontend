@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import useAuth from '../../hook/useAuth';
+import useAuth from '../hook/useAuth';
 import { useEffect, useState } from 'react';
-import useFetchUser from '../../hook/useFetchUser';
+import useFetchUser from '../hook/useFetchUser';
 
 async function login(username, password) {
   const loginUrl = 'http://localhost:8081/api/account/login';
@@ -116,10 +116,10 @@ export default function Login() {
             required
           />
           <button onClick={handleLogin}>Đăng nhập</button>
-          <Link className="color-label" to="/register">
+          <Link className="color-label" to="/src/pages/user/Register">
             Bạn chưa có tài khoản?
           </Link>
-          <Link className="color-label" to="/">
+          <Link className="color-label" to="/public">
             Trở về trang chủ
           </Link>
           <Link className="color-label" to="https://www.facebook.com/login">

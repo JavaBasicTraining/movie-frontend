@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import CustomIcon, { iconRegistry } from './CustomIcon';
+import CustomIcon, { iconRegistry } from '../CustomIcon';
 import PropTypes from 'prop-types';
 import './FileUploadInput.scss';
-import ImagePreview from './ImagePreview/ImagePreview';
+import ImagePreview from '../ImagePreview/ImagePreview';
 
 function FileUploadInput(props) {
   const { label, source, type, helperText, ...inputProps } = props;

@@ -3,10 +3,9 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../../API/axiosConfig';
 import qs from 'qs';
 import { countries } from '../../static-data/countries';
-import { DEFAULT_EPISODE, Episode } from './Episode';
+import { DEFAULT_EPISODE, Episode } from '../../component/Episode';
 import { MultiSelect } from 'react-multi-select-component';
-import CustomIcon, { iconRegistry } from '../CustomIcon';
-import FileUploadInput from '../FileUploadInput';
+import FileUploadInput from '../../component/FileUploadInput/FileUploadInput';
 
 export async function MovieDetailLoader({ params }) {
   if (params.id) {
@@ -17,7 +16,7 @@ export async function MovieDetailLoader({ params }) {
   }
 }
 
-export const AddMovie = () => {
+export const AddOrUpdateMovie = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [showEpisode, setShowEpisode] = useState(false);
@@ -59,7 +58,7 @@ export const AddMovie = () => {
         setShowFileVideo(false);
       }
     } else {
-      fetchData();
+      fetchData().then();
       setShowFilePoster(false);
       setShowFileVideo(false);
     }
@@ -94,6 +93,7 @@ export const AddMovie = () => {
       })),
     });
   };
+
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
     setData((prev) => {
@@ -456,7 +456,13 @@ export const AddMovie = () => {
           <FileUploadInput
             id="poster"
             name="poster"
+            label="Tải Poster"
             onChange={handleFileUpload}
+            source={{
+              value: data.prevPosterUrl || movie.posterUrl,
+              type: 'image',
+            }}
+            helperText={errorsFile.poster}
             required
           />
         </div>

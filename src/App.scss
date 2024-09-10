@@ -12,16 +12,12 @@
 @import url(./style/list-movie-admin.scss);
 @import url(./style/page.scss);
 
-root {
-  background: rgb(85, 83, 87) !important;
-}
-
-.Page {
+.App {
   display: flex;
   flex-direction: column;
   width: 1200px;
   margin: 0 auto;
-  background: rgb(85, 83, 87) !important;
+  background: rgb(85, 83, 87);
 }
 
 .h-fit {

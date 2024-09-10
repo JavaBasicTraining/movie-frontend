@@ -2,32 +2,32 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import Login from './component/account/Login';
-import Register from './component/account/Register';
-import { AddMovie, MovieDetailLoader } from './component/manager/AddMovie';
-import { Admin } from './component/manager/Admin';
+import Login from './pages/Login';
+import Register from './pages/user/Register';
+import { AddOrUpdateMovie, MovieDetailLoader } from './pages/admin/AddOrUpdateMovie';
+import { Admin } from './pages/admin/Admin';
 import {
   ListMovie,
   MovieManagerLoader,
-} from './component/manager/ListMovieAdmin';
+} from './pages/admin/ListMovieAdmin';
 import {
   CountryLoader,
   Movie,
   MovieLoader,
-} from './component/movie-user/ListMovieUser';
+} from './pages/user/ListMovieUser';
 import {
   MovieDetail,
   posterMovieLoader,
-} from './component/movie-user/MovieDetail';
+} from './pages/user/MovieDetail';
 import {
   filterMovieSeriesLoader,
   MovieVideoSeries,
-} from './component/movie-user/MovieVideoSeries';
+} from './pages/user/MovieVideoSeries';
 import {
   filterMovieLoader,
   MovieVideo,
-} from './component/movie-user/MovieVideoSingle';
-import { Page } from './component/movie-user/Page';
+} from './pages/user/MovieVideoSingle';
+import { Page } from './pages/user/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -95,24 +95,19 @@ const router = createBrowserRouter([
             loader: MovieManagerLoader,
           },
           {
-            path: '/admin/movie/new', // path đây// mục đích của e là để cho nó vào cái path edit mà
-            element: <AddMovie />,
+            path: '/admin/movie/new',
+            element: <AddOrUpdateMovie />,
             loader: MovieDetailLoader,
           },
           {
-            path: '/admin/movie/:id', // /admin/movie/:id khi vào path này, nó có cái id => edit, /admin/movie/new => tạo mới
-            // nó có 2 nút khác nhau, mình phải bấm nút nào nó mứ dô path đó chứ a, hiện tại 2 nút nó vô khác path r mà, c
-            // khác path đúng rồi a, khi e bấm edit thfi nó vô path này đúng rfoio, nhưng cái prop của e nó ko ăn nó nó ko loaddata vào input
-            // path đây khác, path nài thì vào đấy, nó dô path này nè a, nó check, nếu mình bấm edit thfi nó vô path này
-            // k cần, để biết cái nào là eddit thì dựa cái path thôi
-            element: <AddMovie value="Edit" />, // cái chỗ này  e để nó mứ dô path update chứ a , sao sai router ta
+            path: '/admin/movie/:id',
+            element: <AddOrUpdateMovie />,
             loader: MovieDetailLoader,
           },
         ],
       },
     ],
   },
-
   {
     path: '/login',
     element: <Login />,
