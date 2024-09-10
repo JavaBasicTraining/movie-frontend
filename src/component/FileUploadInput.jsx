@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import CustomIcon, { iconRegistry } from './CustomIcon';
 import PropTypes from 'prop-types';
 import './FileUploadInput.scss';
+import ImagePreview from './ImagePreview/ImagePreview';
 
 function FileUploadInput(props) {
-  const { label, source, ...inputProps } = props;
+  const { label, source, type, helperText, ...inputProps } = props;
   const [preview, setPreview] = useState(source);
 
   const handleChange = (e) => {
@@ -16,11 +17,8 @@ function FileUploadInput(props) {
         value: url,
         type: file.type,
       });
-    } else {
-      setPreview(null);
+      inputProps?.onChange?.(e);
     }
-
-    inputProps?.onChange?.(e);
   };
 
   return (
@@ -37,17 +35,13 @@ function FileUploadInput(props) {
         onChange={handleChange}
       />
 
-      {preview && (
+      {helperText && (
+        <small className="FileUploadInput__helper-text">{helperText}</small>
+      )}
+
+      {preview && !helperText && (
         <div className="FileUploadInput__preview">
-          {preview.type.includes('image') && (
-            <div className="image-view">
-              <img
-                className="image-view__img"
-                src={preview.value}
-                alt={'view-source'}
-              />
-            </div>
-          )}
+          {preview.type.includes('image') && <ImagePreview preview={preview} />}
 
           {preview.type.includes('video') && (
             <video className="image-view__img" src={preview.value} controls />

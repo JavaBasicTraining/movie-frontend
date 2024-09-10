@@ -12,6 +12,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    width: fit-content;
 
     &:hover {
       background: rgba(128, 128, 128, 0.5);
@@ -22,13 +23,11 @@
     display: none;
   }
 
+  &__helper-text {
+    color: var(--error);
+  }
+
   &__preview {
-    .image-view {
-      &__img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
+
   }
 }
