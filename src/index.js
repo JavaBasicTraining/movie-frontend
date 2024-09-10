@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import Login from './pages/Login';
 import Register from './pages/user/Register';
-import { AddOrUpdateMovie, MovieDetailLoader } from './pages/admin/AddOrUpdateMovie';
+import { AddOrUpdateMovie, AddOrUpdateMovieLoader } from './pages/admin/AddOrUpdateMovie';
 import { Admin } from './pages/admin/Admin';
 import {
   ListMovie,
@@ -97,12 +97,12 @@ const router = createBrowserRouter([
           {
             path: '/admin/movie/new',
             element: <AddOrUpdateMovie />,
-            loader: MovieDetailLoader,
+            loader: AddOrUpdateMovieLoader,
           },
           {
             path: '/admin/movie/:id',
             element: <AddOrUpdateMovie />,
-            loader: MovieDetailLoader,
+            loader: AddOrUpdateMovieLoader,
           },
         ],
       },

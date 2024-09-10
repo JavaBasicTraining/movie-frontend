@@ -5,7 +5,7 @@ import './FileUploadInput.scss';
 import ImagePreview from '../ImagePreview/ImagePreview';
 
 function FileUploadInput(props) {
-  const { label, source, type, helperText, ...inputProps } = props;
+  const { label = 'Upload', source, type, helperText, ...inputProps } = props;
   const [preview, setPreview] = useState(source);
 
   const handleChange = (e) => {
@@ -55,10 +55,6 @@ function FileUploadInput(props) {
 FileUploadInput.propTypes = {
   label: PropTypes.string,
   source: PropTypes.object,
-};
-
-FileUploadInput.defaultProps = {
-  label: 'Upload',
 };
 
 export default FileUploadInput;

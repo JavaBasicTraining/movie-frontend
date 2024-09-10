@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../../API/axiosConfig';
 import qs from 'qs';
@@ -7,8 +7,11 @@ import { DEFAULT_EPISODE, Episode } from '../../component/Episode';
 import FileUploadInput from '../../component/FileUploadInput/FileUploadInput';
 import TextField from '../../component/TextField';
 import SelectField from '../../component/SelectField';
+import { allowImageType, allowVideoType } from '../../utils/validateFile';
+import './AddOrUpdateMovie.scss';
+import { movieAPI } from '../../API/movieAPI';
 
-export async function MovieDetailLoader({ params }) {
+export async function AddOrUpdateMovieLoader({ params }) {
   if (params.id) {
     const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);
     return { movie: res.data };
@@ -18,16 +21,15 @@ export async function MovieDetailLoader({ params }) {
 }
 
 export const AddOrUpdateMovie = () => {
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState([]);
-  const [showEpisode, setShowEpisode] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
-  const [showFilePoster, setShowFilePoster] = useState(false);
-  const [showFileVideo, setShowFileVideo] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [isEdit, setIsEdit] = useState(false);
+  const navigate = useNavigate();
   const { movie } = useLoaderData();
 
+  const [categories, setCategories] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [showEpisode, setShowEpisode] = useState(false);
+  const [genres, setGenres] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [isEdit, setIsEdit] = useState(false);
   const [errorsFile, setErrorsFile] = useState({});
   const [data, setData] = useState({
     nameMovie: '',
@@ -37,7 +39,7 @@ export const AddOrUpdateMovie = () => {
     country: '',
     poster: '',
     video: '',
-    idCategory: [],
+    idCategory: '',
     year: '',
     prevPosterUrl: '',
     prevVideoUrl: '',
@@ -45,64 +47,13 @@ export const AddOrUpdateMovie = () => {
     episodes: [],
   });
 
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setIsEdit(!!movie);
-  }, [movie]);
-
-  useEffect(() => {
-    if (isEdit) {
-      fetchDataUpdate(movie);
-      setShowEpisode(movie?.category?.id === 1);
-      if (movie?.category?.id === 1) {
-        setShowFileVideo(false);
-      }
-    } else {
-      fetchData().then();
-      setShowFilePoster(false);
-      setShowFileVideo(false);
-    }
-  }, [isEdit]);
-
-  const fetchData = async () => {
-    try {
-      const [categoriesResponse, genreResponse] = await Promise.all([
-        axiosInstance.get(`/api/v1/category`),
-        axiosInstance.get(`/api/v1/genre`, {
-          params: {},
-          paramsSerializer: (params) => qs.stringify(params),
-        }),
-      ]);
-      setCategories(categoriesResponse.data);
-      setSuggestions(genreResponse.data ?? []);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  const fetchDataUpdate = (newData) => {
-    setData({
-      ...data,
-      ...newData,
-      idCategory: newData?.category?.id,
-      idGenre: newData?.genres.map((item) => item?.id),
-      genreSelectedData: newData?.genres.map((item) => ({
-        label: item.name,
-        value: item,
-        key: item.id,
-      })),
-    });
-  };
-
-  const handleChange = (e, onSuccess) => {
+  const handleChange = (e, callback) => {
     const { name, value } = e.target;
-    setData((prev) => {
-      const updatedData = { ...prev, [name]: formatValue(value) };
-      onSuccess?.(updatedData);
-      validateField(name, value);
-      return updatedData;
-    });
+    const updatedData = { ...data, [name]: formatValue(value) };
+    validateField(name, value);
+    setData(updatedData);
+
+    callback?.(updatedData);
   };
 
   const formatValue = (value) => {
@@ -113,32 +64,6 @@ export const AddOrUpdateMovie = () => {
     return value;
   };
 
-  const validateFile = (file, type) => {
-    const validImageTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'image/svg+xml',
-      'image/webp',
-    ];
-    const validVideoTypes = [
-      'video/mp4',
-      'video/webm',
-      'video/ogg',
-      'video/mov',
-      'video/avi',
-      'video/flv',
-      'video/mkv',
-      'video/3gp',
-    ];
-
-    if (type === 'poster') {
-      return validImageTypes.includes(file.type);
-    } else if (type === 'video') {
-      return validVideoTypes.includes(file.type);
-    }
-    return false;
-  };
   const handleFileUpload = (e) => {
     const { name, files } = e.target;
     const file = files[0];
@@ -154,9 +79,9 @@ export const AddOrUpdateMovie = () => {
 
     let isValid = false;
     if (name === 'poster') {
-      isValid = validateFile(file, 'poster');
+      isValid = allowImageType(file.type);
     } else if (name === 'video') {
-      isValid = validateFile(file, 'video');
+      isValid = allowVideoType(file.type);
     }
 
     if (!isValid) {
@@ -168,31 +93,20 @@ export const AddOrUpdateMovie = () => {
             : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).',
       }));
       e.target.value = '';
-      name === 'poster' ? setShowFilePoster(false) : setShowFileVideo(false);
       return;
     }
 
-    // Xóa thông báo lỗi nếu file hợp lệ
     setErrorsFile((prevErrors) => ({
       ...prevErrors,
-      [name]: '', // Xóa lỗi tương ứng
+      [name]: '',
     }));
 
     const previewUrl = URL.createObjectURL(file);
 
-    if (name === 'video') {
-      setShowFileVideo(true);
-      setData((prev) => ({
-        ...prev,
-        video: file,
-        prevVideoUrl: previewUrl,
-      }));
-    } else if (name === 'poster') {
-      setShowFilePoster(true);
-      setData((prev) => ({ ...prev, poster: file, prevPosterUrl: previewUrl }));
+    if (name === 'poster') {
+      setData({ ...data, poster: file, prevPosterUrl: previewUrl });
     } else if (name === 'video') {
-      setShowFileVideo(true);
-      setData((prev) => ({ ...prev, video: file, prevVideoUrl: previewUrl }));
+      setData({ ...data, video: file, prevVideoUrl: previewUrl });
     }
   };
 
@@ -238,58 +152,44 @@ export const AddOrUpdateMovie = () => {
     return isValid;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!validateForm()) {
-      return;
+      return Promise.reject();
     } else {
       try {
         const newData = {
           ...data,
           episodes: data.episodes.map((episode) => ({
             ...episode,
-            tempId: '' + new Date().getTime(),
+            tempId: new Date().getTime().toString(),
           })),
         };
+
         const episodesMap = new Map(
           newData.episodes.map((item) => [item.tempId, item])
         );
 
-        if (!isEdit) {
-          apiCreate(newData, episodesMap);
-        } else {
-          apiUpdate(newData, episodesMap);
-        }
+        await saveMovie(newData, episodesMap);
       } catch (error) {
-        alert('Lỗi');
-        console.error('Error submitting movie:', error);
+        alert('Lỗi: ' + error);
       }
     }
   };
 
-  const apiUpdate = async (newData, episodesMap) => {
-    const response = await axiosInstance.put(
-      `/api/v1/admin/movies/${movie.id}`,
-      {
-        ...newData,
-        poster: undefined,
-        video: undefined,
-        episodes: isSeries()
-          ? newData.episodes.map((episode) => ({
-              ...episode,
-              posterUrl: undefined,
-              videoUrl: undefined,
-            }))
-          : [],
-      }
-    );
+  const saveMovie = async (newData, episodesMap) => {
+    const response = isEdit
+      ? await movieAPI.update(newData.id, newData)
+      : await movieAPI.create(newData);
+
     if (data.poster) {
-      uploadFileMovie(response.data.id, 'poster', data.poster);
+      await movieAPI.uploadFile(response.data.id, 'poster', data.poster);
     }
-    if (!isSeries(response.data.category) && data.video) {
-      uploadFileMovie(response.data.id, 'video', data.video);
+
+    if (data.video) {
+      await movieAPI.uploadFile(response.data.id, 'video', data.video);
     }
-    if (isSeries(response.data.category)) {
+
+    if (isSeries()) {
       for (const item of response.data.episodes) {
         const episodeMap = episodesMap.get(item.tempId);
         if (episodeMap.poster && episodeMap.video) {
@@ -303,67 +203,25 @@ export const AddOrUpdateMovie = () => {
         }
       }
     }
-    alert('Cập nhật thành công');
+
+    alert(`${isEdit ? 'Sửa' : 'Thêm'} phim mới thành công`);
+    navigate('/admin/movie');
   };
 
-  const apiCreate = async (newData, episodesMap) => {
-    const response = await axiosInstance.post(
-      `/api/v1/admin/movies`,
-
-      newData
-    );
-
-    if (!isSeries() && data.poster && data.video) {
-      uploadFileMovie(response.data.id, 'poster', data.poster);
-      uploadFileMovie(response.data.id, 'video', data.video);
-    } else if (data.poster) {
-      const formData = new FormData();
-      formData.append('file', data.poster);
-      const res = await axiosInstance.patch(
-        `/api/v1/admin/movies/${response.data.id}?type=poster`,
-        formData
-      );
-      for (const item of response.data.episodes) {
-        const episodeMap = episodesMap.get(item.tempId);
-        if (episodeMap.poster && episodeMap.video) {
-          const formDataEpisode = new FormData();
-          formDataEpisode.append('poster', episodeMap.poster);
-          formDataEpisode.append('video', episodeMap.video);
-          await axiosInstance.patch(
-            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
-            formDataEpisode
-          );
-        }
-      }
-    }
-    alert('Thêm phim mới thành công', response.data);
-    navigate('/admin');
-  };
-
-  const uploadFileMovie = async (id, type, file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    await axiosInstance.patch(
-      `/api/v1/admin/movies/${id}?type=${type}`,
-      formData
-    );
-  };
-
-  const handleShowEpisode = (e) => {
+  const handleShowEpisode = (e, formData) => {
     const isSeries = e.target.value === '1';
     setShowEpisode(isSeries);
-    // setShowUploadFileMovie(!isSeries);
 
     if (isSeries) {
-      setData((prev) => ({
-        ...prev,
+      setData({
+        ...formData,
         episodes: [DEFAULT_EPISODE],
-      }));
+      });
     } else {
-      setData((prev) => ({
-        ...prev,
+      setData({
+        ...formData,
         episodes: [],
-      }));
+      });
     }
   };
 
@@ -381,6 +239,7 @@ export const AddOrUpdateMovie = () => {
       episodes: [...prev.episodes, DEFAULT_EPISODE],
     }));
   };
+
   const handleGenreChange = (selectedItems) => {
     if (!selectedItems || selectedItems.length === 0) {
       setErrors({
@@ -394,12 +253,57 @@ export const AddOrUpdateMovie = () => {
       });
     }
 
-    setSelectedCategory(selectedItems);
+    setSelectedGenres(selectedItems);
     setData((prev) => ({
       ...prev,
       idGenre: selectedItems.map((item) => item.value.id),
     }));
   };
+
+  const initData = useCallback((movie) => {
+    setData({
+      ...data,
+      ...movie,
+      idCategory: movie?.category?.id,
+      idGenre: movie?.genres.map((item) => item?.id),
+    });
+
+    setShowEpisode(movie?.category?.id?.toString() === '1');
+
+    setSelectedGenres(
+      movie?.genres.map((item) => ({
+        label: item.name,
+        value: item,
+        key: item.id,
+      }))
+    );
+  }, []);
+
+  const initDefaultData = useCallback(async () => {
+    try {
+      const [categoriesResponse, genreResponse] = await Promise.all([
+        axiosInstance.get(`/api/v1/category`),
+        axiosInstance.get(`/api/v1/genre`, {
+          params: {},
+          paramsSerializer: (params) => qs.stringify(params),
+        }),
+      ]);
+      setCategories(categoriesResponse.data);
+      setGenres(genreResponse.data ?? []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    setIsEdit(!!movie);
+    initDefaultData().then();
+
+    if (movie) {
+      initData(movie);
+    }
+  }, [initDefaultData, initData, isEdit, movie]);
+
   return (
     <div className="container-addmovie">
       {isEdit === false ? <h1>Thêm Phim Mới</h1> : <h1>Sửa Thông Tin Phim</h1>}
@@ -486,7 +390,7 @@ export const AddOrUpdateMovie = () => {
           }}
           required
           items={categories.map((category) => ({
-            value: category.id,
+            value: parseInt(category.id),
             label: category.name,
           }))}
         />
@@ -495,46 +399,50 @@ export const AddOrUpdateMovie = () => {
           label="Nhập Thể Loại"
           fullWidth={true}
           helperText={errors.idGenre}
-          value={selectedCategory}
+          value={selectedGenres}
           onChange={handleGenreChange}
           labelledBy="Select"
-          items={suggestions.map((item) => ({
+          items={genres.map((item) => ({
             label: item.name,
             value: item,
           }))}
           multiple={true}
         />
 
-        <div className="selected-input-form">
-          <FileUploadInput
-            id="poster"
-            name="poster"
-            label="Tải Poster"
-            onChange={handleFileUpload}
-            source={{
-              value: data.prevPosterUrl || movie.posterUrl,
-              type: 'image',
-            }}
-            helperText={errorsFile.poster}
-            required
-          />
-        </div>
+        <FileUploadInput
+          id="poster"
+          name="poster"
+          label="Tải Poster"
+          onChange={handleFileUpload}
+          source={
+            data?.prevPosterUrl || movie?.posterUrl
+              ? {
+                  value: data?.prevPosterUrl || movie?.posterUrl,
+                  type: 'image',
+                }
+              : null
+          }
+          helperText={errorsFile.poster}
+          required
+        />
 
         {showEpisode || (
-          <div className="selected-input-form">
-            <FileUploadInput
-              id="video"
-              name="video"
-              label="Tải Video"
-              onChange={handleFileUpload}
-              source={{
-                value: data.prevVideoUrl || movie.videoUrl,
-                type: 'video',
-              }}
-              helperText={errorsFile.video}
-              required
-            />
-          </div>
+          <FileUploadInput
+            id="video"
+            name="video"
+            label="Tải Video"
+            onChange={handleFileUpload}
+            source={
+              data?.prevVideoUrl || movie?.videoUrl
+                ? {
+                    value: data?.prevVideoUrl || movie?.videoUrl,
+                    type: 'video',
+                  }
+                : null
+            }
+            helperText={errorsFile.video}
+            required
+          />
         )}
       </div>
 

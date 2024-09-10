@@ -3,7 +3,7 @@ import './CustomInput.scss';
 import PropTypes from 'prop-types';
 
 function CustomInput(props) {
-  const { label, helperText, fullWidth, children } = props;
+  const { label = 'Label', helperText, fullWidth = false, children } = props;
 
   return (
     <div
@@ -24,12 +24,7 @@ function CustomInput(props) {
 
 CustomInput.propTypes = {
   label: PropTypes.string,
-  fullWidth: PropTypes.bool
-};
-
-CustomInput.defaultProps = {
-  label: 'Label',
-  fullWidth: false
+  fullWidth: PropTypes.bool,
 };
 
 export default CustomInput;
