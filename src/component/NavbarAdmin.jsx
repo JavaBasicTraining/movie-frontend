@@ -5,15 +5,15 @@ export const NavbarAdmin = () => {
   const navbarList = [
     {
       name: 'Movie Management',
-      link: '/admin/movie',
+      link: '/Admin/movie',
     },
     {
       name: 'User Management',
-      link: '/admin/movie',
+      link: '/Admin/movie',
     },
     {
       name: 'Category Management',
-      link: '/admin/movie',
+      link: '/Admin/movie',
     },
   ];
 

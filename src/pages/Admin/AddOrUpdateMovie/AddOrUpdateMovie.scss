@@ -1,4 +1,4 @@
-.container-addmovie {
+.AddOrUpdateMovie {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,13 +7,14 @@
   color: white;
   background-color: rgb(62, 51, 51);
 
-  .form-addmovie {
+  &__form-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
     width: 400px;
     align-items: center;
     gap: 20px;
+    padding: 20px 10px;
 
     .selected-input-form {
       width: 100%;

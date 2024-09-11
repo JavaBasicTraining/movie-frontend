@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { axiosInstance } from '../../API/axiosConfig';
+import { axiosInstance } from '../../../API/axiosConfig';
 import qs from 'qs';
-import { countries } from '../../static-data/countries';
-import { DEFAULT_EPISODE, Episode } from '../../component/Episode';
-import FileUploadInput from '../../component/FileUploadInput/FileUploadInput';
-import TextField from '../../component/TextField';
-import SelectField from '../../component/SelectField';
-import { allowImageType, allowVideoType } from '../../utils/validateFile';
+import { countryOptions } from '../../../static-data/countries';
+import { DEFAULT_EPISODE, Episode } from '../../../component/Episode';
+import FileUploadInput from '../../../component/FileUploadInput/FileUploadInput';
+import TextField from '../../../component/TextField';
+import SelectField from '../../../component/SelectField';
+import { allowImageType, allowVideoType } from '../../../utils/validateFile';
 import './AddOrUpdateMovie.scss';
-import { movieAPI } from '../../API/movieAPI';
+import { movieAPI } from '../../../API/movieAPI';
 
 export async function AddOrUpdateMovieLoader({ params }) {
   if (params.id) {
@@ -24,10 +24,10 @@ export const AddOrUpdateMovie = () => {
   const navigate = useNavigate();
   const { movie } = useLoaderData();
 
-  const [categories, setCategories] = useState([]);
+  const [categoryOptions, setCategoryOptions] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [showEpisode, setShowEpisode] = useState(false);
-  const [genres, setGenres] = useState([]);
+  const [genreOptions, setGenreOptions] = useState([]);
   const [errors, setErrors] = useState({});
   const [isEdit, setIsEdit] = useState(false);
   const [errorsFile, setErrorsFile] = useState({});
@@ -49,6 +49,19 @@ export const AddOrUpdateMovie = () => {
 
   const handleChange = (e, callback) => {
     const { name, value } = e.target;
+    updateData(name, value, callback);
+  };
+
+  const handleSelectChange = (name, value, callback) => {
+    const updatedData = { ...data, [name]: value };
+    setData(updatedData);
+
+    validateField(name, value);
+
+    callback?.(updatedData);
+  };
+
+  const updateData = (name, value, callback) => {
     const updatedData = { ...data, [name]: formatValue(value) };
     validateField(name, value);
     setData(updatedData);
@@ -152,7 +165,8 @@ export const AddOrUpdateMovie = () => {
     return isValid;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!validateForm()) {
       return Promise.reject();
     } else {
@@ -208,8 +222,8 @@ export const AddOrUpdateMovie = () => {
     navigate('/admin/movie');
   };
 
-  const handleShowEpisode = (e, formData) => {
-    const isSeries = e.target.value === '1';
+  const handleShowEpisode = (value, formData) => {
+    const isSeries = value.toString() === '1';
     setShowEpisode(isSeries);
 
     if (isSeries) {
@@ -288,8 +302,13 @@ export const AddOrUpdateMovie = () => {
           paramsSerializer: (params) => qs.stringify(params),
         }),
       ]);
-      setCategories(categoriesResponse.data);
-      setGenres(genreResponse.data ?? []);
+      setCategoryOptions(
+        categoriesResponse?.data?.map((category) => ({
+          label: category.name,
+          value: category.id,
+        })) ?? []
+      );
+      setGenreOptions(genreResponse?.data?.map(genre => ({label: genre.name, value: genre})) ?? []);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -305,168 +324,165 @@ export const AddOrUpdateMovie = () => {
   }, [initDefaultData, initData, isEdit, movie]);
 
   return (
-    <div className="container-addmovie">
-      {isEdit === false ? <h1>Thêm Phim Mới</h1> : <h1>Sửa Thông Tin Phim</h1>}
-      <div className="form-addmovie">
-        <TextField
-          label="Nhập Tên Phim"
-          fullWidth={true}
-          helperText={errors.nameMovie}
-          type="text"
-          name="nameMovie"
-          value={data.nameMovie}
-          onChange={handleChange}
-          required
-        />
+    <form onSubmit={handleSubmit}>
+      <div className="AddOrUpdateMovie">
+        <div className="AddOrUpdateMovie__form-wrapper">
+          {isEdit === false ? (
+            <h1>Thêm Phim Mới</h1>
+          ) : (
+            <h1>Sửa Thông Tin Phim</h1>
+          )}
+          <TextField
+            label="Nhập Tên Phim"
+            fullWidth={true}
+            helperText={errors.nameMovie}
+            type="text"
+            name="nameMovie"
+            value={data.nameMovie}
+            onChange={handleChange}
+            required
+          />
 
-        <TextField
-          label="Nhập Tên Phim Tiếng Việt"
-          fullWidth={true}
-          helperText={errors.viTitle}
-          type="text"
-          name="viTitle"
-          value={data.viTitle}
-          onChange={handleChange}
-          required
-        />
+          <TextField
+            label="Nhập Tên Phim Tiếng Việt"
+            fullWidth={true}
+            helperText={errors.viTitle}
+            type="text"
+            name="viTitle"
+            value={data.viTitle}
+            onChange={handleChange}
+            required
+          />
 
-        <TextField
-          label="Nhập Tên Phim Tiếng Anh"
-          fullWidth={true}
-          helperText={errors.enTitle}
-          type="text"
-          name="enTitle"
-          value={data.enTitle}
-          onChange={handleChange}
-          required
-        />
+          <TextField
+            label="Nhập Tên Phim Tiếng Anh"
+            fullWidth={true}
+            helperText={errors.enTitle}
+            type="text"
+            name="enTitle"
+            value={data.enTitle}
+            onChange={handleChange}
+            required
+          />
 
-        <TextField
-          label="Nhập Mô Tả Phim"
-          fullWidth={true}
-          helperText={errors.description}
-          type="text"
-          name="description"
-          value={data.description}
-          onChange={handleChange}
-          required
-        />
+          <TextField
+            label="Nhập Mô Tả Phim"
+            fullWidth={true}
+            helperText={errors.description}
+            type="text"
+            name="description"
+            value={data.description}
+            onChange={handleChange}
+            required
+          />
 
-        <TextField
-          label="Năm Phát Hành"
-          fullWidth={true}
-          helperText={errors.year}
-          type="text"
-          name="year"
-          value={data.year}
-          onChange={handleChange}
-          required
-        />
+          <TextField
+            label="Năm Phát Hành"
+            fullWidth={true}
+            helperText={errors.year}
+            type="text"
+            name="year"
+            value={data.year}
+            onChange={handleChange}
+            required
+          />
 
-        <SelectField
-          label="Nhập Quốc Gia"
-          fullWidth={true}
-          helperText={errors.country}
-          name="country"
-          value={data.country}
-          onChange={handleChange}
-          items={countries.map((country) => ({
-            value: country,
-            label: country,
-          }))}
-          required
-        />
+          <SelectField
+            label="Nhập Quốc Gia"
+            fullWidth={true}
+            helperText={errors.country}
+            name="country"
+            value={countryOptions.find(
+              (country) => country.value === data.country
+            )}
+            onChange={({ value }) => handleSelectChange('country', value)}
+            options={countryOptions}
+          />
 
-        <SelectField
-          label="Chọn Phân Loại Phim"
-          fullWidth={true}
-          helperText={errors.idCategory}
-          name="idCategory"
-          value={data.idCategory}
-          onChange={(e) => {
-            handleChange(e, (formData) => {
-              handleShowEpisode(e, formData);
-            });
-          }}
-          required
-          items={categories.map((category) => ({
-            value: parseInt(category.id),
-            label: category.name,
-          }))}
-        />
+          <SelectField
+            label="Chọn Phân Loại Phim"
+            fullWidth={true}
+            helperText={errors.idCategory}
+            name="idCategory"
+            value={categoryOptions.find((item) => item.value === data.idCategory)}
+            onChange={({ value }) => {
+              handleSelectChange('idCategory', value, (formData) => {
+                handleShowEpisode(value, formData);
+              });
+            }}
+            options={categoryOptions}
+          />
 
-        <SelectField
-          label="Nhập Thể Loại"
-          fullWidth={true}
-          helperText={errors.idGenre}
-          value={selectedGenres}
-          onChange={handleGenreChange}
-          labelledBy="Select"
-          items={genres.map((item) => ({
-            label: item.name,
-            value: item,
-          }))}
-          multiple={true}
-        />
+          <SelectField
+            label="Nhập Thể Loại"
+            fullWidth={true}
+            helperText={errors.idGenre}
+            value={selectedGenres}
+            onChange={handleGenreChange}
+            labelledBy="Select"
+            options={genreOptions}
+            multiple={true}
+          />
 
-        <FileUploadInput
-          id="poster"
-          name="poster"
-          label="Tải Poster"
-          onChange={handleFileUpload}
-          source={
-            data?.prevPosterUrl || movie?.posterUrl
-              ? {
-                  value: data?.prevPosterUrl || movie?.posterUrl,
-                  type: 'image',
-                }
-              : null
-          }
-          helperText={errorsFile.poster}
-          required
-        />
-
-        {showEpisode || (
           <FileUploadInput
-            id="video"
-            name="video"
-            label="Tải Video"
+            id="poster"
+            name="poster"
+            label="Tải Poster"
             onChange={handleFileUpload}
             source={
-              data?.prevVideoUrl || movie?.videoUrl
+              data?.prevPosterUrl || movie?.posterUrl
                 ? {
-                    value: data?.prevVideoUrl || movie?.videoUrl,
-                    type: 'video',
+                    value: data?.prevPosterUrl || movie?.posterUrl,
+                    type: 'image',
                   }
                 : null
             }
-            helperText={errorsFile.video}
-            required
+            helperText={errorsFile.poster}
           />
-        )}
-      </div>
 
-      {showEpisode && (
-        <div className="episodes">
-          {data.episodes && (
-            <>
-              {data.episodes.map((item, index) => (
-                <Episode
-                  key={index}
-                  episode={item}
-                  index={index}
-                  formChanged={handleEpisodeChanged}
-                />
-              ))}
-            </>
+          {showEpisode || (
+            <FileUploadInput
+              id="video"
+              name="video"
+              label="Tải Video"
+              onChange={handleFileUpload}
+              source={
+                data?.prevVideoUrl || movie?.videoUrl
+                  ? {
+                      value: data?.prevVideoUrl || movie?.videoUrl,
+                      type: 'video',
+                    }
+                  : null
+              }
+              helperText={errorsFile.video}
+            />
           )}
-          <button onClick={handleAddEpisode}>Thêm Tập Phim</button>
-        </div>
-      )}
 
-      <button onClick={handleSubmit}>
-        {isEdit === false ? 'Thêm' : 'Sửa Thông Tin Phim '}
-      </button>
-    </div>
+          {showEpisode && (
+            <div className="episodes">
+              {data.episodes && (
+                <>
+                  {data.episodes.map((item, index) => (
+                    <Episode
+                      key={index}
+                      episode={item}
+                      index={index}
+                      formChanged={handleEpisodeChanged}
+                    />
+                  ))}
+                </>
+              )}
+              <button type="button" onClick={handleAddEpisode}>
+                Thêm Tập Phim
+              </button>
+            </div>
+          )}
+
+          <button type="submit">
+            {isEdit === false ? 'Thêm' : 'Sửa Thông Tin Phim '}
+          </button>
+        </div>
+      </div>
+    </form>
   );
 };

@@ -4,7 +4,6 @@
     font-size: 1.125rem;
     font-family: "Roboto", sans-serif;
     border-radius: 4px;
-    padding: 8px;
   }
 
   &__multi-select {
@@ -19,5 +18,9 @@
     .dropdown-content span {
         color: black !important;
     }
+  }
+
+  .menu-list {
+    color: black;
   }
 }

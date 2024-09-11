@@ -3,13 +3,13 @@ import './CustomInput.scss';
 import PropTypes from 'prop-types';
 
 function CustomInput(props) {
-  const { label = 'Label', helperText, fullWidth = false, children } = props;
+  const { label, helperText, fullWidth = false, children } = props;
 
   return (
     <div
       className={`CustomInput ${props.className ? props.className : ''} ${fullWidth && 'full-width'}`}
     >
-      <label className="CustomInput__label">{label}</label>
+      {label && <label className="CustomInput__label">{label}</label>}
 
       <div className="CustomInput__input-wrapper">
         {children}

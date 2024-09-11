@@ -27,3 +27,5 @@ export const countries = [
   'Ấn Độ',
   'Úc',
 ];
+
+export const countryOptions = countries.map((country) => ({  value: country, label: country }));

@@ -66,8 +66,8 @@ export const ListMovie = () => {
     };
 
     return (
-      <select onChange={handleSearchChange}>
-        <option disabled selected>
+      <select defaultValue={'default'} onChange={handleSearchChange}>
+        <option value={'default'} disabled>
           {placeholder}
         </option>
         {items.map((item) => (

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { axiosInstance } from '../../API/axiosConfig';
+import { axiosInstance } from '../API/axiosConfig';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { StarFilled, StarOutlined, StarTwoTone } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
-import useFetchUser from '../../hook/useFetchUser';
+import useFetchUser from '../hook/useFetchUser';
 
 export async function posterMovieLoader({ params }) {
   const response = await axiosInstance.get(

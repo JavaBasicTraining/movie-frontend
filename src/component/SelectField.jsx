@@ -2,41 +2,27 @@ import React from 'react';
 import CustomInput from './CustomInput';
 import PropTypes from 'prop-types';
 import './SelectField.scss';
-import { MultiSelect } from 'react-multi-select-component';
 import _ from 'lodash';
+import Select from 'react-select';
 
 function SelectField(props) {
   const {
-    items = [],
     placeholder = 'Select an option',
-    multiple,
+    multiple = false,
     ...selectProps
   } = props;
 
   return (
     <CustomInput {...props} className="SelectField">
-      {multiple ? (
-        <MultiSelect
-          options={items}
-          {...selectProps}
-          className="SelectField__multi-select"
-        />
-      ) : (
-        <select
-          className="SelectField__select"
-          {..._.omit(selectProps, 'helperText', 'fullWidth')}
-        >
-          <option value="" disabled>
-            {placeholder}
-          </option>
-
-          {items.map((item) => (
-            <option key={item.label} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
-      )}
+      <Select
+        {..._.omit(selectProps, 'helperText', 'fullWidth')}
+        className="SelectField__select"
+        placeholder={placeholder}
+        isMulti={multiple}
+        classNames={{
+          menuList: () => 'menu-list',
+        }}
+      />
     </CustomInput>
   );
 }
@@ -45,6 +31,7 @@ SelectField.propTypes = {
   items: PropTypes.array,
   placeholder: PropTypes.string,
   multiple: PropTypes.bool,
+  value: PropTypes.any,
 };
 
 export default SelectField;
