@@ -5,7 +5,7 @@ import './FileUploadInput.scss';
 import ImagePreview from '../ImagePreview/ImagePreview';
 
 function FileUploadInput(props) {
-  const { label, source, type, helperText, ...inputProps } = props;
+  const { label = 'Upload', source, type, helperText, ...inputProps } = props;
   const [preview, setPreview] = useState(source);
 
   const handleChange = (e) => {
@@ -23,7 +23,7 @@ function FileUploadInput(props) {
 
   return (
     <div className="FileUploadInput">
-      <label className="FileUploadInput__label" htmlFor="poster">
+      <label className="FileUploadInput__label" htmlFor={props.name}>
         <CustomIcon icon={iconRegistry.upload} color="white" />
         {label}
       </label>
@@ -44,7 +44,7 @@ function FileUploadInput(props) {
           {preview.type.includes('image') && <ImagePreview preview={preview} />}
 
           {preview.type.includes('video') && (
-            <video className="image-view__img" src={preview.value} controls />
+            <video className="video-preview" src={preview.value} controls />
           )}
         </div>
       )}
@@ -55,10 +55,6 @@ function FileUploadInput(props) {
 FileUploadInput.propTypes = {
   label: PropTypes.string,
   source: PropTypes.object,
-};
-
-FileUploadInput.defaultProps = {
-  label: 'Upload',
 };
 
 export default FileUploadInput;

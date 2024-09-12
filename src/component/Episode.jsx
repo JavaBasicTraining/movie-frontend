@@ -151,7 +151,7 @@ export const Episode = ({ formChanged, episode, index }) => {
   };
 
   return (
-    <form className="episode-container">
+    <div className="episode-container">
       <div className="body-episode">
         <div className="selected-input-form-episode">
           <label>Tập:</label>
@@ -236,6 +236,6 @@ export const Episode = ({ formChanged, episode, index }) => {
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 };

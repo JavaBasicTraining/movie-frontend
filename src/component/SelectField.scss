@@ -1,0 +1,26 @@
+.SelectField {
+  &__select {
+    width: 100%;
+    font-size: 1.125rem;
+    font-family: "Roboto", sans-serif;
+    border-radius: 4px;
+  }
+
+  &__multi-select {
+    .dropdown-heading {
+      .dropdown-heading-value {
+        span {
+          color: black !important;
+        }
+      }
+    }
+
+    .dropdown-content span {
+        color: black !important;
+    }
+  }
+
+  .menu-list {
+    color: black;
+  }
+}

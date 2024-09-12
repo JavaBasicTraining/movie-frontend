@@ -6,7 +6,7 @@ export const iconRegistry = {
 };
 
 function CustomIcon(props) {
-  const { size, icon, color } = props;
+  const { size = 20, icon, color = 'black' } = props;
   return (
     <div
       style={{
@@ -23,11 +23,6 @@ CustomIcon.propTypes = {
   size: PropTypes.number,
   icon: PropTypes.any,
   color: PropTypes.string,
-};
-
-CustomIcon.defaultProps = {
-  size: 20,
-  color: 'black',
 };
 
 export default CustomIcon;

@@ -1,0 +1,11 @@
+.TextField {
+  &__input {
+    width: 100%;
+    font-size: 1.125rem;
+    font-family: "Roboto", sans-serif;
+    border-radius: 4px;
+    border-width: 0;
+    box-sizing: border-box;
+    padding: 8px;
+  }
+}

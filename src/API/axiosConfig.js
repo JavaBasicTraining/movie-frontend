@@ -29,6 +29,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   function (error) {
+    window.location.href = '/login';
     return Promise.reject(error);
   }
 );

@@ -59,7 +59,7 @@ export default function Login() {
       
         (userFetched) => {
        
-          if (userFetched && userFetched.authorities.includes('admin')) {
+          if (userFetched && userFetched.authorities.includes('Admin')) {
             alert('Đăng Nhập Tài Khoản Admin Thành Công!!!');
             navigate('/admin/movie');
           } else {
@@ -116,7 +116,7 @@ export default function Login() {
             required
           />
           <button onClick={handleLogin}>Đăng nhập</button>
-          <Link className="color-label" to="/src/pages/user/Register">
+          <Link className="color-label" to="/src/pages/Register">
             Bạn chưa có tài khoản?
           </Link>
           <Link className="color-label" to="/public">

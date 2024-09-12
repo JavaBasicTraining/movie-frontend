@@ -83,7 +83,7 @@ export const HomePage = () => {
         )}
         {isLoggedIn() && (
           <div className="login-register">
-            <a href="/" onClick={handleLogout}>
+            <a href="/public" onClick={handleLogout}>
               Đăng Xuất
             </a>
           </div>
