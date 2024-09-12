@@ -85,7 +85,7 @@ export const ListMovie = () => {
     <div>
       <div className="ListMovieAdmin d-flex flex-column gap-4">
         <div className="ListMovieAdmin__filter-controls">
-          <Link to="/admin/movie/new">
+          <Link to={{ pathname: '/admin/movie/new' }}>
             <Button variant={'primary'}>Tạo phim</Button>
           </Link>
 
@@ -109,7 +109,7 @@ export const ListMovie = () => {
           </div>
         </div>
 
-        <table className="table table-bordered table-striped">
+        <table className="table table-bordered table-striped table-hover">
           <thead>
             <tr>
               <th>ID</th>
@@ -126,12 +126,15 @@ export const ListMovie = () => {
                 <td>{item.description}</td>
                 <td>
                   <div className="d-flex align-items-center gap-3">
-                    <Button onClick={() => navigate(`/admin/movie/${item.id}`)}>
+                    <Button
+                      variant={'outline-primary'}
+                      onClick={() => navigate(`/admin/movie/${item.id}`)}
+                    >
                       Edit
                     </Button>
 
                     <Button
-                      variant={'danger'}
+                      variant={'outline-danger'}
                       onClick={() => deleteMovie(item.id)}
                     >
                       Remove

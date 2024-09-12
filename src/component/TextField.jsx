@@ -5,15 +5,14 @@ import CustomInput from './CustomInput';
 import _ from 'lodash';
 
 function TextField(props) {
-  const {
-    helperText,
-    children,
-    ...inputProps
-  } = props;
+  const { helperText, children, ...inputProps } = props;
 
   return (
     <CustomInput {...props} className="TextField">
-      <input className="TextField__input" {...(_.omit(inputProps, 'fullWidth'))} />
+      <input
+        className="TextField__input"
+        {..._.omit(inputProps, 'fullWidth')}
+      />
     </CustomInput>
   );
 }

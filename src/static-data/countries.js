@@ -28,4 +28,7 @@ export const countries = [
   'Úc',
 ];
 
-export const countryOptions = countries.map((country) => ({  value: country, label: country }));
+export const countryOptions = countries.map((country) => ({
+  value: country,
+  label: country,
+}));

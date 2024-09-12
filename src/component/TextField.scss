@@ -7,5 +7,10 @@
     border-width: 0;
     box-sizing: border-box;
     padding: 8px;
+
+    &:focus {
+      outline-color: var(--primary);
+      border-color: var(--primary);
+    }
   }
 }

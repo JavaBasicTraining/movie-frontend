@@ -28,8 +28,8 @@ export const Page = () => {
             <Link to={`/${item.nameMovie}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
-                <div className='icon-play'>
-                <PlayCircleOutlined />
+                <div className="icon-play">
+                  <PlayCircleOutlined />
                 </div>
               </div>
 
@@ -47,8 +47,8 @@ export const Page = () => {
             <Link to={`/${item.nameMovie}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
-                <div className='icon-play'>
-                <PlayCircleOutlined />
+                <div className="icon-play">
+                  <PlayCircleOutlined />
                 </div>
               </div>
               <span>{item.nameMovie}</span>
@@ -64,14 +64,13 @@ export const Page = () => {
             <Link to={`/${item.nameMovie}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
-                <div className='icon-play'>
-                <PlayCircleOutlined />
+                <div className="icon-play">
+                  <PlayCircleOutlined />
                 </div>
               </div>
-         
+
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
-             
             </Link>
           ))}
         </div>
@@ -84,8 +83,8 @@ export const Page = () => {
             <Link to={`/${item.nameMovie}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
-                <div className='icon-play'>
-                <PlayCircleOutlined />
+                <div className="icon-play">
+                  <PlayCircleOutlined />
                 </div>
               </div>
 

@@ -72,7 +72,7 @@ export const HomePage = () => {
             ></input>
             <button onClick={() => filterMovie(null, name)}>
               <SearchOutlined />
-            </button> 
+            </button>
           </div>
         </div>
         {!isLoggedIn() && (

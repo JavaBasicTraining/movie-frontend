@@ -4,29 +4,19 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import { AddOrUpdateMovie, AddOrUpdateMovieLoader } from './pages/Admin/AddOrUpdateMovie/AddOrUpdateMovie';
+import {
+  AddOrUpdateMovie,
+  AddOrUpdateMovieLoader,
+} from './pages/Admin/AddOrUpdateMovie/AddOrUpdateMovie';
 import { Admin } from './pages/Admin/Admin';
-import {
-  ListMovie,
-  MovieManagerLoader,
-} from './pages/Admin/ListMovieAdmin';
-import {
-  CountryLoader,
-  Movie,
-  MovieLoader,
-} from './pages/ListMovieUser';
-import {
-  MovieDetail,
-  posterMovieLoader,
-} from './pages/MovieDetail';
+import { ListMovie, MovieManagerLoader } from './pages/Admin/ListMovieAdmin';
+import { CountryLoader, Movie, MovieLoader } from './pages/ListMovieUser';
+import { MovieDetail, posterMovieLoader } from './pages/MovieDetail';
 import {
   filterMovieSeriesLoader,
   MovieVideoSeries,
 } from './pages/MovieVideoSeries';
-import {
-  filterMovieLoader,
-  MovieVideo,
-} from './pages/MovieVideoSingle';
+import { filterMovieLoader, MovieVideo } from './pages/MovieVideoSingle';
 import { Page } from './pages/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.scss';
@@ -77,30 +67,30 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/Admin',
+    path: '/admin',
     element: <PrivateRoute />,
     children: [
       {
-        path: '/Admin',
+        path: '/admin',
         element: <Admin />,
         children: [
           {
-            path: '/Admin/movie/',
+            path: '/admin/movie/',
             element: <ListMovie />,
             loader: MovieManagerLoader,
           },
           {
-            path: '/Admin/movie/category/:keyword',
+            path: '/admin/movie/category/:keyword',
             element: <ListMovie />,
             loader: MovieManagerLoader,
           },
           {
-            path: '/Admin/movie/new',
+            path: '/admin/movie/new',
             element: <AddOrUpdateMovie />,
             loader: AddOrUpdateMovieLoader,
           },
           {
-            path: '/Admin/movie/:id',
+            path: '/admin/movie/:id',
             element: <AddOrUpdateMovie />,
             loader: AddOrUpdateMovieLoader,
           },

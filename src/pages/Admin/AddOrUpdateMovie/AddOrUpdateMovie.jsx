@@ -309,7 +309,12 @@ export const AddOrUpdateMovie = () => {
           value: category.id,
         })) ?? []
       );
-      setGenreOptions(genreResponse?.data?.map(genre => ({label: genre.name, value: genre})) ?? []);
+      setGenreOptions(
+        genreResponse?.data?.map((genre) => ({
+          label: genre.name,
+          value: genre,
+        })) ?? []
+      );
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -405,7 +410,9 @@ export const AddOrUpdateMovie = () => {
             fullWidth={true}
             helperText={errors.idCategory}
             name="idCategory"
-            value={categoryOptions.find((item) => item.value === data.idCategory)}
+            value={categoryOptions.find(
+              (item) => item.value === data.idCategory
+            )}
             onChange={({ value }) => {
               handleSelectChange('idCategory', value, (formData) => {
                 handleShowEpisode(value, formData);

@@ -19,8 +19,8 @@ const validVideoTypes = [
 
 export const allowVideoType = (fileType) => {
   return validVideoTypes.includes(fileType);
-}
+};
 
 export const allowImageType = (fileType) => {
   return validImageTypes.includes(fileType);
-}
+};

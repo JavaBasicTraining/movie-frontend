@@ -1,9 +1,10 @@
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
 import { NavbarAdmin } from '../../component/NavbarAdmin';
 
 import { useState } from 'react';
 import { UnorderedListOutlined } from '@ant-design/icons';
+import { Button } from 'react-bootstrap';
 
 export const Admin = () => {
   const [showNavbar, setShowNavbar] = useState(false);
@@ -20,9 +21,9 @@ export const Admin = () => {
 
       <div className="right-container">
         <div className="header">
-          <button onClick={onClickMenuNavbar} className="h-fit">
+          <Button onClick={onClickMenuNavbar} className="h-fit">
             <UnorderedListOutlined />
-          </button>
+          </Button>
 
           <div className="body-item">
             <div className="title">
@@ -32,6 +33,7 @@ export const Admin = () => {
         </div>
         <div className="body">
           <Outlet />
+          <Navigate to="/admin/movie" />
         </div>
       </div>
     </div>

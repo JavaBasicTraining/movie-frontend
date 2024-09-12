@@ -1,0 +1,19 @@
+.NavbarAdmin {
+  width: 100%;
+  display: flex;
+  background-color: var(--bs-primary);
+  flex-direction: column;
+  gap: 20px;
+  overflow: hidden;
+
+  &__nav-item {
+    border-radius: 12px;
+    padding: 4px;
+    transition: 0.5s;
+
+    &:hover {
+      background-color: black;
+      cursor: pointer;
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../hook/useAuth';
 import { useEffect, useState } from 'react';
 import useFetchUser from '../hook/useFetchUser';
@@ -54,19 +54,15 @@ export default function Login() {
     const token = await login(username, password);
     if (token) {
       setToken(token);
-    
-      await fetchUser(
-      
-        (userFetched) => {
-       
-          if (userFetched && userFetched.authorities.includes('Admin')) {
-            alert('Đăng Nhập Tài Khoản Admin Thành Công!!!');
-            navigate('/admin/movie');
-          } else {
-            navigate('/');
-          }
+
+      await fetchUser((userFetched) => {
+        if (userFetched && userFetched.authorities.includes('Admin')) {
+          alert('Đăng Nhập Tài Khoản Admin Thành Công!!!');
+          navigate('/admin/movie');
+        } else {
+          navigate('/');
         }
-      );
+      });
     } else if (username === '' || password === '') {
       alert('Vui lòng nhập đầy đủ user password');
     } else {

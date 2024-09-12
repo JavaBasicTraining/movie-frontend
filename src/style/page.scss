@@ -52,6 +52,7 @@
       .img-item {
         overflow: hidden;
         position: relative;
+
         span {
           color: rgb(241, 241, 240);
         }
@@ -75,6 +76,7 @@
           transition: opacity 0.3s;
           filter: brightness(0.4);
         }
+
         img:hover + .icon-play {
           opacity: 5;
           color: white !important;
