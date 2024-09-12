@@ -29,7 +29,7 @@ import {
 } from './pages/MovieVideoSingle';
 import { Page } from './pages/Page';
 import PrivateRoute from './component/PrivateRoute';
-import './index.css';
+import './index.scss';
 import reportWebVitals from './reportWebVitals';
 
 const router = createBrowserRouter([

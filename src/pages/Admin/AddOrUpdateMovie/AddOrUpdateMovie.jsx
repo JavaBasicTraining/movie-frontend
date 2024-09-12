@@ -10,6 +10,7 @@ import SelectField from '../../../component/SelectField';
 import { allowImageType, allowVideoType } from '../../../utils/validateFile';
 import './AddOrUpdateMovie.scss';
 import { movieAPI } from '../../../API/movieAPI';
+import { Button } from 'react-bootstrap';
 
 export async function AddOrUpdateMovieLoader({ params }) {
   if (params.id) {
@@ -478,9 +479,9 @@ export const AddOrUpdateMovie = () => {
             </div>
           )}
 
-          <button type="submit">
+          <Button type="submit" variant={'primary'}>
             {isEdit === false ? 'Thêm' : 'Sửa Thông Tin Phim '}
-          </button>
+          </Button>
         </div>
       </div>
     </form>

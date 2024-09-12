@@ -1,5 +1,5 @@
 .CustomInput {
-  width: 100%;
+  width: fit-content;
   display: flex;
   flex-direction: column;
 
@@ -29,7 +29,7 @@
     color: var(--error);
   }
 
-  .full-width {
+  &--full-width {
     width: 100%;
   }
 }

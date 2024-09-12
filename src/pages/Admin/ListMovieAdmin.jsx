@@ -6,6 +6,9 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { axiosInstance } from '../../API/axiosConfig';
+import SelectField from '../../component/SelectField';
+import { Button } from 'react-bootstrap';
+import './ListMovieAdmin.scss';
 
 export async function MovieManagerLoader({ params, request }) {
   const searchParams = new URL(request.url).searchParams;
@@ -59,75 +62,87 @@ export const ListMovie = () => {
   };
 
   const renderSelect = (items, paramName, placeholder) => {
-    const handleSearchChange = (e) => {
+    const handleSearchChange = ({ value }) => {
       const params = new URLSearchParams(searchParams);
-      params.set(paramName, e.target.value);
+      params.set(paramName, value);
       setSearchParams(params);
     };
 
     return (
-      <select defaultValue={'default'} onChange={handleSearchChange}>
-        <option value={'default'} disabled>
-          {placeholder}
-        </option>
-        {items.map((item) => (
-          <option key={item.label} value={item.value.name}>
-            {item.label}
-          </option>
-        ))}
-      </select>
+      <SelectField
+        placeholder={placeholder}
+        onChange={handleSearchChange}
+        options={items.map((item) => ({
+          label: item.label,
+          value: item.value.name,
+        }))}
+        fullWidth={false}
+      />
     );
   };
 
   return (
     <div>
-      <div className="container-navbar-admin">
-        <Link to="/admin/movie/new">
-          <button>Add New</button>
-        </Link>
+      <div className="ListMovieAdmin d-flex flex-column gap-4">
+        <div className="ListMovieAdmin__filter-controls">
+          <Link to="/admin/movie/new">
+            <Button variant={'primary'}>Tạo phim</Button>
+          </Link>
 
-        {renderSelect(
-          categories.map((category) => ({
-            label: category.name,
-            value: category,
-          })),
-          'genre',
-          'Chon the loai'
-        )}
-        {renderSelect(
-          countries.map((country) => ({
-            label: country.name,
-            value: country,
-          })),
-          'country',
-          'Chon quoc gia'
-        )}
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {movies.map((item) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.nameMovie}</td>
-              <td>{item.description}</td>
-              <td>
-                <button onClick={() => navigate(`/admin/movie/${item.id}`)}>
-                  Edit
-                </button>
-                <button onClick={() => deleteMovie(item.id)}>Remove</button>
-              </td>
+          <div className="d-flex align-items-center flex-row gap-2">
+            {renderSelect(
+              categories.map((category) => ({
+                label: category.name,
+                value: category,
+              })),
+              'genre',
+              'Thể loại'
+            )}
+            {renderSelect(
+              countries.map((country) => ({
+                label: country.name,
+                value: country,
+              })),
+              'country',
+              'Quốc gia'
+            )}
+          </div>
+        </div>
+
+        <table className="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {movies.map((item) => (
+              <tr key={item.id}>
+                <td>{item.id}</td>
+                <td>{item.nameMovie}</td>
+                <td>{item.description}</td>
+                <td>
+                  <div className="d-flex align-items-center gap-3">
+                    <Button onClick={() => navigate(`/admin/movie/${item.id}`)}>
+                      Edit
+                    </Button>
+
+                    <Button
+                      variant={'danger'}
+                      onClick={() => deleteMovie(item.id)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

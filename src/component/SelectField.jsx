@@ -28,7 +28,7 @@ function SelectField(props) {
 }
 
 SelectField.propTypes = {
-  items: PropTypes.array,
+  options: PropTypes.array,
   placeholder: PropTypes.string,
   multiple: PropTypes.bool,
   value: PropTypes.any,

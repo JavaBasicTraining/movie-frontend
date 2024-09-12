@@ -25,23 +25,21 @@ export const Movie = () => {
 
   return (
     <div className="container">
-      {
-        <div className="item">
-          {movies?.map((item) => (
-            <Link to={`/${item.nameMovie}`}>
-              <div className="poster" key={item.id}>
-                <div className='img-item-filter'>
-                  <img src={item.posterUrl} alt="" />
-                </div>
-                <div className="title-movie">
-                  <span>{item.nameMovie}</span>
-                  <span>{item.enTitle}</span>
-                </div>
+      <div className="item">
+        {movies?.map((item) => (
+          <Link to={`/${item.nameMovie}`}>
+            <div className="poster" key={item.id}>
+              <div className="img-item-filter">
+                <img src={item.posterUrl} alt="" />
               </div>
-            </Link>
-          ))}
-        </div>
-      }
+              <div className="title-movie">
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };
