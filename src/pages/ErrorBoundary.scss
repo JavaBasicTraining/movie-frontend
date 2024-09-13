@@ -1,0 +1,49 @@
+:root {
+  --text-size: 3;
+  --time-each-step: 0.4s;
+  --border-right: 5px solid;
+}
+
+.ErrorBoundary {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__status-wrapper {
+    width: fit-content;
+  }
+
+  &__status {
+    font-size: 10rem !important;
+    font-weight: bold;
+    white-space: nowrap;
+    display: block;
+    border-right: var(--border-right);
+    width: 100%;
+    overflow: hidden;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+
+    background: url("../../public/poster/congdianguc.jpg") no-repeat top left;
+    background-size: cover;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    animation: typing calc(var(--time-each-step) * var(--text-size)) steps(var(--text-size)),
+    cursor var(--time-each-step) step-end infinite alternate;
+  }
+}
+
+@keyframes cursor {
+  50% {
+    border-color: transparent;
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+}

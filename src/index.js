@@ -21,11 +21,13 @@ import { Page } from './pages/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
+import ErrorBoundary from './pages/ErrorBoundary';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         path: '/',
