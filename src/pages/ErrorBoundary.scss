@@ -28,7 +28,7 @@
 
     background: url("../../public/poster/congdianguc.jpg") no-repeat top left;
     background-size: cover;
-    -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 
     animation: typing calc(var(--time-each-step) * var(--text-size)) steps(var(--text-size)),
