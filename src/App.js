@@ -9,6 +9,7 @@ function App() {
       <HomePage />
       <NavbarUser />
       <Outlet />
+      
     </div>
   );
 }

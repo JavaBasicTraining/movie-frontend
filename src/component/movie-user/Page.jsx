@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../../API/axiosConfig';
 import { Link } from 'react-router-dom';
+import { PlayCircleOutlined } from '@ant-design/icons';
 
 export const Page = () => {
   const [movies, setMovies] = useState([]);
@@ -18,6 +19,24 @@ export const Page = () => {
     fetchMovies();
   }, []);
 
+  const horrifiedMovies = movies.filter((movie) =>
+    Array.from(movie.genreName).some((name) =>
+      name.toLowerCase().includes('kinh dị'.toLowerCase())
+    )
+  );
+
+  const adventureMovies = movies.filter((movie) =>
+    Array.from(movie.genreName).some((name) =>
+      name.toLowerCase().includes('phiêu lưu'.toLowerCase())
+    )
+  );
+
+  const cartoonMovies = movies.filter((movie) =>
+    Array.from(movie.genreName).some((name) =>
+      name.toLowerCase().includes('hoạt hình'.toLowerCase())
+    )
+  );
+
   return (
     <div className="page-container">
       <div className="nav-category">
@@ -25,7 +44,13 @@ export const Page = () => {
         <div class="article-item">
           {movies.map((item) => (
             <Link to={`/${item.nameMovie}`} className="list-item-page">
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+              <div className="img-item">
+                <img key={item.id} src={item.posterUrl} alt={item.title} />
+                <div className="icon-play">
+                  <PlayCircleOutlined />
+                </div>
+              </div>
+
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
             </Link>
@@ -36,9 +61,14 @@ export const Page = () => {
       <div className="nav-category">
         <h>Phim Lẻ Mới Cập Nhật</h>
         <div class="article-item">
-          {movies.map((item) => (
+          {adventureMovies.map((item) => (
             <Link to={`/${item.nameMovie}`} className="list-item-page">
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+              <div className="img-item">
+                <img key={item.id} src={item.posterUrl} alt={item.title} />
+                <div className="icon-play">
+                  <PlayCircleOutlined />
+                </div>
+              </div>
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
             </Link>
@@ -48,9 +78,15 @@ export const Page = () => {
       <div className="nav-category">
         <h>Phim Bộ Mới Cập Nhật</h>
         <div class="article-item">
-          {movies.map((item) => (
+          {horrifiedMovies.map((item) => (
             <Link to={`/${item.nameMovie}`} className="list-item-page">
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+              <div className="img-item">
+                <img key={item.id} src={item.posterUrl} alt={item.title} />
+                <div className="icon-play">
+                  <PlayCircleOutlined />
+                </div>
+              </div>
+
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
             </Link>
@@ -61,9 +97,15 @@ export const Page = () => {
       <div className="nav-category">
         <h>Phim Hoạt Hình</h>
         <div class="article-item">
-          {movies.map((item) => (
+          {cartoonMovies.map((item) => (
             <Link to={`/${item.nameMovie}`} className="list-item-page">
-              <img key={item.id} src={item.posterUrl} alt={item.title} />
+              <div className="img-item">
+                <img key={item.id} src={item.posterUrl} alt={item.title} />
+                <div className="icon-play">
+                  <PlayCircleOutlined />
+                </div>
+              </div>
+
               <span>{item.nameMovie}</span>
               <span>{item.enTitle}</span>
             </Link>
