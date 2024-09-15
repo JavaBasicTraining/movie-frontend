@@ -23,22 +23,19 @@ export const MovieVideo = () => {
   const [editCommentContent, setEditCommentContent] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
-  const optionsRefs = useRef({});
+  const menuRef = useRef(null);
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setShowOptions({});
+    }
+  };
 
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     const clickedOutside = Object.keys(optionsRefs.current).every((id) => {
-  //       return !optionsRefs.current[id].contains(event.target);
-  //     });
-    
-  //     if (clickedOutside) {
-  //       setShowOptions({});
-  //     }
-  //   };
-
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => document.removeEventListener('mousedown', handleClickOutside);
-  // }, []);
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   const toggleOptions = (commentId) => {
     setShowOptions((prevState) => ({
@@ -46,7 +43,7 @@ export const MovieVideo = () => {
       [commentId]: !prevState[commentId],
     }));
   };
-  
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -141,7 +138,6 @@ export const MovieVideo = () => {
         console.error('Error updating comment:', error);
         notification.error({
           message: 'Update Comment Error',
-       
         });
       }
     }
@@ -159,7 +155,6 @@ export const MovieVideo = () => {
       console.error('Error deleting comment:', error);
       notification.error({
         message: 'Delete Comment Error',
-       
       });
     }
   };
@@ -268,9 +263,14 @@ export const MovieVideo = () => {
                         onChange={(e) => setEditCommentContent(e.target.value)}
                         onKeyDown={handleKeyDownUpdateComment}
                       />
-                      <div className='save-cancel'>
+                      <div className="save-cancel">
                         <button onClick={handleUpdateComment}>Lưu</button>
-                        <button onClick={() => setEditCommentId(null)}>
+                        <button
+                          onClick={() => {
+                            setEditCommentId(null);
+                            setShowOptions(false);
+                          }}
+                        >
                           Hủy
                         </button>
                       </div>
@@ -278,25 +278,27 @@ export const MovieVideo = () => {
                   ) : (
                     <div className="content-icon">
                       <label>{value.content}</label>
-                      <div className="edit-comment">
-                        <button onClick={() => toggleOptions(value.id)}>
-                          ...
-                        </button>
+                      <div ref={menuRef} className="comment-options">
+                        <div className="edit-comment">
+                          <button onClick={() => toggleOptions(value.id)}>
+                            ...
+                          </button>
 
-                        {showOptions[value.id] && (
-                          <div className="choose-update-delete">
-                            <button
-                              onClick={() =>
-                                handleEditClick(value.id, value.content)
-                              }
-                            >
-                              Chỉnh Sửa
-                            </button>
-                            <button onClick={() => handleDelete(value.id)}>
-                              Xóa
-                            </button>
-                          </div>
-                        )}
+                          {showOptions[value.id] && (
+                            <div className="choose-update-delete">
+                              <button
+                                onClick={() =>
+                                  handleEditClick(value.id, value.content)
+                                }
+                              >
+                                Chỉnh Sửa
+                              </button>
+                              <button onClick={() => handleDelete(value.id)}>
+                                Xóa
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -306,8 +308,15 @@ export const MovieVideo = () => {
                   <button onClick={() => handleClickLike(value.id)}>
                     Like
                   </button>
-                  <label style={{ color: 'red', fontSize:'12px', marginRight:'15px' }}>{value.totalLikes}</label>
-
+                  <label
+                    style={{
+                      color: 'red',
+                      fontSize: '12px',
+                      marginRight: '15px',
+                    }}
+                  >
+                    {value.totalLikes}
+                  </label>
                   <button onClick={() => handleReply(value.id)}>Reply</button>
                 </div>
               </div>
