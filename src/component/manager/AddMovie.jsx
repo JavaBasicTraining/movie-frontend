@@ -46,6 +46,41 @@ export const AddMovie = () => {
 
   const posterRef = useRef();
 
+  // const uploadFileClick = () => {
+  //   if (data.poster) {
+  //     document
+  //       .getElementById('title-file-poster')
+  //       .addEventListener('click', function () {
+  //         document.getElementById('file-poster').click();
+  //       });
+
+  //     document
+  //       .getElementById('file-poster')
+  //       .addEventListener('change', function (event) {
+  //         var fileName =
+  //           event.target.files.length > 0
+  //             ? event.target.files[0].name
+  //             : 'Tải Poster';
+  //         document.getElementById('title-file-poster').textContent = fileName;
+  //       });
+  //   } else {
+  //     document
+  //       .getElementById('title-file-video')
+  //       .addEventListener('click', function () {
+  //         document.getElementById('file-video').click();
+  //       });
+  //     document
+  //       .getElementById('file-video')
+  //       .addEventListener('change', function (event) {
+  //         var fileName =
+  //           event.target.files.length > 0
+  //             ? event.target.files[0].name
+  //             : 'Tải video  ';
+  //         document.getElementById('title-file-video').textContent = fileName;
+  //       });
+  //   }
+  // };
+
   useEffect(() => {
     window.addEventListener('resize', () => {
       updatePosterHeight();
@@ -626,7 +661,7 @@ export const AddMovie = () => {
           ) : null
         ) : (
           <img
-           
+            className="poster"
             ref={posterRef}
             src={data.prevPosterUrl || movie.posterUrl}
             alt=""
