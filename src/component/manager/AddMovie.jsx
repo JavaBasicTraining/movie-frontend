@@ -46,6 +46,41 @@ export const AddMovie = () => {
 
   const posterRef = useRef();
 
+  // const uploadFileClick = () => {
+  //   if (data.poster) {
+  //     document
+  //       .getElementById('title-file-poster')
+  //       .addEventListener('click', function () {
+  //         document.getElementById('file-poster').click();
+  //       });
+
+  //     document
+  //       .getElementById('file-poster')
+  //       .addEventListener('change', function (event) {
+  //         var fileName =
+  //           event.target.files.length > 0
+  //             ? event.target.files[0].name
+  //             : 'Tải Poster';
+  //         document.getElementById('title-file-poster').textContent = fileName;
+  //       });
+  //   } else {
+  //     document
+  //       .getElementById('title-file-video')
+  //       .addEventListener('click', function () {
+  //         document.getElementById('file-video').click();
+  //       });
+  //     document
+  //       .getElementById('file-video')
+  //       .addEventListener('change', function (event) {
+  //         var fileName =
+  //           event.target.files.length > 0
+  //             ? event.target.files[0].name
+  //             : 'Tải video  ';
+  //         document.getElementById('title-file-video').textContent = fileName;
+  //       });
+  //   }
+  // };
+
   useEffect(() => {
     window.addEventListener('resize', () => {
       updatePosterHeight();
@@ -612,6 +647,57 @@ export const AddMovie = () => {
             />
             {errorsFile.poster || (
               <small style={{ color: 'red' }}>{errorsFile.poster}</small>
+            {isEdit ? (
+              isEdit && (
+                <Select
+                  isMulti
+                  value={data.genreSelectedData}
+                  onChange={handleGenreChange}
+                  options={suggestions
+                    .filter(
+                      (suggestion) =>
+                        !data.genreSelectedData.some(
+                          (selected) => selected.value.id === suggestion.id
+                        )
+                    )
+                    .map((item) => ({
+                      label: item.name,
+                      value: item,
+                    }))}
+                  styles={{
+                    option: (provided) => ({ ...provided, color: 'black' }),
+                    singleValue: (base) => ({ ...base, color: 'black' }),
+                  }}
+                />
+              )
+            ) : (
+              <MultiSelect
+                options={suggestions.map((item) => ({
+                  label: item.name,
+                  value: item,
+                }))}
+                value={selectedCategory}
+                onChange={handleGenreChange}
+                labelledBy="Select"
+                className="light custom-multi-select"
+                defaultIsOpen={false}
+              />
+            )}
+          </div>
+        </div>
+        <div className="selected-input-form">
+          <label id="title-file-poster">Tải Poster</label>
+          <div className="validate">
+            <input
+              id="file-poster"
+              type="file"
+              name="poster"
+              onChange={handleFileUpload}
+              required
+              style={{ color: 'white' }}
+            />
+            {errorsFile.poster || (
+              <small style={{ color: 'red' }}>{errorsFile.poster}</small>
             )}
           </div>
         </div>
@@ -626,7 +712,7 @@ export const AddMovie = () => {
           ) : null
         ) : (
           <img
-           
+            className="poster"
             ref={posterRef}
             src={data.prevPosterUrl || movie.posterUrl}
             alt=""

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export const DEFAULT_EPISODE = {
   episodeCount: '',
@@ -16,11 +16,7 @@ export const Episode = ({ formChanged, episode, index }) => {
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [errorsFile, setErrorsFile] = useState({});
   const [errors, setErrors] = useState({});
-  const fields = ['episodeCount', 'descriptions'];  
-  const posterRef = useRef();
-
-
-
+  const fields = ['episodeCount', 'descriptions'];
 
   useEffect(() => {
     document.addEventListener('checkFormError', () => {
@@ -57,31 +53,6 @@ export const Episode = ({ formChanged, episode, index }) => {
     checkFieldError(name, value);
   };
 
-
-  
-  useEffect(() => {
-    window.addEventListener('resize', () => {
-      updatePosterEpisodeHeight();
-    });
-
-    return () => {
-      window.removeEventListener('resize', () => {
-        updatePosterEpisodeHeight();
-      });
-    };
-  }, []);
-
-  
-  useLayoutEffect(() => {
-    updatePosterEpisodeHeight();
-  }, [data.poster]);
-
-  const updatePosterEpisodeHeight = () => {
-    if (posterRef?.current) {
-      const height = (posterRef.current.clientWidth * 4) / 3;
-      posterRef.current.style.height = height !== 0 ? `${height}px` : 'auto';
-    }
-  };
   const checkFieldError = (name, value) => {
     let error = '';
     if (!value.trim()) {
@@ -138,50 +109,50 @@ export const Episode = ({ formChanged, episode, index }) => {
         ...prevErrors,
         [name]: 'Không có tệp nào được chọn.',
       }));
-      setData((prev) => ({ ...prev, [name]: '' }));
-      setShowFileVideo(false);
       return;
     }
 
-    let isValid = false;
-    if (name === 'poster') {
-      isValid = validateFile(file, 'poster');
-    } else if (name === 'video') {
-      isValid = validateFile(file, 'video');
-    }
-
-    if (!isValid) {
+    if (name === 'poster' && !validateFile(file, 'poster')) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
         [name]:
-          name === 'poster'
-            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).'
-            : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI, FLV, MKV, 3GP).',
+          'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).',
       }));
       e.target.value = '';
-      name === 'poster' ? setShowFilePoster(false) : setShowFileVideo(false);
+      setShowFilePoster(false);
       return;
     }
-
-    setErrorsFile((prevErrors) => ({
-      ...prevErrors,
-      [name]: '',
-    }));
-
+    if (name === 'video' && !validateFile(file, 'video')) {
+      setErrorsFile((prevErrors) => ({
+        ...prevErrors,
+        [name]:
+          'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI,FLV, MKV,3GP).',
+      }));
+      e.target.value = '';
+      setShowFileVideo(false);
+    }
     const previewUrl = URL.createObjectURL(file);
-
+    let newData = { ...data };
     if (name === 'video') {
       setShowFileVideo(true);
-      setData((prev) => ({
-        ...prev,
+      newData = {
+        ...newData,
         video: file,
         prevVideoUrl: previewUrl,
-      }));
+      };
+      setData(newData);
     } else if (name === 'poster') {
       setShowFilePoster(true);
-      setData((prev) => ({ ...prev, poster: file, prevPosterUrl: previewUrl }));
+      newData = {
+        ...newData,
+        poster: file,
+        prevPosterUrl: previewUrl,
+      };
+      setData(newData);
     }
+    formChanged(newData, index); 
   };
+
   return (
     <form className="episode-container">
       <div className="body-episode">
@@ -210,24 +181,17 @@ export const Episode = ({ formChanged, episode, index }) => {
         </div>
         <div className="selected-input-form-episode-file">
           <div className="item-file">
-            <label > Tải Poster</label>
-          <div className="validate-episode">
+            <label>Tải Poster </label>
             <input
               type="file"
               name="poster"
-             
               onChange={handleFileChange}
               required
             />
-            {errorsFile.poster || (
-              <small style={{ color: 'red' }}>{errorsFile.poster}</small>
-            )}
-          </div>
           </div>
           {showFilePoster && (
             <img
               className="poster-item-episode"
-              ref={posterRef}
               src={episode.posterUrl || data.prevPosterUrl}
               alt=""
             />
@@ -236,19 +200,12 @@ export const Episode = ({ formChanged, episode, index }) => {
         <div className="selected-input-form-episode-file">
           <div className="item-file">
             <label>Tải Phim </label>
-            <div className="validate-episode">
             <input
-       
               type="file"
-              name="poster"
+              name="video"
               onChange={handleFileChange}
               required
-             
             />
-            {errorsFile.poster || (
-              <small style={{ color: 'red' }}>{errorsFile.poster}</small>
-            )}
-          </div>
           </div>
           {(showFileVideo || episode.video) && (
             <video
