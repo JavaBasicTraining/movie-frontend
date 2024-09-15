@@ -464,7 +464,7 @@ export const AddMovie = () => {
   console.log(suggestions);
   return (
     <div className="container-addmovie">
-      {isEdit === false ? <h1>Thêm Phim Mới</h1> : <h1>Sửa Thông Tin Phim</h1>}
+      <h1>{isEdit ? 'Sửa Thông Tin Phim' : 'Thêm Phim Mới'}</h1>
       <div className="form-addmovie">
         <div className="selected-input-form">
           <label>Nhập Tên Phim</label>
@@ -476,7 +476,7 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.nameMovie || (
+            {errors.nameMovie && (
               <small className="error">{errors.nameMovie}</small>
             )}
           </div>
@@ -492,11 +492,12 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.viTitle || (
+            {errors.viTitle && (
               <small className="error">{errors.viTitle}</small>
             )}
           </div>
         </div>
+
         <div className="selected-input-form">
           <label>Nhập Tên Phim Tiếng Anh</label>
           <div className="validate">
@@ -507,11 +508,12 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.enTitle || (
+            {errors.enTitle && (
               <small className="error">{errors.enTitle}</small>
             )}
           </div>
         </div>
+
         <div className="selected-input-form">
           <label>Nhập Mô Tả Phim</label>
           <div className="validate">
@@ -522,11 +524,12 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.description || (
+            {errors.description && (
               <small className="error">{errors.description}</small>
             )}
           </div>
         </div>
+
         <div className="selected-input-form">
           <label>Năm Phát Hành:</label>
           <div className="validate">
@@ -537,9 +540,10 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.year || <small className="error">{errors.year}</small>}
+            {errors.year && <small className="error">{errors.year}</small>}
           </div>
         </div>
+
         <div className="selected-input-form">
           <label>Nhập Quốc Gia</label>
           <div className="validate">
@@ -559,12 +563,12 @@ export const AddMovie = () => {
                 </option>
               ))}
             </select>
-
-            {errors.country || (
+            {errors.country && (
               <small className="error">{errors.country}</small>
             )}
           </div>
         </div>
+
         <div className="selected-input-form">
           <label>Chọn Phân Loại Phim</label>
           <div className="validate">
@@ -572,11 +576,9 @@ export const AddMovie = () => {
               className="selected-item"
               name="idCategory"
               value={data.idCategory}
-              onChange={(e) => {
-                handleChange(e, (formData) => {
-                  handleShowEpisode(e, formData);
-                });
-              }}
+              onChange={(e) =>
+                handleChange(e, (formData) => handleShowEpisode(e, formData))
+              }
               required
             >
               <option value="" disabled>
@@ -588,37 +590,33 @@ export const AddMovie = () => {
                 </option>
               ))}
             </select>
-            {errors.idCategory || (
+            {errors.idCategory && (
               <small className="error">{errors.idCategory}</small>
             )}
           </div>
         </div>
+
         <div className="selected-input-form">
           <label>Nhập Thể Loại</label>
           <div className="validate">
             {isEdit ? (
-              isEdit && (
-                <Select
-                  isMulti
-                  value={data.genreSelectedData}
-                  onChange={handleGenreChange}
-                  options={suggestions
-                    .filter(
-                      (suggestion) =>
-                        !data.genreSelectedData.some(
-                          (selected) => selected.value.id === suggestion.id
-                        )
-                    )
-                    .map((item) => ({
-                      label: item.name,
-                      value: item,
-                    }))}
-                  styles={{
-                    option: (provided) => ({ ...provided, color: 'black' }),
-                    singleValue: (base) => ({ ...base, color: 'black' }),
-                  }}
-                />
-              )
+              <Select
+                isMulti
+                value={data.genreSelectedData}
+                onChange={handleGenreChange}
+                options={suggestions
+                  .filter(
+                    (suggestion) =>
+                      !data.genreSelectedData.some(
+                        (selected) => selected.value.id === suggestion.id
+                      )
+                  )
+                  .map((item) => ({ label: item.name, value: item }))}
+                styles={{
+                  option: (provided) => ({ ...provided, color: 'black' }),
+                  singleValue: (base) => ({ ...base, color: 'black' }),
+                }}
+              />
             ) : (
               <MultiSelect
                 options={suggestions.map((item) => ({
@@ -634,6 +632,7 @@ export const AddMovie = () => {
             )}
           </div>
         </div>
+
         <div className="selected-input-form">
           <label id="title-file-poster">Tải Poster</label>
           <div className="validate">
@@ -643,113 +642,35 @@ export const AddMovie = () => {
               name="poster"
               onChange={handleFileUpload}
               required
-              style={{ color: 'white' }}
             />
-            {errorsFile.poster || (
-              <small style={{ color: 'red' }}>{errorsFile.poster}</small>
-            {isEdit ? (
-              isEdit && (
-                <Select
-                  isMulti
-                  value={data.genreSelectedData}
-                  onChange={handleGenreChange}
-                  options={suggestions
-                    .filter(
-                      (suggestion) =>
-                        !data.genreSelectedData.some(
-                          (selected) => selected.value.id === suggestion.id
-                        )
-                    )
-                    .map((item) => ({
-                      label: item.name,
-                      value: item,
-                    }))}
-                  styles={{
-                    option: (provided) => ({ ...provided, color: 'black' }),
-                    singleValue: (base) => ({ ...base, color: 'black' }),
-                  }}
-                />
-              )
-            ) : (
-              <MultiSelect
-                options={suggestions.map((item) => ({
-                  label: item.name,
-                  value: item,
-                }))}
-                value={selectedCategory}
-                onChange={handleGenreChange}
-                labelledBy="Select"
-                className="light custom-multi-select"
-                defaultIsOpen={false}
-              />
+            {errorsFile.poster && (
+              <small className="error">{errorsFile.poster}</small>
             )}
           </div>
         </div>
-        <div className="selected-input-form">
-          <label id="title-file-poster">Tải Poster</label>
-          <div className="validate">
-            <input
-              id="file-poster"
-              type="file"
-              name="poster"
-              onChange={handleFileUpload}
-              required
-              style={{ color: 'white' }}
-            />
-            {errorsFile.poster || (
-              <small style={{ color: 'red' }}>{errorsFile.poster}</small>
-            )}
-          </div>
-        </div>
-        {isEdit === false ? (
-          showFilePoster === true ? (
-            <img
-              className="poster"
-              ref={posterRef}
-              src={data.prevPosterUrl}
-              alt=""
-            />
-          ) : null
-        ) : (
+
+        {isEdit ? (
           <img
             className="poster"
             ref={posterRef}
             src={data.prevPosterUrl || movie.posterUrl}
-            alt=""
+            alt="Poster"
           />
+        ) : (
+          showFilePoster && (
+            <img
+              className="poster"
+              ref={posterRef}
+              src={data.prevPosterUrl}
+              alt="Poster"
+            />
+          )
         )}
-        {showEpisode || (
-          <>
-            <div className="selected-input-form">
-              <label id="title-file-video">Tải Phim</label>
-              <div className="validate">
-                <input
-                  id="file-video"
-                  type="file"
-                  name="video"
-                  onChange={handleFileUpload}
-                  required
-                  style={{ color: 'white' }}
-                />
-                {errorsFile.video || <small>{errorsFile.video}</small>}
-              </div>
-            </div>
 
-            {isEdit === false ? (
-              showFileVideo === true ? (
-                <video src={data.prevVideoUrl} controls></video>
-              ) : null
-            ) : (
-              <video src={data.prevVideoUrl || movie.videoUrl} controls></video>
-            )}
-          </>
-        )}
-      </div>
-      {showEpisode && (
-        <div className="episodes">
-          {data.episodes && (
-            <>
-              {data.episodes.map((item, index) => (
+        {showEpisode && (
+          <div className="episodes">
+            {data.episodes &&
+              data.episodes.map((item, index) => (
                 <Episode
                   key={index}
                   episode={item}
@@ -757,14 +678,38 @@ export const AddMovie = () => {
                   formChanged={handleEpisodeChanged}
                 />
               ))}
-            </>
-          )}
-          <button onClick={handleAddEpisode}>Thêm Tập </button>
-        </div>
-      )}
-      <button onClick={handleSubmit}>
-        {isEdit === false ? 'Thêm' : 'Sửa Thông Tin Phim '}
-      </button>
+            <button onClick={handleAddEpisode}>Thêm Tập</button>
+          </div>
+        )}
+
+        {showFileVideo && !isEdit && (
+          <div className="selected-input-form">
+            <label id="title-file-video">Tải Phim</label>
+            <div className="validate">
+              <input
+                id="file-video"
+                type="file"
+                name="video"
+                onChange={handleFileUpload}
+                required
+              />
+              {errorsFile.video && (
+                <small className="error">{errorsFile.video}</small>
+              )}
+            </div>
+          </div>
+        )}
+
+        {isEdit ? (
+          <video src={data.prevVideoUrl || movie.videoUrl} controls></video>
+        ) : (
+          showFileVideo && <video src={data.prevVideoUrl} controls></video>
+        )}
+
+        <button onClick={handleSubmit}>
+          {isEdit ? 'Sửa Thông Tin Phim' : 'Thêm'}
+        </button>
+      </div>
     </div>
   );
 };
