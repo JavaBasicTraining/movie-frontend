@@ -30,13 +30,14 @@ export const MovieVideo = () => {
     if (event.key === 'Enter') {
       event.preventDefault();
       if (jwt && replyToCommentId) {
-        const request = new FormData();
-        request.append('content', replyComment);
-        request.append('idUser', user.id);
-        request.append('idMovie', movie.id);
-        request.append('user', user);
-        request.append('replyToCommentId', replyToCommentId);
-
+        const request = {
+          content: replyComment,
+          idUser: user.id,
+          idMovie: movie.id,
+          user: user,
+          replyToCommentId:  replyToCommentId
+        }
+  
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
           fetchComment();
@@ -208,13 +209,10 @@ export const MovieVideo = () => {
           content: comment,
           idUser: user.id,
           idMovie: movie.id,
-          user: user.userName
-        }
-       
-        if (replyToCommentId) {
-          request.append('replyToCommentId', replyToCommentId);
-        }
-
+          user: user,
+          replyToCommentId: replyToCommentId || null,
+        };
+  
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
           fetchComment(); 
@@ -235,6 +233,7 @@ export const MovieVideo = () => {
       }
     }
   };
+  
 
   const handleEditClick = (commentId, content) => {
     setEditCommentId(commentId);
