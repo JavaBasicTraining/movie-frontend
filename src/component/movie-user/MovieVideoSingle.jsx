@@ -23,30 +23,68 @@ export const MovieVideo = () => {
   const [editCommentContent, setEditCommentContent] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
-  const optionsRefs = useRef({});
+  const menuRef = useRef(null);
+  const [replyComment, setReplyComment] = useState('');
+  const [isReplyMode, setIsReplyMode] = useState(false); // Trạng thái để tách biệt chế độ bình luận chính và reply
 
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     const clickedOutside = Object.keys(optionsRefs.current).every((id) => {
-  //       return !optionsRefs.current[id].contains(event.target);
-  //     });
-    
-  //     if (clickedOutside) {
-  //       setShowOptions({});
-  //     }
-  //   };
+  const handleKeyDownReply = async (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (jwt && replyToCommentId) {
+        const request = new FormData();
+        request.append('content', replyComment);
+        request.append('idUser', user.id);
+        request.append('idMovie', movie.id);
+        request.append('user', user);
+        request.append('replyToCommentId', replyToCommentId);
 
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => document.removeEventListener('mousedown', handleClickOutside);
-  // }, []);
-
-  const toggleOptions = (commentId) => {
-    setShowOptions((prevState) => ({
-      ...prevState,
-      [commentId]: !prevState[commentId],
-    }));
+        try {
+          await axiosInstance.post(`/api/v1/comment/create`, request);
+          fetchComment();
+          setReplyComment('');
+          setReplyToCommentId(null);
+        } catch (error) {
+          console.error('Error posting reply:', error);
+          notification.error({
+            message: 'Post Reply Error',
+            description: 'Unable to post reply.',
+          });
+        }
+      }
+    }
   };
-  
+
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setShowOptions({});
+      if (replyToCommentId) {
+        setReplyToCommentId(null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+  const toggleOptions = (commentId) => {
+    setShowOptions((prevState) => {
+      const newShowOptions = {
+        ...prevState,
+        [commentId]: !prevState[commentId],
+      };
+
+      // Nếu đang hiển thị input reply và bấm vào dấu ba chấm của bình luận khác
+      if (replyToCommentId && replyToCommentId !== commentId) {
+        setReplyToCommentId(null);
+      }
+
+      return newShowOptions;
+    });
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -85,7 +123,7 @@ export const MovieVideo = () => {
     try {
       const params = new URLSearchParams({ movieId: movie.id });
       const response = await axiosInstance.get('/api/v1/comment', { params });
-      setListComment(response.data);
+      setListComment(response.data); 
     } catch (error) {
       console.error('Error fetching comments:', error);
       notification.error({
@@ -94,6 +132,7 @@ export const MovieVideo = () => {
       });
     }
   };
+  
 
   const getTimeDifference = (currentDate) => {
     const now = new Date();
@@ -141,7 +180,6 @@ export const MovieVideo = () => {
         console.error('Error updating comment:', error);
         notification.error({
           message: 'Update Comment Error',
-       
         });
       }
     }
@@ -159,7 +197,6 @@ export const MovieVideo = () => {
       console.error('Error deleting comment:', error);
       notification.error({
         message: 'Delete Comment Error',
-       
       });
     }
   };
@@ -168,20 +205,22 @@ export const MovieVideo = () => {
     if (event.key === 'Enter') {
       event.preventDefault();
       if (jwt) {
-        const request = new FormData();
-        request.append('content', comment);
-        request.append('idUser', user.id);
-        request.append('idMovie', movie.id);
-        request.append('user', user.userName);
-
-        if (replyToCommentId)
+        const request = {
+          content: comment,
+          idUser: user.id,
+          idMovie: movie.id,
+          user: user.userName
+        }
+       
+        if (replyToCommentId) {
           request.append('replyToCommentId', replyToCommentId);
+        }
 
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
-          fetchComment();
-          setComment('');
-          setReplyToCommentId(null);
+          fetchComment(); 
+          setComment(''); 
+          setReplyToCommentId(null); 
         } catch (error) {
           console.error('Error posting comment:', error);
           notification.error({
@@ -249,6 +288,7 @@ export const MovieVideo = () => {
           </button>
         </div>
       </div>
+
       <div className="body">
         <div className="comment">
           {showComment &&
@@ -260,6 +300,7 @@ export const MovieVideo = () => {
                   <h1>@{value.user.userName}: </h1>
                   <label>{getTimeDifference(value.currentDate)}</label>
                 </div>
+
                 <div className="comment-item">
                   {editCommentId === value.id ? (
                     <div className="edit-comment">
@@ -268,9 +309,14 @@ export const MovieVideo = () => {
                         onChange={(e) => setEditCommentContent(e.target.value)}
                         onKeyDown={handleKeyDownUpdateComment}
                       />
-                      <div className='save-cancel'>
+                      <div className="save-cancel">
                         <button onClick={handleUpdateComment}>Lưu</button>
-                        <button onClick={() => setEditCommentId(null)}>
+                        <button
+                          onClick={() => {
+                            setEditCommentId(null);
+                            setShowOptions(false);
+                          }}
+                        >
                           Hủy
                         </button>
                       </div>
@@ -278,57 +324,75 @@ export const MovieVideo = () => {
                   ) : (
                     <div className="content-icon">
                       <label>{value.content}</label>
-                      <div className="edit-comment">
-                        <button onClick={() => toggleOptions(value.id)}>
-                          ...
-                        </button>
-
-                        {showOptions[value.id] && (
-                          <div className="choose-update-delete">
-                            <button
-                              onClick={() =>
-                                handleEditClick(value.id, value.content)
-                              }
-                            >
-                              Chỉnh Sửa
-                            </button>
-                            <button onClick={() => handleDelete(value.id)}>
-                              Xóa
-                            </button>
-                          </div>
-                        )}
+                      <div ref={menuRef} className="comment-options">
+                        <div className="edit-comment">
+                          <button onClick={() => toggleOptions(value.id)}>
+                            ...
+                          </button>
+                          {showOptions[value.id] && (
+                            <div className="choose-update-delete">
+                              <button
+                                onClick={() =>
+                                  handleEditClick(value.id, value.content)
+                                }
+                              >
+                                Chỉnh Sửa
+                              </button>
+                              <button onClick={() => handleDelete(value.id)}>
+                                Xóa
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
-
                 <div className="like-reply">
                   <button onClick={() => handleClickLike(value.id)}>
                     Like
                   </button>
-                  <label style={{ color: 'red', fontSize:'12px', marginRight:'15px' }}>{value.totalLikes}</label>
-
+                  <label
+                    style={{
+                      color: 'red',
+                      fontSize: '12px',
+                      marginRight: '15px',
+                    }}
+                  >
+                    {value.totalLikes}
+                  </label>
                   <button onClick={() => handleReply(value.id)}>Reply</button>
                 </div>
+                {replyToCommentId === value.id && (
+                  <div className="reply-input">
+                    <input
+                      className="input"
+                      type="text"
+                      value={replyComment}
+                      placeholder="Nhập phản hồi của bạn..."
+                      onChange={(e) => setReplyComment(e.target.value)}
+                      onKeyDown={handleKeyDownReply}
+                      required
+                    />
+                    <button onClick={() => setReplyToCommentId(null)}>
+                      Hủy Reply
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           <span>Bình Luận</span>
-          {replyToCommentId && (
-            <div className="reply-input">
-              <input
-                className="input"
-                type="text"
-                value={comment}
-                placeholder="Nhập bình luận của bạn..."
-                onChange={handleCommentChange}
-                onKeyDown={handleKeyDown}
-                required
-              />
-              <button onClick={() => setReplyToCommentId(null)}>
-                Hủy Reply
-              </button>
-            </div>
-          )}
+          <div className="reply-input">
+            <input
+              className="input"
+              type="text"
+              value={comment}
+              placeholder="Nhập bình luận của bạn..."
+              onChange={handleCommentChange}
+              onKeyDown={handleKeyDown}
+              required
+            />
+          </div>
         </div>
       </div>
     </div>
