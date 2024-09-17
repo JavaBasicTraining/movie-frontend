@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { axiosInstance } from '../../API/axiosConfig';
 import { useLoaderData } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
+import { notification } from 'antd';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
@@ -20,8 +21,7 @@ export const MovieVideo = () => {
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');
-<<<<<<< HEAD
-=======
+
   const [replyToCommentId, setReplyToCommentId] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
   const menuRef = useRef(null);
@@ -103,7 +103,6 @@ export const MovieVideo = () => {
       }
     }
   }, []);
->>>>>>> 0215561 (update-filter-by-id)
 
   const fetchUser = async (userName) => {
     try {
@@ -228,7 +227,7 @@ export const MovieVideo = () => {
           {showComment &&
             listComment.map((value) => (
               <div className="show-comment" key={value.id}>
-                <h1>@{value.user}: </h1>
+                <h1>@{value.user.userName}: </h1>
                 {editCommentId === value.id ? (
                   <div className="edit-comment">
                     <input
