@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
-    `/api/v1/movies/name/${params.name}`
+    `/api/v1/movies/id/${params.idMovie}`
   );
   return { movie: response.data };
 }
@@ -20,6 +20,90 @@ export const MovieVideo = () => {
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');
+<<<<<<< HEAD
+=======
+  const [replyToCommentId, setReplyToCommentId] = useState(null);
+  const [showOptions, setShowOptions] = useState(false);
+  const menuRef = useRef(null);
+  const [replyComment, setReplyComment] = useState('');
+
+  const handleKeyDownReply = async (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (jwt && replyToCommentId) {
+        const request = new FormData();
+        request.append('content', replyComment);
+        request.append('idUser', user.id);
+        request.append('idMovie', movie.id);
+        request.append('user', user);
+        request.append('replyToCommentId', replyToCommentId);
+
+        try {
+          await axiosInstance.post(`/api/v1/comment/create`, request);
+          fetchComment();
+          setReplyComment('');
+          setReplyToCommentId(null);
+        } catch (error) {
+          console.error('Error posting reply:', error);
+          notification.error({
+            message: 'Post Reply Error',
+            description: 'Unable to post reply.',
+          });
+        }
+      }
+    }
+  };
+
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setShowOptions({});
+      if (replyToCommentId) {
+        setReplyToCommentId(null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+  const toggleOptions = (commentId) => {
+    setShowOptions((prevState) => {
+      const newShowOptions = {
+        ...prevState,
+        [commentId]: !prevState[commentId],
+      };
+
+      // Nếu đang hiển thị input reply và bấm vào dấu ba chấm của bình luận khác
+      if (replyToCommentId && replyToCommentId !== commentId) {
+        setReplyToCommentId(null);
+      }
+
+      return newShowOptions;
+    });
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setJwt(decodedToken);
+        fetchUser(decodedToken.sub);
+        fetchComment();
+        setShowComment(true);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        notification.error({
+          message: 'Invalid Token',
+          description: 'Unable to decode token.',
+        });
+      }
+    }
+  }, []);
+>>>>>>> 0215561 (update-filter-by-id)
 
   const fetchUser = async (userName) => {
     try {
