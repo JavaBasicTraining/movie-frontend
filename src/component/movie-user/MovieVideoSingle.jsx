@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
-    `/api/v1/movies/name/${params.name}`
+    `/api/v1/movies/id/${params.idMovie}`
   );
   return { movie: response.data };
 }
@@ -25,7 +25,6 @@ export const MovieVideo = () => {
   const [showOptions, setShowOptions] = useState(false);
   const menuRef = useRef(null);
   const [replyComment, setReplyComment] = useState('');
-  const [isReplyMode, setIsReplyMode] = useState(false); // Trạng thái để tách biệt chế độ bình luận chính và reply
 
   const handleKeyDownReply = async (event) => {
     if (event.key === 'Enter') {

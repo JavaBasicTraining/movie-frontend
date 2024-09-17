@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 
 export async function filterMovieSeriesLoader({ params }) {
   const response = await axiosInstance.get(
-    `/api/v1/movies/name/${params.name}`
+    `/api/v1/movies/name/${params.idMovie}`
   );
 
   return {

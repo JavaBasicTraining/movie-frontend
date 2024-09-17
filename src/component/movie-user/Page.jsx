@@ -43,7 +43,7 @@ export const Page = () => {
         <h>Phim Đề Cử</h>
         <div class="article-item">
           {movies.map((item) => (
-            <Link to={`/${item.nameMovie}`} className="list-item-page">
+            <Link to={`/${item.id}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
                 <div className="icon-play">
@@ -62,7 +62,7 @@ export const Page = () => {
         <h>Phim Lẻ Mới Cập Nhật</h>
         <div class="article-item">
           {adventureMovies.map((item) => (
-            <Link to={`/${item.nameMovie}`} className="list-item-page">
+            <Link to={`/${item.id}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
                 <div className="icon-play">
@@ -79,7 +79,7 @@ export const Page = () => {
         <h>Phim Bộ Mới Cập Nhật</h>
         <div class="article-item">
           {horrifiedMovies.map((item) => (
-            <Link to={`/${item.nameMovie}`} className="list-item-page">
+            <Link to={`/${item.id}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
                 <div className="icon-play">
@@ -98,7 +98,7 @@ export const Page = () => {
         <h>Phim Hoạt Hình</h>
         <div class="article-item">
           {cartoonMovies.map((item) => (
-            <Link to={`/${item.nameMovie}`} className="list-item-page">
+            <Link to={`/${item.id}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
                 <div className="icon-play">
