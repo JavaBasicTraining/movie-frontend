@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
-    `/api/v1/movies/id/${params.idMovie}`
+    `/api/v1/movies/${params.id}`
   );
   return { movie: response.data };
 }
@@ -26,31 +26,35 @@ export const MovieVideo = () => {
   const menuRef = useRef(null);
   const [replyComment, setReplyComment] = useState('');
 
+  const handleClickReply= async ()=>
+  {
+    if (jwt && replyToCommentId) {
+      const request = {
+        content: replyComment,
+        idUser: user.id,
+        idMovie: movie.id,
+        user: user,
+        replyToCommentId:  replyToCommentId
+      }
+
+      try {
+        await axiosInstance.post(`/api/v1/comment/create`, request);
+        fetchComment();
+        setReplyComment('');
+        setReplyToCommentId(null);
+      } catch (error) {
+        console.error('Error posting reply:', error);
+        notification.error({
+          message: 'Post Reply Error',
+          description: 'Unable to post reply.',
+        });
+      }
+    }
+  }
   const handleKeyDownReply = async (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      if (jwt && replyToCommentId) {
-        const request = {
-          content: replyComment,
-          idUser: user.id,
-          idMovie: movie.id,
-          user: user,
-          replyToCommentId:  replyToCommentId
-        }
-  
-        try {
-          await axiosInstance.post(`/api/v1/comment/create`, request);
-          fetchComment();
-          setReplyComment('');
-          setReplyToCommentId(null);
-        } catch (error) {
-          console.error('Error posting reply:', error);
-          notification.error({
-            message: 'Post Reply Error',
-            description: 'Unable to post reply.',
-          });
-        }
-      }
+      handleClickReply()
     }
   };
 
@@ -372,6 +376,9 @@ export const MovieVideo = () => {
                       onKeyDown={handleKeyDownReply}
                       required
                     />
+                    <button onClick={handleClickReply}>
+                      Reply
+                    </button>
                     <button onClick={() => setReplyToCommentId(null)}>
                       Hủy Reply
                     </button>

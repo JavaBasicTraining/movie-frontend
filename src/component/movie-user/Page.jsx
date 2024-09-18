@@ -20,20 +20,20 @@ export const Page = () => {
   }, []);
 
   const horrifiedMovies = movies.filter((movie) =>
-    Array.from(movie.genreName).some((name) =>
-      name.toLowerCase().includes('kinh dị'.toLowerCase())
+  movie.genres.some((genreName) =>
+    genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
     )
   );
 
   const adventureMovies = movies.filter((movie) =>
-    Array.from(movie.genreName).some((name) =>
-      name.toLowerCase().includes('phiêu lưu'.toLowerCase())
+    movie.genres.some((genreName) =>
+      genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase())
     )
   );
 
   const cartoonMovies = movies.filter((movie) =>
-    Array.from(movie.genreName).some((name) =>
-      name.toLowerCase().includes('hoạt hình'.toLowerCase())
+    movie.genres.some((genreName) =>
+      genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase())
     )
   );
 

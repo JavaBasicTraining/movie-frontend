@@ -7,7 +7,7 @@ import useFetchUser from '../../hook/useFetchUser';
 
 export async function posterMovieLoader({ params }) {
   const response = await axiosInstance.get(
-    `/api/v1/movies/id/${params.idMovie}`
+    `/api/v1/movies/${params.id}`
   );
 
   return {
