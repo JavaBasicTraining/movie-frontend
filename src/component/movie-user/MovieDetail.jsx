@@ -7,7 +7,7 @@ import useFetchUser from '../../hook/useFetchUser';
 
 export async function posterMovieLoader({ params }) {
   const response = await axiosInstance.get(
-    `/api/v1/movies/name/${params.name}`
+    `/api/v1/movies/${params.name}`
   );
 
   return {
@@ -115,13 +115,13 @@ export const MovieDetail = () => {
               <div className="list-btn">
                 {movie.category.id === 1 ? (
                   <button
-                    onClick={() => navigate(`/xem-phim-bo/${movie.nameMovie}`)}
+                    onClick={() => navigate(`/xem-phim-bo/${movie.id}`)}
                   >
                     Xem Phim
                   </button>
                 ) : (
                   <button
-                    onClick={() => navigate(`/xem-phim/${movie.nameMovie}`)}
+                    onClick={() => navigate(`/xem-phim/${movie.id}`)}
                   >
                     Xem Phim
                   </button>
