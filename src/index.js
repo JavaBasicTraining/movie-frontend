@@ -59,7 +59,7 @@ const router = createBrowserRouter([
         loader: MovieLoader,
       },
       {
-        path: '/:idMovie',
+        path: '/:id',
         element: <MovieDetail />,
         loader: posterMovieLoader,
       },
@@ -95,17 +95,13 @@ const router = createBrowserRouter([
             loader: MovieManagerLoader,
           },
           {
-            path: '/admin/movie/new', // path đây// mục đích của e là để cho nó vào cái path edit mà
+            path: '/admin/movie/new',
             element: <AddMovie />,
             loader: MovieDetailLoader,
           },
           {
-            path: '/admin/movie/:id', // /admin/movie/:id khi vào path này, nó có cái id => edit, /admin/movie/new => tạo mới
-            // nó có 2 nút khác nhau, mình phải bấm nút nào nó mứ dô path đó chứ a, hiện tại 2 nút nó vô khác path r mà, c
-            // khác path đúng rồi a, khi e bấm edit thfi nó vô path này đúng rfoio, nhưng cái prop của e nó ko ăn nó nó ko loaddata vào input
-            // path đây khác, path nài thì vào đấy, nó dô path này nè a, nó check, nếu mình bấm edit thfi nó vô path này
-            // k cần, để biết cái nào là eddit thì dựa cái path thôi
-            element: <AddMovie value="Edit" />, // cái chỗ này  e để nó mứ dô path update chứ a , sao sai router ta
+            path: '/admin/movie/:id', 
+            element: <AddMovie value="Edit" />, 
             loader: MovieDetailLoader,
           },
         ],
