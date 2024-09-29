@@ -59,7 +59,7 @@ const router = createBrowserRouter([
         loader: MovieLoader,
       },
       {
-        path: '/:name',
+        path: '/:idMovie',
         element: <MovieDetail />,
         loader: posterMovieLoader,
       },
