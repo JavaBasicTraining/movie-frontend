@@ -4,6 +4,7 @@ import { useLoaderData } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { notification } from 'antd'; 
 import { jwtDecode } from 'jwt-decode';
+import { notification } from 'antd';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
