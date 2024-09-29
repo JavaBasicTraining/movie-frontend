@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { axiosInstance } from '../../API/axiosConfig';
 import { useLoaderData } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { notification } from 'antd'; // Import notification for user feedback
-import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
+import { notification } from 'antd'; 
+import { jwtDecode } from 'jwt-decode';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(

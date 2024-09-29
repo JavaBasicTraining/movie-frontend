@@ -24,7 +24,6 @@ export const Page = () => {
     genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
     )
   );
-
   const adventureMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
       genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase())
