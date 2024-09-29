@@ -59,17 +59,17 @@ const router = createBrowserRouter([
         loader: MovieLoader,
       },
       {
-        path: '/:name',
+        path: '/:idMovie',
         element: <MovieDetail />,
         loader: posterMovieLoader,
       },
       {
-        path: '/xem-phim/:name',
+        path: '/xem-phim/:idMovie',
         element: <MovieVideo />,
         loader: filterMovieLoader,
       },
       {
-        path: '/xem-phim-bo/:name',
+        path: '/xem-phim-bo/:idMovie',
         element: <MovieVideoSeries />,
         loader: filterMovieSeriesLoader,
       },
