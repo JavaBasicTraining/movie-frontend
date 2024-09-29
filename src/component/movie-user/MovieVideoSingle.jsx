@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { axiosInstance } from '../../API/axiosConfig';
 import { useLoaderData } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
+import { notification } from 'antd';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
@@ -20,6 +21,88 @@ export const MovieVideo = () => {
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');
+
+  const [replyToCommentId, setReplyToCommentId] = useState(null);
+  const [showOptions, setShowOptions] = useState(false);
+  const menuRef = useRef(null);
+  const [replyComment, setReplyComment] = useState('');
+
+  const handleKeyDownReply = async (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (jwt && replyToCommentId) {
+        const request = new FormData();
+        request.append('content', replyComment);
+        request.append('idUser', user.id);
+        request.append('idMovie', movie.id);
+        request.append('user', user);
+        request.append('replyToCommentId', replyToCommentId);
+
+        try {
+          await axiosInstance.post(`/api/v1/comment/create`, request);
+          fetchComment();
+          setReplyComment('');
+          setReplyToCommentId(null);
+        } catch (error) {
+          console.error('Error posting reply:', error);
+          notification.error({
+            message: 'Post Reply Error',
+            description: 'Unable to post reply.',
+          });
+        }
+      }
+    }
+  };
+
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setShowOptions({});
+      if (replyToCommentId) {
+        setReplyToCommentId(null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+  const toggleOptions = (commentId) => {
+    setShowOptions((prevState) => {
+      const newShowOptions = {
+        ...prevState,
+        [commentId]: !prevState[commentId],
+      };
+
+      // Nếu đang hiển thị input reply và bấm vào dấu ba chấm của bình luận khác
+      if (replyToCommentId && replyToCommentId !== commentId) {
+        setReplyToCommentId(null);
+      }
+
+      return newShowOptions;
+    });
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setJwt(decodedToken);
+        fetchUser(decodedToken.sub);
+        fetchComment();
+        setShowComment(true);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        notification.error({
+          message: 'Invalid Token',
+          description: 'Unable to decode token.',
+        });
+      }
+    }
+  }, []);
 
   const fetchUser = async (userName) => {
     try {
@@ -144,7 +227,7 @@ export const MovieVideo = () => {
           {showComment &&
             listComment.map((value) => (
               <div className="show-comment" key={value.id}>
-                <h1>@{value.user}: </h1>
+                <h1>@{value.user.userName}: </h1>
                 {editCommentId === value.id ? (
                   <div className="edit-comment">
                     <input
