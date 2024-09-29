@@ -7,7 +7,7 @@ import { notification } from 'antd';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
-    `/api/v1/movies/id/${params.idMovie}`
+    `/api/v1/movies/${params.id}`
   );
   return { movie: response.data };
 }

@@ -64,12 +64,12 @@ const router = createBrowserRouter([
         loader: posterMovieLoader,
       },
       {
-        path: '/xem-phim/:idMovie',
+        path: '/xem-phim/:id',
         element: <MovieVideo />,
         loader: filterMovieLoader,
       },
       {
-        path: '/xem-phim-bo/:idMovie',
+        path: '/xem-phim-bo/:id',
         element: <MovieVideoSeries />,
         loader: filterMovieSeriesLoader,
       },
