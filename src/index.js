@@ -26,7 +26,7 @@ import {
 import {
   filterMovieLoader,
   MovieVideo,
-} from './component/movie-user/MovieVideoSingle';
+} from './component/movie-user/movie-comment/MovieVideoSingle';
 import { Page } from './component/movie-user/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.css';
