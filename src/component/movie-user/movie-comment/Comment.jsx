@@ -288,7 +288,7 @@ export const Comment = ({ movieId }) => {
       {showComment &&
         listComment.map((value) => (
           <div className="show-comment" key={value.id}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className='comment-title'>
               <h1>@{value.user.userName}: </h1>
               <label>{getTimeDifference(value.currentDate)}</label>
             </div>
@@ -341,21 +341,15 @@ export const Comment = ({ movieId }) => {
               )}
             </div>
 
-            <div className="like-reply" style={{ marginLeft: '25px' }}>
+            <div className="like-reply">
               <button onClick={() => handleClickLike(value.id)}>Like</button>
-              <label
-                style={{
-                  color: 'red',
-                  fontSize: '12px',
-                  marginRight: '15px',
-                }}
-              >
+              <label>
                 {value.totalLikes}
               </label>
               <button onClick={() => handleReply(value.id)}>Reply</button>
             </div>
             {value.replies && value.replies.length > 0 && (
-              <div className="reply-toggle" style={{ marginLeft: '25px' }}>
+              <div className="reply-toggle" >
                 <button onClick={() => toggleReplies(value.id)}>
                   {showReplies[value.id]
                     ? 'Ẩn'
