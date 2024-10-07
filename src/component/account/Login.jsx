@@ -1,11 +1,15 @@
 import axios from 'axios';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../../hook/useAuth';
 import { useEffect, useState } from 'react';
 import useFetchUser from '../../hook/useFetchUser';
+import { RedirectUriPage } from './RedirectUriPage';  
+import { KeycloakComponent } from './KeycloakComponent';
+
 
 async function login(username, password) {
   const loginUrl = 'http://localhost:8081/api/account/login';
+  // console.log(RedirectUriPage)
 
   try {
     const response = await axios.post(loginUrl, {
@@ -19,7 +23,6 @@ async function login(username, password) {
       return token;
     } else {
       console.error('Đăng nhập không thành công:', response.status);
-
       return null;
     }
   } catch (error) {
@@ -33,89 +36,34 @@ async function login(username, password) {
     return null;
   }
 }
-
 export default function Login() {
   const navigate = useNavigate();
   const isAuth = useAuth();
   const [token, setToken] = useState(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const { user, isUser, fetchUser } = useFetchUser(token);
 
   useEffect(() => {
+    const storedToken = localStorage.getItem('access_token');
+    if (storedToken) {
+      setToken(storedToken);
+    }
+
     if (isAuth && isUser) {
       navigate('/');
     } else if (!isUser) {
       navigate('/login');
     }
-  }, [isAuth]);
-
-  async function handleLogin() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const token = await login(username, password);
-    if (token) {
-      setToken(token);
-    
-      await fetchUser(
-      
-        (userFetched) => {
-       
-          if (userFetched && userFetched.authorities.includes('admin')) {
-            alert('Đăng Nhập Tài Khoản Admin Thành Công!!!');
-            navigate('/admin/movie');
-          } else {
-            navigate('/');
-          }
-        }
-      );
-    } else if (username === '' || password === '') {
-      alert('Vui lòng nhập đầy đủ user password');
-    } else {
-      alert(
-        'Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập và mật khẩu.'
-      );
-    }
-  }
-
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      handleLogin();
-    }
-  };
-  const getUser = async (token) => {
-    try {
-      const res = await axios.get('http://localhost:8081/api/account/info', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return res.data;
-    } catch (err) {
-      return null;
-    }
-  };
-
+  }, [isAuth, isUser, token, navigate]);
   return (
     <div className="form">
       <div className="body">
-        <label className="color-label">Welcom to Admin TrumPhim.Net</label>
+        <label className="color-label">Welcome to Admin TrumPhim.Net</label>
         <div className="login-form">
-          <h2 className="color-label">Đăng nhập thành viên </h2>
-          <input
-            type="text"
-            id="username"
-            placeholder="Tên đăng nhập"
-            onKeyDown={handleKeyDown}
-            required
-          />
-          <input
-            type="password"
-            id="password"
-            placeholder="Mật khẩu"
-            onKeyDown={handleKeyDown}
-            required
-          />
-          <button onClick={handleLogin}>Đăng nhập</button>
+          <h2 className="color-label">Đăng nhập thành viên</h2>
+          <KeycloakComponent/>
+
           <Link className="color-label" to="/register">
             Bạn chưa có tài khoản?
           </Link>

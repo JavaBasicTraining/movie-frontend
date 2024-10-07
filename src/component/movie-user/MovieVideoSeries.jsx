@@ -53,7 +53,7 @@ export const MovieVideoSeries = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);

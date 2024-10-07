@@ -17,20 +17,10 @@ const useFetchUser = (token) => {
   }, [token, location.pathname]);
 
   const fetchUser = async (onSuccess) => {
-    /// async \\oke a
     try {
       const response = await axiosInstance.get('/api/account/info');
-      // sau khi response xong nó chạy hàm này onSuccess =
-      onSuccess?.(response.data); // truyền nguyên hàm vô, thì lúc này onSuccess nó là hàm ở dưới
-      // (userFetched) => {
-      //   // viết vầy nó đồng code, đợi response xong nó chạy tiếp
-      //   if (userFetched && userFetched.authorities.includes("admin")) {
-      //     alert("Đăng Nhập Tài Khoản Admin Thành Công!!!");
-      //     navigate("/admin/movie");
-      //   } else {
-      //     navigate("/");
-      //   }
-      // }
+      onSuccess?.(response.data);
+  
       setUser(response.data);
       setIsUser(true);
     } catch (error) {
