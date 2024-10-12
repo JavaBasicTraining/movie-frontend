@@ -5,7 +5,7 @@ import "./KeycloakComponent.scss"
 export const KeycloakComponent = () => {
   const keycloak = {
     url: 'http://localhost:8080',
-    realm: 'movie_realm',
+    realm: 'movie_website_realm',
     clientId: 'movie_website_client',
     
   };

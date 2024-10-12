@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 export const RedirectUriPage = () => {
   const keycloak = {
     url: 'http://localhost:8080',
-    realm: 'movie_realm',
+    realm: 'movie_website_realm',
     clientId: 'movie_website_client',
   };
 
@@ -36,26 +36,26 @@ export const RedirectUriPage = () => {
 
       if (response.data.access_token) {
         console.log('Access Token:', response.data.access_token);
-
-        // Lưu token vào localStorage và state
         localStorage.setItem('access_token', response.data.access_token);
         localStorage.setItem('refresh_token', response.data.refresh_token);
         localStorage.setItem('id_token', response.data.id_token);
         setToken(response.data.access_token);
 
-    
+        await fetchUser();
+
         await fetchUser((userFetched) => {
           if (userFetched && userFetched.authorities.includes('admin')) {
-            alert('Đăng Nhập Tài Khoản Admin Thành Công!!!');
-            navigate('/admin');
-          } else {
-            alert('Đăng Nhập Tài Khoản Thành Công!!!');
-            navigate('/');
-          }
+          alert('Đăng Nhập Tài Khoản Admin Thành Công!!!');
+          navigate('/admin');
+        } else {
+          alert('Đăng Nhập Tài Khoản Thành Công!!!');
+          navigate('/');
+        }
         });
       }
     } catch (error) {
       console.error('Error fetching token:', error.message);
+    
     }
   };
 
@@ -65,7 +65,7 @@ export const RedirectUriPage = () => {
     if (code) {
       getToken(code);
     }
-  }, []);
+  }, []); 
 
   return <div></div>;
 };
