@@ -3,15 +3,11 @@ import { HiOutlineFilm } from 'react-icons/hi';
 import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { KeycloakComponent } from './account/KeycloakComponent';
-
+import { keycloak } from  './account/KeycloakComponent';
 export const HomePage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
-  const keycloak = {
-    url: 'http://localhost:8080',
-    realm: 'movie_website_realm',
-    clientId: 'movie_website_client',
-  };
+
 
   const handleChange = (e) => {
     setName(e.target.value);

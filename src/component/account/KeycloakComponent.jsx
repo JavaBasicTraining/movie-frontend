@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import "./KeycloakComponent.scss"
-
+export const keycloak = {
+  url: 'http://localhost:8080',
+  realm: 'movie_website_realm',
+  clientId: 'movie_website_client',
+  
+};
 export const KeycloakComponent = () => {
-  const keycloak = {
-    url: 'http://localhost:8080',
-    realm: 'movie_website_realm',
-    clientId: 'movie_website_client',
-    
-  };
+
   
 
   const handleKeycloakLogin = () => {

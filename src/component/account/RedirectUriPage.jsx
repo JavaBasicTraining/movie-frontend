@@ -2,13 +2,10 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import useFetchUser from '../../hook/useFetchUser';
 import { useNavigate } from 'react-router-dom';
+import { keycloak } from './KeycloakComponent';
 
 export const RedirectUriPage = () => {
-  const keycloak = {
-    url: 'http://localhost:8080',
-    realm: 'movie_website_realm',
-    clientId: 'movie_website_client',
-  };
+
 
   const [token, setToken] = useState();
   const { user, isUser, fetchUser } = useFetchUser(token);

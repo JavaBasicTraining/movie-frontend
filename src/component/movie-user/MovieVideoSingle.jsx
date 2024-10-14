@@ -81,7 +81,7 @@ export const MovieVideo = () => {
         [commentId]: !prevState[commentId],
       };
 
-      // Nếu đang hiển thị input reply và bấm vào dấu ba chấm của bình luận khác
+
       if (replyToCommentId && replyToCommentId !== commentId) {
         setReplyToCommentId(null);
       }
@@ -96,7 +96,7 @@ export const MovieVideo = () => {
       try {
         const decodedToken = jwtDecode(token);
         setJwt(decodedToken);
-        fetchUser(decodedToken.sub);
+        fetchUser(decodedToken.preferred_username);
         fetchComment();
         setShowComment(true);
       } catch (error) {
@@ -192,7 +192,7 @@ export const MovieVideo = () => {
 
   const handleDelete = async (commentId) => {
     try {
-      await axiosInstance.delete(`/api/v1/comment/delete/${commentId}`);
+      await axiosInstance.delete(`/api/v1/comment/${commentId}`);
       notification.success({
         message: 'Success',
         description: 'Comment deleted successfully.',
@@ -200,7 +200,7 @@ export const MovieVideo = () => {
       fetchComment();
     } catch (error) {
       console.error('Error deleting comment:', error);
-      notification.error({
+      notification.error({  
         message: 'Delete Comment Error',
       });
     }
