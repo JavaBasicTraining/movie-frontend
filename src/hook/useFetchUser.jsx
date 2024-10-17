@@ -27,7 +27,9 @@ const useFetchUser = (token) => {
       if (error?.response?.status === 401 && location.pathname !== '/login') {
         setIsUser(false);
         alert('Phiên bản hết hạn, vui lòng đăng nhập lại');
-        localStorage.removeItem('token');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('id_token');
         navigate('/login');
       }
     }

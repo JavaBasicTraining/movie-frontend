@@ -4,22 +4,22 @@ import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { KeycloakComponent } from './account/KeycloakComponent';
 import { keycloak } from  './account/KeycloakComponent';
+import useAuth from '../hook/useAuth';
 export const HomePage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
 
+  const {token} = useAuth();
 
   const handleChange = (e) => {
     setName(e.target.value);
   };
 
   const isLoggedIn = () => {
-    const token = localStorage.getItem('access_token');
     return token !== null;
   };
 
   const handleLogout = () => {
-    sessionStorage.clear();
     localStorage.clear();
     const loginUrl = `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=http://localhost:3000`;
     window.open(loginUrl, '_self');

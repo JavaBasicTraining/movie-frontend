@@ -4,7 +4,7 @@ import { useLoaderData } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { notification } from 'antd'; 
 import { jwtDecode } from 'jwt-decode';
-
+import useAuth from '../../hook/useAuth';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
@@ -26,6 +26,9 @@ export const MovieVideo = () => {
   const [showOptions, setShowOptions] = useState(false);
   const menuRef = useRef(null);
   const [replyComment, setReplyComment] = useState('');
+  const {token} = useAuth();
+
+
 
   const handleClickReply= async ()=>
   {
@@ -91,7 +94,6 @@ export const MovieVideo = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
@@ -250,7 +252,7 @@ export const MovieVideo = () => {
   const handleClickLike = async (commentId) => {
     try {
       const response = await axiosInstance.get(
-        `/api/v1/like_comment/user/${user.id}/movie/${movie.id}`
+        `/api/v1/like-comment/user/${user.id}/movie/${movie.id}`
       );
       const likedComment = response.data.find(
         (item) => item.idComment === commentId
@@ -262,9 +264,9 @@ export const MovieVideo = () => {
           idMovie: movie.id,
           idComment: commentId,
         };
-        await axiosInstance.post('/api/v1/like_comment', request);
+        await axiosInstance.post('/api/v1/like-comment', request);
       } else {
-        await axiosInstance.delete(`/api/v1/like_comment/${likedComment.id}`);
+        await axiosInstance.delete(`/api/v1/like-comment/${likedComment.id}`);
       }
       fetchComment();
     } catch (error) {

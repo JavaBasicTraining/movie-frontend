@@ -8,14 +8,9 @@ export const keycloak = {
   
 };
 export const KeycloakComponent = () => {
-
-  
-
   const handleKeycloakLogin = () => {
-  
       const loginUrl =  `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/auth?client_id=${keycloak.clientId}&redirect_uri=${encodeURIComponent('http://localhost:3000/redirect')}&response_type=code&scope=openid`;
       window.open(loginUrl, '_self');
-      
   };
   const handleKeycloakRegistor = () =>
   {
