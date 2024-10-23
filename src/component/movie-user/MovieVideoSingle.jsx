@@ -5,6 +5,7 @@ import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { notification } from 'antd'; 
 import { jwtDecode } from 'jwt-decode';
 import useAuth from '../../hook/useAuth';
+import VideoPlayer from './Videos';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(
@@ -30,6 +31,14 @@ export const MovieVideo = () => {
 
 
 
+
+
+
+
+
+
+
+  
   const handleClickReply= async ()=>
   {
     if (jwt && replyToCommentId) {
@@ -282,7 +291,7 @@ export const MovieVideo = () => {
     <div className="container-movie">
       <div className="header-container">
         <div className="header">
-          <video src={movie.videoUrl} controls />
+        <VideoPlayer fileName="movies/112/video/doibongthieulam.mp4" controls />
         </div>
         <div className="like-share">
           <button>
