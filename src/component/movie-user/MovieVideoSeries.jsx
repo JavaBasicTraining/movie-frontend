@@ -3,6 +3,7 @@ import { axiosInstance } from '../../API/axiosConfig';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
+import useAuth from '../../hook/useAuth';
 
 export async function filterMovieSeriesLoader({ params }) {
   const response = await axiosInstance.get(
@@ -25,6 +26,8 @@ export const MovieVideoSeries = () => {
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');
+  const {token} = useAuth();
+
 
   const fetchUser = async (userName) => {
     try {
@@ -53,8 +56,7 @@ export const MovieVideoSeries = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+        if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
       fetchUser(decodedToken.sub);

@@ -31,6 +31,7 @@ import { Page } from './component/movie-user/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import { RedirectUriPage } from './component/account/RedirectUriPage';
 
 const router = createBrowserRouter([
   {
@@ -112,6 +113,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/redirect',
+    element: <RedirectUriPage />,
   },
   {
     path: '/register',
