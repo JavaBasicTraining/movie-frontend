@@ -3,12 +3,10 @@ import { axiosInstance } from '../../API/axiosConfig';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
-import useAuth from '../../hook/useAuth';
+import useAuth from '../../hooks/useAuth';
 
 export async function filterMovieSeriesLoader({ params }) {
-  const response = await axiosInstance.get(
-    `/api/v1/movies/${params.id}`
-  );
+  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
 
   return {
     movie: response.data,
@@ -26,8 +24,7 @@ export const MovieVideoSeries = () => {
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');
-  const {token} = useAuth();
-
+  const { token } = useAuth();
 
   const fetchUser = async (userName) => {
     try {
@@ -56,7 +53,7 @@ export const MovieVideoSeries = () => {
   };
 
   useEffect(() => {
-        if (token) {
+    if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
       fetchUser(decodedToken.sub);
@@ -204,15 +201,25 @@ export const MovieVideoSeries = () => {
                       />
                       <div className="edit-comment-buttons">
                         <button onClick={handleUpdateComment}>Lưu</button>
-                        <button onClick={() => setEditCommentId(null)}>Hủy</button>
+                        <button onClick={() => setEditCommentId(null)}>
+                          Hủy
+                        </button>
                       </div>
                     </div>
                   ) : (
                     <div className="comment-content">
                       <label>{value.content}</label>
                       <div className="comment-options">
-                        <button onClick={() => handleEditClick(value.id, value.content)}>Chỉnh Sửa</button>
-                        <button onClick={() => handleDelete(value.id)}>Xóa</button>
+                        <button
+                          onClick={() =>
+                            handleEditClick(value.id, value.content)
+                          }
+                        >
+                          Chỉnh Sửa
+                        </button>
+                        <button onClick={() => handleDelete(value.id)}>
+                          Xóa
+                        </button>
                       </div>
                     </div>
                   )}

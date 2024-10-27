@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { HiOutlineFilm } from 'react-icons/hi';
 import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { KeycloakComponent } from './account/KeycloakComponent';
-import { keycloak } from  './account/KeycloakComponent';
-import useAuth from '../hook/useAuth';
+import { KeycloakComponent } from '../component/account/KeycloakComponent';
+import { keycloak } from '../component/account/KeycloakComponent';
+import useAuth from '../hooks/useAuth';
 export const HomePage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
 
-  const {token} = useAuth();
+  const { token } = useAuth();
 
   const handleChange = (e) => {
     setName(e.target.value);
@@ -86,10 +86,10 @@ export const HomePage = () => {
         {isLoggedIn() && (
           <div className="login-register">
             <a
-              href="/"
+              href="/public"
               onClick={(e) => {
-                e.preventDefault(); 
-                handleLogout(); 
+                e.preventDefault();
+                handleLogout();
               }}
             >
               Đăng Xuất
