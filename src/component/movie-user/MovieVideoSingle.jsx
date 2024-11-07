@@ -28,16 +28,6 @@ export const MovieVideo = () => {
   const menuRef = useRef(null);
   const [replyComment, setReplyComment] = useState('');
   const {token} = useAuth();
-
-
-
-
-
-
-
-
-
-
   
   const handleClickReply= async ()=>
   {
@@ -292,6 +282,7 @@ export const MovieVideo = () => {
       <div className="header-container">
         <div className="header">
         <VideoPlayer fileName="movies/112/video/doibongthieulam.mp4" controls />
+      
         </div>
         <div className="like-share">
           <button>

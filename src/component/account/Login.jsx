@@ -53,7 +53,7 @@ export default function Login() {
     if (isAuth && isUser) {
       navigate('/');
     } else if (!isUser) {
-      navigate('/login');
+      navigate('/');
     }
   }, [isAuth, isUser, token, navigate]);
   return (

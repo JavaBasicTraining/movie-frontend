@@ -8,18 +8,27 @@ const VideoPlayer = ({ fileName }) => {
     const fetchVideo = async () => {
       try {
         const params = new URLSearchParams({ fileName });
-        const response = await axiosInstance.get('http://localhost:8081/api/v1/minio/video', {
+        const response = await axiosInstance.get('http://localhost:8081/api/upload/video', {
           params: params,
-          responseType: 'blob',
+          responseType: 'blob',  
         });
-        const url = URL.createObjectURL(new Blob([response.data]));
+
+        // Tạo URL từ blob và cập nhật vào videoUrl
+        const url = URL.createObjectURL(response.data);
         setVideoUrl(url);
       } catch (error) {
         console.error('Error fetching video', error);
       }
     };
 
-    fetchVideo();
+    fetchVideo(); 
+
+    // Cleanup URL khi component unmount
+    return () => {
+      if (videoUrl) {
+        URL.revokeObjectURL(videoUrl);
+      }
+    };
   }, [fileName]);
 
   return (

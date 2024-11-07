@@ -17,8 +17,6 @@ const useAuth = () => {
         const resourceAccess = decodedToken.resource_access || [];
         const clientAccess = resourceAccess.movie_website_client;
         const authorities = clientAccess.roles
-
-        // Kiểm tra nếu user có quyền 'admin'
         if (authorities.includes('admin')) {
           axiosInstance
             .get('api/authenticate')

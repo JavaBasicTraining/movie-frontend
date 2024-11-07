@@ -25,7 +25,7 @@ export const navbar = [
   },
   {
     name: 'Quốc Gia',
-    basePath: '/quoc-gia',
+      basePath: '/quoc-gia',
     subItems: [
       { name: 'Việt Nam', path: 'viet-nam' },
       { name: 'Mỹ', path: 'my' },
@@ -33,7 +33,7 @@ export const navbar = [
       { name: 'Nhật Bản', path: 'nhat-ban' },
       { name: 'Hồng Kông', path: 'hong-kong' },
       { name: 'Ấn Độ', path: 'an-do' },
-      { name: 'Úc', path: 'an-do' },
+      { name: 'Úc', path: 'uc' },
     ],
   },
 ];

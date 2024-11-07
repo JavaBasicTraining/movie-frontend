@@ -4,7 +4,7 @@ import { Link, useLoaderData } from 'react-router-dom';
 
 export async function MovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies`, {
-    params: params,
+    params: params.id,
   });
   return {
     movies: response.data ?? [],
@@ -28,7 +28,7 @@ export const Movie = () => {
       {
         <div className="item">
           {movies?.map((item) => (
-            <Link to={`/${item.nameMovie}`}>
+            <Link to={`/${item.id}`}>
               <div className="poster" key={item.id}>
                 <div className='img-item-filter'>
                   <img src={item.posterUrl} alt="" />
