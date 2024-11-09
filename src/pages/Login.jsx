@@ -55,6 +55,7 @@ export default function Login() {
       navigate('/login');
     }
   }, [isAuth, isUser, token, navigate]);
+  
   return (
     <div className="form">
       <div className="body">

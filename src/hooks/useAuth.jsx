@@ -31,7 +31,6 @@ const useAuth = () => {
         } else {
           setIsAuth(false);
           navigate(`/`);
-          
         }
       } catch (error) {
         console.error("Invalid token:", error);
