@@ -29,16 +29,6 @@ export const MovieVideo = () => {
   const [replyComment, setReplyComment] = useState('');
   const {token} = useAuth();
 
-
-
-
-
-
-
-
-
-
-  
   const handleClickReply= async ()=>
   {
     if (jwt && replyToCommentId) {
@@ -291,7 +281,7 @@ export const MovieVideo = () => {
     <div className="container-movie">
       <div className="header-container">
         <div className="header">
-        <VideoPlayer fileName="movies/112/video/doibongthieulam.mp4" controls />
+        <video src={movie.videoUrl} controls/>
         </div>
         <div className="like-share">
           <button>

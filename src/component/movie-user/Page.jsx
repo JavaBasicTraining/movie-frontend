@@ -60,7 +60,7 @@ export const Page = () => {
       <div className="nav-category">
         <h>Phim Lẻ Mới Cập Nhật</h>
         <div class="article-item">
-          {adventureMovies.map((item) => (
+          {movies.map((item) => (
             <Link to={`/${item.id}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
@@ -77,7 +77,7 @@ export const Page = () => {
       <div className="nav-category">
         <h>Phim Bộ Mới Cập Nhật</h>
         <div class="article-item">
-          {horrifiedMovies.map((item) => (
+          {movies.map((item) => (
             <Link to={`/${item.id}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
@@ -96,7 +96,7 @@ export const Page = () => {
       <div className="nav-category">
         <h>Phim Hoạt Hình</h>
         <div class="article-item">
-          {cartoonMovies.map((item) => (
+          {movies.map((item) => (
             <Link to={`/${item.id}`} className="list-item-page">
               <div className="img-item">
                 <img key={item.id} src={item.posterUrl} alt={item.title} />
