@@ -4,6 +4,7 @@ export const axiosInstance = axios.create({
   baseURL: 'http://localhost:8081',
 });
 
+
 const publicAPI = [
   '/api/v1/movies',
   '/api/v1/account/login',
@@ -22,7 +23,7 @@ axiosInstance.interceptors.request.use(
       return config;
     }
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
