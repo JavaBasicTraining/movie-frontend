@@ -112,7 +112,7 @@ export const MovieDetail = () => {
               <img className="poster" src={movie.posterUrl} alt="" />
               <div className="list-btn">
                 {movie.category.id === 1 ? (
-                  <button onClick={() => navigate(`/xem-phim-bo/${movie.id}`)}>
+                  <button onClick={() => navigate(`/xem-phim/${movie.id}`)}>
                     Xem Phim
                   </button>
                 ) : (
