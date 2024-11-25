@@ -6,9 +6,7 @@ import { notification } from 'antd'; // Import notification for user feedback
 import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
 
 export async function filterMovieLoader({ params }) {
-  const response = await axiosInstance.get(
-    `/api/v1/movies/name/${params.name}`
-  );
+  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
   return { movie: response.data };
 }
 
@@ -277,7 +275,7 @@ export const MovieVideo = () => {
     <div className="container-movie">
       <div className="header-container">
         <div className="header">
-          <video src={movie.videoUrl} controls />
+          <VideoPlayer fileName={movie.videoUrl} controls />
         </div>
         <div className="like-share">
           <button>
@@ -373,8 +371,7 @@ export const MovieVideo = () => {
                       onChange={(e) => setReplyComment(e.target.value)}
                       onKeyDown={handleKeyDownReply}
                       required
-                    />
-                    <button onClick={() => setReplyToCommentId(null)}>
+                    />                    <button onClick={() => setReplyToCommentId(null)}>
                       Hủy Reply
                     </button>
                   </div>
