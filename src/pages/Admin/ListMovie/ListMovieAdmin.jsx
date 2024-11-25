@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLoaderData, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import { axiosInstance } from '../../../configs/axiosConfig';
 import './ListMovieAdmin.scss';
 
@@ -93,37 +98,37 @@ export const ListMovie = () => {
             value: category,
           })),
           'genre',
-          'Chon the loai',
+          'Chon the loai'
         )}
         {renderSelect(
           countries.map((country) => ({ label: country.name, value: country })),
           'country',
-          'Chon quoc gia',
+          'Chon quoc gia'
         )}
       </div>
       <table>
         <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Action</th>
-        </tr>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Action</th>
+          </tr>
         </thead>
         <tbody>
-        {movies.map((item) => (
-          <tr key={item.id}>
-            <td>{item.id}</td>
-            <td>{item.nameMovie}</td>
-            <td>{item.description}</td>
-            <td>
-              <button onClick={() => navigate(`/admin/movie/${item.id}`)}>
-                Edit
-              </button>
-              <button onClick={() => deleteMovie(item.id)}>Remove</button>
-            </td>
-          </tr>
-        ))}
+          {movies.map((item) => (
+            <tr key={item.id}>
+              <td>{item.id}</td>
+              <td>{item.nameMovie}</td>
+              <td>{item.description}</td>
+              <td>
+                <button onClick={() => navigate(`/admin/movie/${item.id}`)}>
+                  Edit
+                </button>
+                <button onClick={() => deleteMovie(item.id)}>Remove</button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

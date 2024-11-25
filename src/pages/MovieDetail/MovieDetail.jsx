@@ -30,7 +30,7 @@ export const MovieDetail = () => {
 
   const evaluationsNumberReview = async (params) => {
     const response = await axiosInstance.get(
-      `/api/v1/evaluations/numberOfReviews/${params}`,
+      `/api/v1/evaluations/numberOfReviews/${params}`
     );
     setCountRating(response.data);
   };
@@ -43,7 +43,7 @@ export const MovieDetail = () => {
 
   const averageRating = async (params) => {
     const response = await axiosInstance.get(
-      `/api/v1/evaluations/average/${params}`,
+      `/api/v1/evaluations/average/${params}`
     );
     setAverage(response.data);
   };
@@ -53,7 +53,7 @@ export const MovieDetail = () => {
       evaluationsNumberReview(movie.id);
       if (jwt) {
         const response = await axiosInstance.get(
-          `/api/v1/evaluations/user/${user.id}/movie/${movie.id}`,
+          `/api/v1/evaluations/user/${user.id}/movie/${movie.id}`
         );
         if (response.status === 200 && response.data !== '') {
           const request = {
@@ -63,7 +63,7 @@ export const MovieDetail = () => {
           };
           await axiosInstance.put(
             `/api/v1/evaluations/${response.data.id}`,
-            request,
+            request
           );
           if (index === null) {
             return 0;

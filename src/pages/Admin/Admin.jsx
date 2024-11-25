@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import "./Admin.scss"
+import './Admin.scss';
 
 import { useEffect, useState } from 'react';
 import { UnorderedListOutlined } from '@ant-design/icons';
@@ -12,7 +12,7 @@ export const Admin = () => {
   const [showNavbar, setShowNavbar] = useState(false);
   const { token } = useAuth();
   const { user, isUser, fetchUser } = useFetchUser(token);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const onClickMenuNavbar = () => {
     setShowNavbar(!showNavbar);

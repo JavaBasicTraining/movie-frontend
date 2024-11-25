@@ -2,7 +2,10 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import qs from 'qs';
 import { countries } from '../../../static-data/countries';
-import { DEFAULT_EPISODE, EpisodeForm } from '../../../component/EpisodeForm/EpisodeForm';
+import {
+  DEFAULT_EPISODE,
+  EpisodeForm,
+} from '../../../component/EpisodeForm/EpisodeForm';
 import { MultiSelect } from 'react-multi-select-component';
 import Select from 'react-select';
 import { v4 as uuidv4 } from 'uuid';
@@ -280,7 +283,7 @@ export const AddMovie = () => {
           })),
         };
         const episodesMap = new Map(
-          newData.episodes.map((item) => [item.tempId, item]),
+          newData.episodes.map((item) => [item.tempId, item])
         );
 
         if (!isEdit) {
@@ -306,12 +309,12 @@ export const AddMovie = () => {
           video: undefined,
           episodes: isSeries()
             ? newData.episodes.map((episode) => ({
-              ...episode,
-              posterUrl: undefined,
-              videoUrl: undefined,
-            }))
+                ...episode,
+                posterUrl: undefined,
+                videoUrl: undefined,
+              }))
             : [],
-        },
+        }
       );
 
       // Xử lý việc tải lên poster và video
@@ -331,7 +334,7 @@ export const AddMovie = () => {
             formDataEpisode.append('video', episodeMap.video);
             await axiosInstance.patch(
               `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
-              formDataEpisode,
+              formDataEpisode
             );
           }
         }
@@ -347,7 +350,7 @@ export const AddMovie = () => {
     const response = await axiosInstance.post(
       `/api/v1/admin/movies`,
 
-      newData,
+      newData
     );
 
     if (!isSeries() && data.poster && data.video) {
@@ -358,7 +361,7 @@ export const AddMovie = () => {
       formData.append('file', data.poster);
       const res = await axiosInstance.patch(
         `/api/v1/admin/movies/${response.data.id}?type=poster`,
-        formData,
+        formData
       );
       for (const item of response.data.episodes) {
         const episodeMap = episodesMap.get(item.tempId);
@@ -368,7 +371,7 @@ export const AddMovie = () => {
           formDataEpisode.append('video', episodeMap.video);
           await axiosInstance.patch(
             `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
-            formDataEpisode,
+            formDataEpisode
           );
         }
       }
@@ -381,7 +384,7 @@ export const AddMovie = () => {
     formData.append('file', file);
     await axiosInstance.patch(
       `/api/v1/admin/movies/${id}?type=${type}`,
-      formData,
+      formData
     );
   };
 
@@ -576,8 +579,8 @@ export const AddMovie = () => {
                   .filter(
                     (suggestion) =>
                       !data.genreSelectedData.some(
-                        (selected) => selected.value.id === suggestion.id,
-                      ),
+                        (selected) => selected.value.id === suggestion.id
+                      )
                   )
                   .map((item) => ({ label: item.name, value: item }))}
                 styles={{
@@ -619,7 +622,6 @@ export const AddMovie = () => {
 
         {isEdit ? (
           <img
-
             ref={posterRef}
             src={data.prevPosterUrl || movie.posterUrl}
             alt="Poster"

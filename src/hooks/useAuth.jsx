@@ -16,7 +16,7 @@ const useAuth = () => {
         const decodedToken = jwtDecode(token);
         const resourceAccess = decodedToken.resource_access || [];
         const clientAccess = resourceAccess.movie_website_client;
-        const authorities = clientAccess.roles
+        const authorities = clientAccess.roles;
         if (authorities.includes('admin')) {
           axiosInstance
             .get('api/authenticate')
@@ -31,13 +31,13 @@ const useAuth = () => {
           navigate(`/`);
         }
       } catch (error) {
-        console.error("Invalid token:", error);
+        console.error('Invalid token:', error);
         setIsAuth(false);
       }
     }
   }, []);
 
-  return {isAuth , token};
+  return { isAuth, token };
 };
 
 export default useAuth;

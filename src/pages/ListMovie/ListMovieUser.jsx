@@ -17,12 +17,12 @@ export async function CountryLoader({ params }) {
     params: params,
   });
   return {
-    movies: response.data ?? []
+    movies: response.data ?? [],
   };
 }
 
 export const Movie = () => {
-  const {movies} = useLoaderData();
+  const { movies } = useLoaderData();
 
   return (
     <div className="container">

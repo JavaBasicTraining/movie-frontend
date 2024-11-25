@@ -20,7 +20,7 @@ class KeycloakService {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-      },
+      }
     );
   }
 
@@ -38,7 +38,7 @@ class KeycloakService {
     storageService.remove(ACCESS_TOKEN);
     const loginUrl = `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=http://localhost:3000`;
     window.open(loginUrl, '_self');
-  };
+  }
 }
 
 export const keycloakService = new KeycloakService();

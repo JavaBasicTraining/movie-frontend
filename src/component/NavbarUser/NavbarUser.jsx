@@ -1,9 +1,9 @@
 /* eslint-disable no-lone-blocks */
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../configs/axiosConfig";
-import { Link, useNavigate } from "react-router-dom";
-import { navbar } from "../../static-data/navBarusUser";
-import "./NavbarUser.scss";
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../../configs/axiosConfig';
+import { navbar } from '../../static-data/navBarusUser';
+import './NavbarUser.scss';
 
 export const NavbarUser = () => {
   const [categories, setCategories] = useState([]);
@@ -14,7 +14,7 @@ export const NavbarUser = () => {
   }, []);
   useEffect(() => {
     navbar.map((item) => {
-      if (item.name === "Thể Loại") {
+      if (item.name === 'Thể Loại') {
         item.subItems = categories.map((category) => ({
           name: category.name,
           path: category.name,
@@ -30,11 +30,9 @@ export const NavbarUser = () => {
   };
 
   const listItem = () => {
-    return navbar.map((value) => {
-   
+    return navbar.map((value, index) => {
       return (
-        
-        <div className="nav-item">
+        <div key={index} className="nav-item">
           <span
             className="nav-item-name"
             onClick={() => {
@@ -45,15 +43,15 @@ export const NavbarUser = () => {
           >
             {value.name}
           </span>
-          {value["subItems"] && (
+          {value['subItems'] && (
             <div className="nav-sub-items">
-              {value["subItems"].map((sub, subIndex) => {
+              {value['subItems'].map((sub, subIndex) => {
                 return (
                   <span value={sub} className="nav-item-name">
                     <Link
                       key={subIndex}
                       className="link-item"
-                      to={(value.basePath ?? "") + `/${sub.name}`}
+                      to={(value.basePath ?? '') + `/${sub.name}`}
                     >
                       {sub.name}
                     </Link>

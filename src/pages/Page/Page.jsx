@@ -22,19 +22,19 @@ export const Page = () => {
 
   const horrifiedMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('kinh dị'.toLowerCase()),
-    ),
+      genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
+    )
   );
   const adventureMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase()),
-    ),
+      genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase())
+    )
   );
 
   const cartoonMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase()),
-    ),
+      genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase())
+    )
   );
 
   return (

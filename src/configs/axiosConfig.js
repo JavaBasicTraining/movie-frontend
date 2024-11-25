@@ -2,6 +2,7 @@ import axios from 'axios';
 import { keycloakService } from '../services/keycloakService';
 import { storageService } from '../services/storageService';
 import { ACCESS_TOKEN } from '../constants/storage';
+import { notification } from 'antd';
 
 export const axiosInstance = axios.create({
   baseURL: 'http://localhost:8081',
@@ -21,15 +22,21 @@ const publicAPI = [
 
 const ignorePaths = ['/api/account/info', '/api/authenticate'];
 
+const normalizeUrl = (url) => {
+  return url.startsWith('/') ? url : `/${url}`;
+};
+
 const isPublicAPI = (url) => {
-  return publicAPI.some((api) => url.includes(api));
+  const normalizedUrl = normalizeUrl(url);
+  return publicAPI.some((api) => normalizedUrl.startsWith(api));
 };
 
 const isPathIgnored = (url) => {
-  return ignorePaths.some((api) => url.includes(api));
+  const normalizedUrl = normalizeUrl(url);
+  return ignorePaths.some((api) => normalizedUrl.startsWith(api));
 };
 
-axiosInstance.interceptors.request.use(function(config) {
+axiosInstance.interceptors.request.use(function (config) {
   if (isPublicAPI(config.url)) {
     return config;
   }
@@ -42,19 +49,24 @@ axiosInstance.interceptors.request.use(function(config) {
 });
 
 axiosInstance.interceptors.response.use(
-  function(config) {
+  function (config) {
     return config;
   },
-  function(error) {
-    if (error.response) {
-      if (error.response.status === 401 && !isPathIgnored(error.config.url)) {
-        alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        storageService.remove(ACCESS_TOKEN);
+  function (error) {
+    if (error?.response?.status === 401 && !isPathIgnored(error.config.url)) {
+      notification.info({
+        message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+      });
+
+      storageService.remove(ACCESS_TOKEN);
+
+      setTimeout(() => {
         keycloakService.openLoginPage();
-        return Promise.reject(error);
-      }
+      }, 1000);
+
+      return Promise.reject(error);
     }
 
     return Promise.reject(error);
-  },
+  }
 );

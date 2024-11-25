@@ -2,17 +2,27 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import { CountryLoader, Movie, MovieLoader } from './pages/ListMovie/ListMovieUser';
-import { MovieDetail, MovieDetailLoader } from './pages/MovieDetail/MovieDetail';
-import { Page } from './pages/Page/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.css';
-import reportWebVitals from './reportWebVitals';
-import { Admin } from './pages/Admin/Admin';
-import { WatchMovie } from './pages/WatchMovie/WatchMovie';
-import { ListMovie, MovieManagerLoader } from './pages/Admin/ListMovie/ListMovieAdmin';
 import { AddMovie, AddMovieLoader } from './pages/Admin/AddMovie/AddMovie';
+import { Admin } from './pages/Admin/Admin';
+import {
+  ListMovie,
+  MovieManagerLoader,
+} from './pages/Admin/ListMovie/ListMovieAdmin';
+import {
+  CountryLoader,
+  Movie,
+  MovieLoader,
+} from './pages/ListMovie/ListMovieUser';
+import {
+  MovieDetail,
+  MovieDetailLoader,
+} from './pages/MovieDetail/MovieDetail';
 import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
+import { Page } from './pages/Page/Page';
+import { WatchMovie } from './pages/WatchMovie/WatchMovie';
+import reportWebVitals from './reportWebVitals';
 
 const router = createBrowserRouter([
   {
@@ -93,7 +103,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 reportWebVitals();
