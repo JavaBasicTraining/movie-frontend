@@ -30,13 +30,31 @@
       flex-basis: 50%;
       flex-direction: column;
       align-items: center;
+      img{
+        object-fit: cover;
+      }
       .item-file {
         display: flex;
         justify-content: space-between;
         width: 100%;
-        input {
-          color: black;
+
+        .validate-episode{
+          font-size: 100%;
+          color: red;
+          width: 100%;
+         
+          min-width: 100px;
+          display: flex;
+          flex-direction: column;
+          input {
+            color: black;
+          }
+          white-space: normal;
+          .validate-video {
+            margin-left: 8px;
+          }
         }
+  
       }
       .video-episode-item {
         align-items: center;
