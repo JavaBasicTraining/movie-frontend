@@ -17,14 +17,18 @@
     padding-inline-end: 30px;
    
 
-    a {
-      font-size: 15px;
-      color: white;
-    }
-
     .login-register {
       display: flex;
       align-items: center;
+      a {
+        font-size: 15px;
+        color: white;
+      }
+
+      .keycloak {
+        font-size: 15px;
+        color: white;
+      }
     }
 
     .header-title {

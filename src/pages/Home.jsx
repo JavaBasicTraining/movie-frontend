@@ -2,29 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { HiOutlineFilm } from 'react-icons/hi';
 import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-
+import { KeycloakComponent } from '../component/account/KeycloakComponent';
+import { keycloak } from '../component/account/KeycloakComponent';
+import useAuth from '../hooks/useAuth';
 export const HomePage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
+
+  const { token } = useAuth();
 
   const handleChange = (e) => {
     setName(e.target.value);
   };
 
   const isLoggedIn = () => {
-    const token = localStorage.getItem('token');
     return token !== null;
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.setItem('tokenCleared', 'true');
+    localStorage.clear();
+    const loginUrl = `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=http://localhost:3000`;
+    window.open(loginUrl, '_self');
   };
 
   useEffect(() => {
     const tokenCleared = localStorage.getItem('tokenCleared');
     if (!tokenCleared) {
-      handleLogout();
     }
   }, []);
 
@@ -72,18 +75,23 @@ export const HomePage = () => {
             ></input>
             <button onClick={() => filterMovie(null, name)}>
               <SearchOutlined />
-            </button> 
+            </button>
           </div>
         </div>
         {!isLoggedIn() && (
           <div className="login-register">
-            <a href="/login">Đăng Nhập/ </a>
-            <a href="/register">Đăng Ký</a>
+            <KeycloakComponent className="keycloak" />
           </div>
         )}
         {isLoggedIn() && (
           <div className="login-register">
-            <a href="/" onClick={handleLogout}>
+            <a
+              href="/public"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLogout();
+              }}
+            >
               Đăng Xuất
             </a>
           </div>

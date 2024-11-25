@@ -3,12 +3,10 @@ import { axiosInstance } from '../../API/axiosConfig';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { StarFilled, StarOutlined, StarTwoTone } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
-import useFetchUser from '../../hook/useFetchUser';
+import useFetchUser from '../../hooks/useFetchUser';
 
 export async function posterMovieLoader({ params }) {
-  const response = await axiosInstance.get(
-    `/api/v1/movies/name/${params.name}`
-  );
+  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
 
   return {
     movie: response.data,
@@ -31,7 +29,7 @@ export const MovieDetail = () => {
     setCountRating(response.data);
   };
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
@@ -66,7 +64,7 @@ export const MovieDetail = () => {
       evaluationsNumberReview(movie.id);
       if (jwt) {
         const response = await axiosInstance.get(
-          `/api/v1/evaluations/evaluations/user/${user.id}/movie/${movie.id}`
+          `/api/v1/evaluations/user/${user.id}/movie/${movie.id}`
         );
         if (response.status === 200 && response.data !== '') {
           const request = {
@@ -114,15 +112,11 @@ export const MovieDetail = () => {
               <img className="poster" src={movie.posterUrl} alt="" />
               <div className="list-btn">
                 {movie.category.id === 1 ? (
-                  <button
-                    onClick={() => navigate(`/xem-phim-bo/${movie.nameMovie}`)}
-                  >
+                  <button onClick={() => navigate(`/xem-phim-bo/${movie.id}`)}>
                     Xem Phim
                   </button>
                 ) : (
-                  <button
-                    onClick={() => navigate(`/xem-phim/${movie.nameMovie}`)}
-                  >
+                  <button onClick={() => navigate(`/xem-phim/${movie.id}`)}>
                     Xem Phim
                   </button>
                 )}
