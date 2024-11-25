@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { axiosInstance } from '../../API/axiosConfig';
+import { axiosInstance } from '../../../API/axiosConfig';
 
 const VideoPlayer = ({ fileName }) => {
   const [videoUrl, setVideoUrl] = useState('');

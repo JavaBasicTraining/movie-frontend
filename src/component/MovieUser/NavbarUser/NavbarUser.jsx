@@ -1,8 +1,9 @@
 /* eslint-disable no-lone-blocks */
 import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../API/axiosConfig";
+import { axiosInstance } from "../../../API/axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
-import { navbar } from "../static-data/navBarusUser";
+import { navbar } from "../../../static-data/navBarusUser";
+import "./NavbarUser.scss";
 
 export const NavbarUser = () => {
   const [categories, setCategories] = useState([]);

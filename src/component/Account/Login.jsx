@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 import { useEffect, useState } from 'react';
-import useFetchUser from '../hooks/useFetchUser';
-import { KeycloakComponent } from '../component/account/KeycloakComponent';
+import useFetchUser from '../../hooks/useFetchUser';
+import { KeycloakComponent } from './KeycloakComponent';
 
 async function login(username, password) {
   const loginUrl = 'http://localhost:8081/api/account/login';
