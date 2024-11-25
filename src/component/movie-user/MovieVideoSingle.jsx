@@ -1,11 +1,9 @@
-import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { notification } from 'antd';
-import { jwtDecode } from 'jwt-decode';
 import React, { useEffect, useRef, useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
 import { axiosInstance } from '../../API/axiosConfig';
-import useAuth from '../../hooks/useAuth';
-import VideoPlayer from '../../component/VideoPlayer';
+import { useLoaderData } from 'react-router-dom';
+import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { notification } from 'antd'; // Import notification for user feedback
+import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
@@ -25,36 +23,32 @@ export const MovieVideo = () => {
   const [showOptions, setShowOptions] = useState(false);
   const menuRef = useRef(null);
   const [replyComment, setReplyComment] = useState('');
-  const { token } = useAuth();
+  const [isReplyMode, setIsReplyMode] = useState(false); // Trạng thái để tách biệt chế độ bình luận chính và reply
 
-  const handleClickReply = async () => {
-    if (jwt && replyToCommentId) {
-      const request = {
-        content: replyComment,
-        idUser: user.id,
-        idMovie: movie.id,
-        user: user,
-        replyToCommentId: replyToCommentId,
-      };
-
-      try {
-        await axiosInstance.post(`/api/v1/comment/create`, request);
-        fetchComment();
-        setReplyComment('');
-        setReplyToCommentId(null);
-      } catch (error) {
-        console.error('Error posting reply:', error);
-        notification.error({
-          message: 'Post Reply Error',
-          description: 'Unable to post reply.',
-        });
-      }
-    }
-  };
   const handleKeyDownReply = async (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      handleClickReply();
+      if (jwt && replyToCommentId) {
+        const request = new FormData();
+        request.append('content', replyComment);
+        request.append('idUser', user.id);
+        request.append('idMovie', movie.id);
+        request.append('user', user);
+        request.append('replyToCommentId', replyToCommentId);
+
+        try {
+          await axiosInstance.post(`/api/v1/comment/create`, request);
+          fetchComment();
+          setReplyComment('');
+          setReplyToCommentId(null);
+        } catch (error) {
+          console.error('Error posting reply:', error);
+          notification.error({
+            message: 'Post Reply Error',
+            description: 'Unable to post reply.',
+          });
+        }
+      }
     }
   };
 
@@ -80,6 +74,7 @@ export const MovieVideo = () => {
         [commentId]: !prevState[commentId],
       };
 
+      // Nếu đang hiển thị input reply và bấm vào dấu ba chấm của bình luận khác
       if (replyToCommentId && replyToCommentId !== commentId) {
         setReplyToCommentId(null);
       }
@@ -89,11 +84,12 @@ export const MovieVideo = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
         setJwt(decodedToken);
-        fetchUser(decodedToken.preferred_username);
+        fetchUser(decodedToken.sub);
         fetchComment();
         setShowComment(true);
       } catch (error) {
@@ -125,7 +121,7 @@ export const MovieVideo = () => {
     try {
       const params = new URLSearchParams({ movieId: movie.id });
       const response = await axiosInstance.get('/api/v1/comment', { params });
-      setListComment(response.data);
+      setListComment(response.data); 
     } catch (error) {
       console.error('Error fetching comments:', error);
       notification.error({
@@ -134,6 +130,7 @@ export const MovieVideo = () => {
       });
     }
   };
+  
 
   const getTimeDifference = (currentDate) => {
     const now = new Date();
@@ -188,7 +185,7 @@ export const MovieVideo = () => {
 
   const handleDelete = async (commentId) => {
     try {
-      await axiosInstance.delete(`/api/v1/comment/${commentId}`);
+      await axiosInstance.delete(`/api/v1/comment/delete/${commentId}`);
       notification.success({
         message: 'Success',
         description: 'Comment deleted successfully.',
@@ -210,15 +207,18 @@ export const MovieVideo = () => {
           content: comment,
           idUser: user.id,
           idMovie: movie.id,
-          user: user,
-          replyToCommentId: replyToCommentId || null,
-        };
+          user: user.userName
+        }
+       
+        if (replyToCommentId) {
+          request.append('replyToCommentId', replyToCommentId);
+        }
 
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
-          fetchComment();
-          setComment('');
-          setReplyToCommentId(null);
+          fetchComment(); 
+          setComment(''); 
+          setReplyToCommentId(null); 
         } catch (error) {
           console.error('Error posting comment:', error);
           notification.error({
@@ -245,7 +245,7 @@ export const MovieVideo = () => {
   const handleClickLike = async (commentId) => {
     try {
       const response = await axiosInstance.get(
-        `/api/v1/like-comment/user/${user.id}/movie/${movie.id}`
+        `/api/v1/like_comment/user/${user.id}/movie/${movie.id}`
       );
       const likedComment = response.data.find(
         (item) => item.idComment === commentId
@@ -257,9 +257,9 @@ export const MovieVideo = () => {
           idMovie: movie.id,
           idComment: commentId,
         };
-        await axiosInstance.post('/api/v1/like-comment', request);
+        await axiosInstance.post('/api/v1/like_comment', request);
       } else {
-        await axiosInstance.delete(`/api/v1/like-comment/${likedComment.id}`);
+        await axiosInstance.delete(`/api/v1/like_comment/${likedComment.id}`);
       }
       fetchComment();
     } catch (error) {
@@ -371,9 +371,7 @@ export const MovieVideo = () => {
                       onChange={(e) => setReplyComment(e.target.value)}
                       onKeyDown={handleKeyDownReply}
                       required
-                    />
-                    <button onClick={handleClickReply}>Reply</button>
-                    <button onClick={() => setReplyToCommentId(null)}>
+                    />                    <button onClick={() => setReplyToCommentId(null)}>
                       Hủy Reply
                     </button>
                   </div>
