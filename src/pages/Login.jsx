@@ -1,15 +1,13 @@
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import useAuth from '../../hook/useAuth';
+import useAuth from '../hooks/useAuth';
 import { useEffect, useState } from 'react';
-import useFetchUser from '../../hook/useFetchUser';
-import { RedirectUriPage } from './RedirectUriPage';  
-import { KeycloakComponent } from './KeycloakComponent';
-
+import useFetchUser from '../hooks/useFetchUser';
+import { KeycloakComponent } from '../component/account/KeycloakComponent';
 
 async function login(username, password) {
   const loginUrl = 'http://localhost:8081/api/account/login';
-  // console.log(RedirectUriPage)
+  // console.log(RedirectUri)
 
   try {
     const response = await axios.post(loginUrl, {
@@ -36,6 +34,7 @@ async function login(username, password) {
     return null;
   }
 }
+
 export default function Login() {
   const navigate = useNavigate();
   const isAuth = useAuth();
@@ -56,13 +55,14 @@ export default function Login() {
       navigate('/login');
     }
   }, [isAuth, isUser, token, navigate]);
+  
   return (
     <div className="form">
       <div className="body">
         <label className="color-label">Welcome to Admin TrumPhim.Net</label>
         <div className="login-form">
           <h2 className="color-label">Đăng nhập thành viên</h2>
-          <KeycloakComponent/>
+          <KeycloakComponent />
 
           <Link className="color-label" to="/register">
             Bạn chưa có tài khoản?
