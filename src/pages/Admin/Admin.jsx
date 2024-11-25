@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { UnorderedListOutlined } from '@ant-design/icons';
 import useFetchUser from '../../hooks/useFetchUser';
 import useAuth from '../../hooks/useAuth';
-import { NavbarAdmin } from '../../component/Manager/NavbarAdmin/NavbarAdmin';
+import { NavbarAdmin } from '../../component/NavbarAdmin/NavbarAdmin';
 
 export const Admin = () => {
   const [showNavbar, setShowNavbar] = useState(false);

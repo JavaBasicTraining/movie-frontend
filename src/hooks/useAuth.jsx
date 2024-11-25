@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { axiosInstance } from '../API/axiosConfig';
+import { axiosInstance } from '../configs/axiosConfig';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 

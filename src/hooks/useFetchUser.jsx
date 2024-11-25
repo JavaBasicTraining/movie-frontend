@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { axiosInstance } from '../API/axiosConfig';
+import { axiosInstance } from '../configs/axiosConfig';
 
 const useFetchUser = () => {
   const [user, setUser] = useState(null);
