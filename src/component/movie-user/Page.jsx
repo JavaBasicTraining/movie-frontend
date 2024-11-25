@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { axiosInstance } from '../../API/axiosConfig';
-import { Link } from 'react-router-dom';
-import { PlayCircleOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from "react";
+import { axiosInstance } from "../../API/axiosConfig";
+import { Link } from "react-router-dom";
+import { PlayCircleOutlined } from "@ant-design/icons";
 
 export const Page = () => {
   const [movies, setMovies] = useState([]);
@@ -12,7 +12,7 @@ export const Page = () => {
         const response = await axiosInstance.get(`/api/v1/movies`);
         setMovies(response.data);
       } catch (error) {
-        console.error('Failed to fetch movies', error);
+        console.error("Failed to fetch movies", error);
       }
     };
 
@@ -20,40 +20,43 @@ export const Page = () => {
   }, []);
 
   const horrifiedMovies = movies.filter((movie) =>
-  movie.genres.some((genreName) =>
-    genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
+    movie.genres.some((genreName) =>
+      genreName.name.toLowerCase().includes("kinh dị".toLowerCase())
     )
   );
   const adventureMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase())
+      genreName.name.toLowerCase().includes("phiêu lưu".toLowerCase())
     )
   );
 
   const cartoonMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase())
+      genreName.name.toLowerCase().includes("hoạt hình".toLowerCase())
     )
   );
 
   return (
     <div className="page-container">
       <div className="nav-category">
-        <h>Phim Đề Cử</h>
-        <div class="article-item">
-          {movies.map((item) => (
-            <Link to={`/${item.id}`} className="list-item-page">
-              <div className="img-item">
-                <img key={item.id} src={item.posterUrl} alt={item.title} />
-                <div className="icon-play">
-                  <PlayCircleOutlined />
-                </div>
+        <div className="article-item">
+          {movies.map((item) =>
+            item !== null ? (
+              <div key={item.id}>
+                <h2>Phim Đề Cử</h2>
+                <Link to={`/${item.id}`} className="list-item-page">
+                  <div className="img-item">
+                    <img src={item.posterUrl} alt={item.title} />
+                    <div className="icon-play">
+                      <PlayCircleOutlined />
+                    </div>
+                  </div>
+                  <span>{item.nameMovie}</span>
+                  <span>{item.enTitle}</span>
+                </Link>
               </div>
-
-              <span>{item.nameMovie}</span>
-              <span>{item.enTitle}</span>
-            </Link>
-          ))}
+            ) : null
+          )}
         </div>
       </div>
 

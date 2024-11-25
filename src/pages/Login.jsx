@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { useEffect, useState } from 'react';
 import useFetchUser from '../hooks/useFetchUser';
-import { KeycloakComponent } from '../component/account/KeycloakComponent';
+import { KeycloakComponent } from '../component/Account/KeycloakComponent';
 
 async function login(username, password) {
   const loginUrl = 'http://localhost:8081/api/account/login';
