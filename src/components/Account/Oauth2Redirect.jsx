@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import useFetchUser from '../hooks/useFetchUser';
+import useFetchUser from '../../hooks/useFetchUser';
 import { useLoaderData, useNavigate, useSearchParams } from 'react-router-dom';
-import { keycloakService } from '../API/keycloakService';
+import { keycloakService } from '../../API/keycloakService';
 
 export async function Oauth2RedirectLoader({ request }) {
   const [, params] = request.url.split('?');

@@ -1,24 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { axiosInstance } from '../../API/axiosConfig';
-import PropTypes from 'prop-types';
-import './VideoPlayer.scss';
-
-const REACT_PLAYER_CONFIG = {
-  file: {
-    attributes: {
-      controlsList: 'nodownload noremoteplayback',
-      disablePictureInPicture: true,
-      crossOrigin: 'anonymous',
-    },
-    forceVideo: true,
-    forceHLS: false,
-    forceDASH: false,
-    headers: {
-      Range: 'bytes=0-',
-    },
-  },
-};
+import { axiosInstance } from '../../../API/axiosConfig';
 
 const VideoPlayer = ({ fileName }) => {
   const [videoToken, setVideoToken] = useState(null);
@@ -32,7 +14,7 @@ const VideoPlayer = ({ fileName }) => {
     const fetchToken = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/v1/minio/video/token?fileName=${fileName}`,
+          `/api/v1/minio/video/token?fileName=${fileName}`
         );
         setVideoToken(response.data.token);
       } catch (error) {
@@ -60,9 +42,10 @@ const VideoPlayer = ({ fileName }) => {
 
   return (
     <div className="video-player-wrapper">
-      <button
-        className="video-player-container btn-non-style"
+      <div
+        className="video-player-container"
         onContextMenu={(e) => e.preventDefault()}
+        style={{ position: 'relative' }}
       >
         {videoUrl && (
           <ReactPlayer
@@ -73,23 +56,62 @@ const VideoPlayer = ({ fileName }) => {
             playing={playing}
             volume={volume}
             controls={true}
-            config={REACT_PLAYER_CONFIG}
+            config={{
+              file: {
+                attributes: {
+                  controlsList: 'nodownload noremoteplayback',
+                  disablePictureInPicture: true,
+                  crossOrigin: 'anonymous',
+                },
+                forceVideo: true,
+                forceHLS: false,
+                forceDASH: false,
+                headers: {
+                  Range: 'bytes=0-',
+                },
+              },
+            }}
           />
         )}
 
         <div
           ref={watermarkRef}
           className="video-watermark"
+          style={{
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            padding: '5px',
+            background: 'rgba(255, 255, 255, 0.3)',
+            color: '#fff',
+            pointerEvents: 'none',
+            transition: 'transform 1s ease',
+            userSelect: 'none',
+          }}
         >
           {`${localStorage.getItem('username')} - ${new Date().toLocaleString()}`}
         </div>
-      </button>
+      </div>
+
+      <style jsx>{`
+        .video-player-wrapper {
+          position: relative;
+          max-width: 100%;
+          background: #000;
+        }
+
+        .video-player-container {
+          width: 100%;
+          height: 100%;
+        }
+
+        /* Disable selection */
+        .video-player-container * {
+          user-select: none !important;
+        }
+      `}</style>
     </div>
   );
-};
-
-VideoPlayer.propTypes = {
-  fileName: PropTypes.string.isRequired,
 };
 
 export default VideoPlayer;

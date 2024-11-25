@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../../API/axiosConfig';
 import { Link } from 'react-router-dom';
 import { PlayCircleOutlined } from '@ant-design/icons';
-
+import "./Page.scss"
 export const Page = () => {
   const [movies, setMovies] = useState([]);
 

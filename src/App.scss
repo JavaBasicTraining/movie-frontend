@@ -1,22 +1,8 @@
-@import url(./style/home.scss);
-@import url(./style/navbar-user.scss);
-@import url(./style/list-movie-user.scss);
-@import url(./style/login.scss);
-@import url(./style/register.scss);
-@import url(./style/admin.scss);
-@import url(./style/addmovie.scss);
-@import url(./style/movie-detail.scss);
-@import url(./style/navbar-admin.scss);
-@import url(./style/movie-video.scss);
-@import url(./style/episode.scss);
-@import url(./style/list-movie-admin.scss);
-@import url(./style/page.scss);
 
-root {
-  background: rgb(85, 83, 87) !important;
-}
+root{  background: rgb(85, 83, 87) !important;}
 
-.Page {
+.Page
+{
   display: flex;
   flex-direction: column;
   width: 1200px;

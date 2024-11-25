@@ -4,7 +4,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { StarFilled, StarOutlined, StarTwoTone } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
 import useFetchUser from '../../hooks/useFetchUser';
-
+import "./MovieDetail.scss"
 export async function posterMovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
 
