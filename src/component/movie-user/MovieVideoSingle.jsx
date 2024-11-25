@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { axiosInstance } from '../../API/axiosConfig';
-import { useLoaderData } from 'react-router-dom';
-import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { notification } from 'antd'; // Import notification for user feedback
-import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
+import React, { useEffect, useRef, useState } from "react";
+import { axiosInstance } from "../../API/axiosConfig";
+import { useLoaderData } from "react-router-dom";
+import { LikeOutlined, ShareAltOutlined } from "@ant-design/icons";
+import { notification } from "antd"; // Import notification for user feedback
+import { jwtDecode } from "jwt-decode";
+import VideoPlayer from "../VideoPlayer";
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
@@ -11,41 +12,41 @@ export async function filterMovieLoader({ params }) {
 }
 
 export const MovieVideo = () => {
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [listComment, setListComment] = useState([]);
   const { movie } = useLoaderData();
   const [user, setUser] = useState({});
   const [jwt, setJwt] = useState(null);
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
-  const [editCommentContent, setEditCommentContent] = useState('');
+  const [editCommentContent, setEditCommentContent] = useState("");
   const [replyToCommentId, setReplyToCommentId] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
   const menuRef = useRef(null);
-  const [replyComment, setReplyComment] = useState('');
+  const [replyComment, setReplyComment] = useState("");
   const [isReplyMode, setIsReplyMode] = useState(false); // Trạng thái để tách biệt chế độ bình luận chính và reply
 
   const handleKeyDownReply = async (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       if (jwt && replyToCommentId) {
         const request = new FormData();
-        request.append('content', replyComment);
-        request.append('idUser', user.id);
-        request.append('idMovie', movie.id);
-        request.append('user', user);
-        request.append('replyToCommentId', replyToCommentId);
+        request.append("content", replyComment);
+        request.append("idUser", user.id);
+        request.append("idMovie", movie.id);
+        request.append("user", user);
+        request.append("replyToCommentId", replyToCommentId);
 
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
           fetchComment();
-          setReplyComment('');
+          setReplyComment("");
           setReplyToCommentId(null);
         } catch (error) {
-          console.error('Error posting reply:', error);
+          console.error("Error posting reply:", error);
           notification.error({
-            message: 'Post Reply Error',
-            description: 'Unable to post reply.',
+            message: "Post Reply Error",
+            description: "Unable to post reply.",
           });
         }
       }
@@ -62,9 +63,9 @@ export const MovieVideo = () => {
   };
 
   useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
   const toggleOptions = (commentId) => {
@@ -84,7 +85,7 @@ export const MovieVideo = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
@@ -93,10 +94,10 @@ export const MovieVideo = () => {
         fetchComment();
         setShowComment(true);
       } catch (error) {
-        console.error('Error decoding token:', error);
+        console.error("Error decoding token:", error);
         notification.error({
-          message: 'Invalid Token',
-          description: 'Unable to decode token.',
+          message: "Invalid Token",
+          description: "Unable to decode token.",
         });
       }
     }
@@ -109,10 +110,10 @@ export const MovieVideo = () => {
       });
       setUser(response.data ?? {});
     } catch (error) {
-      console.error('Error fetching user:', error);
+      console.error("Error fetching user:", error);
       notification.error({
-        message: 'Fetch User Error',
-        description: 'Unable to fetch user data.',
+        message: "Fetch User Error",
+        description: "Unable to fetch user data.",
       });
     }
   };
@@ -120,17 +121,16 @@ export const MovieVideo = () => {
   const fetchComment = async () => {
     try {
       const params = new URLSearchParams({ movieId: movie.id });
-      const response = await axiosInstance.get('/api/v1/comment', { params });
-      setListComment(response.data); 
+      const response = await axiosInstance.get("/api/v1/comment", { params });
+      setListComment(response.data);
     } catch (error) {
-      console.error('Error fetching comments:', error);
+      console.error("Error fetching comments:", error);
       notification.error({
-        message: 'Fetch Comments Error',
-        description: 'Unable to fetch comments.',
+        message: "Fetch Comments Error",
+        description: "Unable to fetch comments.",
       });
     }
   };
-  
 
   const getTimeDifference = (currentDate) => {
     const now = new Date();
@@ -140,7 +140,7 @@ export const MovieVideo = () => {
     const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
-    if (minutesDifference < 1) return 'Vừa xong';
+    if (minutesDifference < 1) return "Vừa xong";
     if (minutesDifference < 60) return `${minutesDifference} phút trước`;
     if (hoursDifference < 24) return `${hoursDifference} giờ trước`;
     if (daysDifference <= 7) return `${daysDifference} ngày trước`;
@@ -154,7 +154,7 @@ export const MovieVideo = () => {
   const handleCommentChange = (e) => setComment(e.target.value);
 
   const handleKeyDownUpdateComment = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleUpdateComment();
     }
@@ -173,11 +173,11 @@ export const MovieVideo = () => {
         });
         fetchComment();
         setEditCommentId(null);
-        setEditCommentContent('');
+        setEditCommentContent("");
       } catch (error) {
-        console.error('Error updating comment:', error);
+        console.error("Error updating comment:", error);
         notification.error({
-          message: 'Update Comment Error',
+          message: "Update Comment Error",
         });
       }
     }
@@ -187,49 +187,49 @@ export const MovieVideo = () => {
     try {
       await axiosInstance.delete(`/api/v1/comment/delete/${commentId}`);
       notification.success({
-        message: 'Success',
-        description: 'Comment deleted successfully.',
+        message: "Success",
+        description: "Comment deleted successfully.",
       });
       fetchComment();
     } catch (error) {
-      console.error('Error deleting comment:', error);
+      console.error("Error deleting comment:", error);
       notification.error({
-        message: 'Delete Comment Error',
+        message: "Delete Comment Error",
       });
     }
   };
 
   const handleKeyDown = async (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       if (jwt) {
         const request = {
           content: comment,
           idUser: user.id,
           idMovie: movie.id,
-          user: user.userName
-        }
-       
+          user: user.userName,
+        };
+
         if (replyToCommentId) {
-          request.append('replyToCommentId', replyToCommentId);
+          request.append("replyToCommentId", replyToCommentId);
         }
 
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
-          fetchComment(); 
-          setComment(''); 
-          setReplyToCommentId(null); 
+          fetchComment();
+          setComment("");
+          setReplyToCommentId(null);
         } catch (error) {
-          console.error('Error posting comment:', error);
+          console.error("Error posting comment:", error);
           notification.error({
-            message: 'Post Comment Error',
-            description: 'Unable to post comment.',
+            message: "Post Comment Error",
+            description: "Unable to post comment.",
           });
         }
       } else {
         notification.warning({
-          message: 'Login Required',
-          description: 'Please log in to post a comment.',
+          message: "Login Required",
+          description: "Please log in to post a comment.",
         });
       }
     }
@@ -245,10 +245,10 @@ export const MovieVideo = () => {
   const handleClickLike = async (commentId) => {
     try {
       const response = await axiosInstance.get(
-        `/api/v1/like_comment/user/${user.id}/movie/${movie.id}`
+        `/api/v1/like_comment/user/${user.id}/movie/${movie.id}`,
       );
       const likedComment = response.data.find(
-        (item) => item.idComment === commentId
+        (item) => item.idComment === commentId,
       );
 
       if (!likedComment) {
@@ -257,16 +257,16 @@ export const MovieVideo = () => {
           idMovie: movie.id,
           idComment: commentId,
         };
-        await axiosInstance.post('/api/v1/like_comment', request);
+        await axiosInstance.post("/api/v1/like_comment", request);
       } else {
         await axiosInstance.delete(`/api/v1/like_comment/${likedComment.id}`);
       }
       fetchComment();
     } catch (error) {
-      console.error('Error liking comment:', error);
+      console.error("Error liking comment:", error);
       notification.error({
-        message: 'Like Comment Error',
-        description: 'Unable to like comment.',
+        message: "Like Comment Error",
+        description: "Unable to like comment.",
       });
     }
   };
@@ -293,7 +293,7 @@ export const MovieVideo = () => {
             listComment.map((value) => (
               <div className="show-comment" key={value.id}>
                 <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
                 >
                   <h1>@{value.user.userName}: </h1>
                   <label>{getTimeDifference(value.currentDate)}</label>
@@ -352,9 +352,9 @@ export const MovieVideo = () => {
                   </button>
                   <label
                     style={{
-                      color: 'red',
-                      fontSize: '12px',
-                      marginRight: '15px',
+                      color: "red",
+                      fontSize: "12px",
+                      marginRight: "15px",
                     }}
                   >
                     {value.totalLikes}
@@ -371,7 +371,8 @@ export const MovieVideo = () => {
                       onChange={(e) => setReplyComment(e.target.value)}
                       onKeyDown={handleKeyDownReply}
                       required
-                    />                    <button onClick={() => setReplyToCommentId(null)}>
+                    />
+                    <button onClick={() => setReplyToCommentId(null)}>
                       Hủy Reply
                     </button>
                   </div>

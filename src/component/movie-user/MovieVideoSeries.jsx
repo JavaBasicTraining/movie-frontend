@@ -24,6 +24,7 @@ export const MovieVideoSeries = () => {
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');
+  const {token} = useAuth();
 
   const fetchUser = async (userName) => {
     try {
