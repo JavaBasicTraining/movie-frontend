@@ -63,7 +63,7 @@ export const MovieVideo = () => {
   const getEpisodes = async () => {
     try {
       const response = await axiosInstance.get(
-        `/api/v1/episode/getEpisodeByMovieId/${movie.id}`
+        `/api/v1/episode/${movie.id}`
       );
       setSelectEpisode(response.data);
     } catch (error) {
@@ -74,7 +74,7 @@ export const MovieVideo = () => {
   const handleSelectEpisode = async (episodeId) => {
     try {
       const response = await axiosInstance.get(
-        `/api/v1/episode/getEpisodeByMovieId/movieId/${movie.id}/episode/${episodeId}`
+        `/api/v1/episode/movieId/${movie.id}/episode/${episodeId}`
       );
       setCurrentEpisodeIndex(response.data);
     } catch (error) {

@@ -12,7 +12,7 @@ const publicAPI = [
   '/api/v1/genre',
   '/api/v1/evaluations/numberOfReviews',
   '/api/v1/evaluations/average/',
-  '/api/v1/episode/getEpisodeByMovieId',
+  '/api/v1/episode',
   '/api/v1/minio/video',
 ];
 
