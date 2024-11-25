@@ -7,7 +7,6 @@ import { Admin } from './component/manager/Admin';
 import { ListMovie, MovieManagerLoader } from './component/manager/ListMovieAdmin';
 import { CountryLoader, Movie, MovieLoader } from './component/movie-user/ListMovieUser';
 import { MovieDetail, posterMovieLoader } from './component/movie-user/MovieDetail';
-import { filterMovieSeriesLoader, MovieVideoSeries } from './component/movie-user/MovieVideoSeries';
 import { filterMovieLoader, MovieVideo } from './component/movie-user/MovieVideoSingle';
 import { Page } from './component/movie-user/Page';
 import PrivateRoute from './component/PrivateRoute';
@@ -51,12 +50,8 @@ const router = createBrowserRouter([
         path: '/xem-phim/:id',
         element: <MovieVideo />,
         loader: filterMovieLoader,
-      },
-      {
-        path: '/xem-phim-bo/:id',
-        element: <MovieVideoSeries />,
-        loader: filterMovieSeriesLoader,
-      },
+      }
+     
     ],
   },
 

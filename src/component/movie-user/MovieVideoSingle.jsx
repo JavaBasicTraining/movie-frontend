@@ -4,6 +4,7 @@ import { useLoaderData } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { notification } from 'antd'; // Import notification for user feedback
 import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
+import VideoPlayer from '../VideoPlayer';
 
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
@@ -16,6 +17,9 @@ export const MovieVideo = () => {
   const { movie } = useLoaderData();
   const [user, setUser] = useState({});
   const [jwt, setJwt] = useState(null);
+  const [selectEpisode, setSelectEpisode] = useState([]);
+  const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
+
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');
@@ -51,7 +55,32 @@ export const MovieVideo = () => {
       }
     }
   };
+  useEffect(() => {
+    getEpisodes();
+  }, []);
 
+
+  const getEpisodes = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/v1/episode/getEpisodeByMovieId/${movie.id}`
+      );
+      setSelectEpisode(response.data);
+    } catch (error) {
+      console.error('Error fetching episodes:', error);
+    }
+  };
+
+  const handleSelectEpisode = async (episodeId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/v1/episode/getEpisodeByMovieId/movieId/${movie.id}/episode/${episodeId}`
+      );
+      setCurrentEpisodeIndex(response.data);
+    } catch (error) {
+      console.error('Error fetching episode:', error);
+    }
+  };
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setShowOptions({});
@@ -74,7 +103,6 @@ export const MovieVideo = () => {
         [commentId]: !prevState[commentId],
       };
 
-      // Nếu đang hiển thị input reply và bấm vào dấu ba chấm của bình luận khác
       if (replyToCommentId && replyToCommentId !== commentId) {
         setReplyToCommentId(null);
       }
@@ -84,7 +112,7 @@ export const MovieVideo = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
@@ -121,7 +149,7 @@ export const MovieVideo = () => {
     try {
       const params = new URLSearchParams({ movieId: movie.id });
       const response = await axiosInstance.get('/api/v1/comment', { params });
-      setListComment(response.data); 
+      setListComment(response.data);
     } catch (error) {
       console.error('Error fetching comments:', error);
       notification.error({
@@ -130,7 +158,6 @@ export const MovieVideo = () => {
       });
     }
   };
-  
 
   const getTimeDifference = (currentDate) => {
     const now = new Date();
@@ -139,7 +166,6 @@ export const MovieVideo = () => {
     const minutesDifference = Math.floor(timeDifference / (1000 * 60));
     const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
     if (minutesDifference < 1) return 'Vừa xong';
     if (minutesDifference < 60) return `${minutesDifference} phút trước`;
     if (hoursDifference < 24) return `${hoursDifference} giờ trước`;
@@ -207,18 +233,18 @@ export const MovieVideo = () => {
           content: comment,
           idUser: user.id,
           idMovie: movie.id,
-          user: user.userName
-        }
-       
+          user: user.userName,
+        };
+
         if (replyToCommentId) {
           request.append('replyToCommentId', replyToCommentId);
         }
 
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
-          fetchComment(); 
-          setComment(''); 
-          setReplyToCommentId(null); 
+          fetchComment();
+          setComment('');
+          setReplyToCommentId(null);
         } catch (error) {
           console.error('Error posting comment:', error);
           notification.error({
@@ -275,7 +301,26 @@ export const MovieVideo = () => {
     <div className="container-movie">
       <div className="header-container">
         <div className="header">
-          <VideoPlayer fileName={movie.videoUrl} controls />
+          {movie.category.id === 1 ? (
+            <>
+              <VideoPlayer fileName={movie.videoUrl} controls />
+              <div className='btn-episode'>
+                <button>Tập Trước</button>
+                {selectEpisode &&
+                  selectEpisode.map((item) => (
+                    <button
+                      onClick={() => handleSelectEpisode(item.episodeCount)}
+                      key={item.id}
+                    >
+                      {item.episodeCount}
+                    </button>
+                  ))}
+                <button>Tập Sau</button>
+              </div>
+            </>
+          ) : (
+            <VideoPlayer fileName={movie.videoUrl} controls />
+          )}
         </div>
         <div className="like-share">
           <button>
@@ -371,7 +416,8 @@ export const MovieVideo = () => {
                       onChange={(e) => setReplyComment(e.target.value)}
                       onKeyDown={handleKeyDownReply}
                       required
-                    />                    <button onClick={() => setReplyToCommentId(null)}>
+                    />{' '}
+                    <button onClick={() => setReplyToCommentId(null)}>
                       Hủy Reply
                     </button>
                   </div>

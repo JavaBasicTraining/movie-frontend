@@ -15,10 +15,25 @@
       display: flex;
       justify-content: center;
       margin-bottom: 10px;
+      flex-direction: column;
 
       video {
         width: 100%;
         max-height: 500px;
+      }
+      .btn-episode {
+        background: #201f1f;
+        border-radius: 5px;
+        margin-top: 20px;
+        
+        width: 100%;
+        height: 60px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        button {
+          height: 30px;
+        }
       }
     }
 
