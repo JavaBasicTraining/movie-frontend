@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { axiosInstance } from '../../API/axiosConfig';
+import { axiosInstance } from '../../configs/axiosConfig';
 import { Link } from 'react-router-dom';
 import { PlayCircleOutlined } from '@ant-design/icons';
-import "./Page.scss"
+import './Page.scss';
+
 export const Page = () => {
   const [movies, setMovies] = useState([]);
 
@@ -20,20 +21,20 @@ export const Page = () => {
   }, []);
 
   const horrifiedMovies = movies.filter((movie) =>
-  movie.genres.some((genreName) =>
-    genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
-    )
+    movie.genres.some((genreName) =>
+      genreName.name.toLowerCase().includes('kinh dị'.toLowerCase()),
+    ),
   );
   const adventureMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase())
-    )
+      genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase()),
+    ),
   );
 
   const cartoonMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase())
-    )
+      genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase()),
+    ),
   );
 
   return (

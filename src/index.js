@@ -2,17 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import { ListMovie, MovieManagerLoader } from './component/Manager/ListMovie/ListMovieAdmin';
 import { CountryLoader, Movie, MovieLoader } from './pages/ListMovie/ListMovieUser';
-import { MovieDetail, posterMovieLoader } from './pages/MovieDetail/MovieDetail';
-import { filterMovieLoader, MovieVideo } from './component/MovieUser/MoviePlayer/MovieVideoSingle';
+import { MovieDetail, MovieDetailLoader } from './pages/MovieDetail/MovieDetail';
 import { Page } from './pages/Page/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import Oauth2Redirect, { Oauth2RedirectLoader } from './component/Account/Oauth2Redirect';
-import { AddMovie, MovieDetailLoader } from './component/Manager/AddMovie/AddMovie'
 import { Admin } from './pages/Admin/Admin';
+import { WatchMovie } from './pages/WatchMovie/WatchMovie';
+import { ListMovie, MovieManagerLoader } from './pages/Admin/ListMovie/ListMovieAdmin';
+import { AddMovie, AddMovieLoader } from './pages/Admin/AddMovie/AddMovie';
+import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
 
 const router = createBrowserRouter([
   {
@@ -42,13 +42,13 @@ const router = createBrowserRouter([
       {
         path: '/:id',
         element: <MovieDetail />,
-        loader: posterMovieLoader,
+        loader: MovieDetailLoader,
       },
       {
         path: '/xem-phim/:id',
-        element: <MovieVideo />,
-        loader: filterMovieLoader,
-      }
+        element: <WatchMovie />,
+        loader: MovieDetailLoader,
+      },
     ],
   },
 
@@ -73,24 +73,21 @@ const router = createBrowserRouter([
           {
             path: '/admin/movie/new',
             element: <AddMovie />,
-            loader: MovieDetailLoader,
           },
           {
             path: '/admin/movie/:id',
             element: <AddMovie value="Edit" />,
-            loader: MovieDetailLoader,
+            loader: AddMovieLoader,
           },
         ],
       },
     ],
   },
-
-
   {
     path: '/redirect',
     element: <Oauth2Redirect />,
     loader: Oauth2RedirectLoader,
-  }
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

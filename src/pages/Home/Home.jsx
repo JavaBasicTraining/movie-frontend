@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { HiOutlineFilm } from 'react-icons/hi';
 import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { KeycloakComponent } from '../../component/Account/KeycloakComponent';
-import { keycloak } from '../../component/Account/KeycloakComponent';
 import useAuth from '../../hooks/useAuth';
-import "./Home.scss";
-export const HomePage = () => {
+import './Home.scss';
+import { KeycloakComponent } from '../../component/KeycloakComponent/KeycloakComponent';
+import { keycloakService } from '../../services/keycloakService';
+
+export const Header = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
 
@@ -18,12 +19,6 @@ export const HomePage = () => {
 
   const isLoggedIn = () => {
     return token !== null;
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    const loginUrl = `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=http://localhost:3000`;
-    window.open(loginUrl, '_self');
   };
 
   useEffect(() => {
@@ -90,7 +85,7 @@ export const HomePage = () => {
               href="/public"
               onClick={(e) => {
                 e.preventDefault();
-                handleLogout();
+                keycloakService.openLogoutPage();
               }}
             >
               Đăng Xuất
