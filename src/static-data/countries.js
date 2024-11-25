@@ -1,3 +1,5 @@
+import React from "react";
+
 // export const countries = () => {
 //   const countryData = {
 //     name: "Quốc Gia",
@@ -18,12 +20,12 @@
 // };
 
 export const countries = [
-  'Việt Nam',
-  'Mỹ',
-  'Thái Lan',
-  'Hàn Quốc',
-  'Nhật Bản',
-  'Hồng Kông',
-  'Ấn Độ',
-  'Úc',
+  "Việt Nam",
+  "Mỹ",
+  "Thái Lan",
+  "Hàn Quốc",
+  "Nhật Bản",
+  "Hồng Kông",
+  "Ấn Độ",
+  "Úc",
 ];
