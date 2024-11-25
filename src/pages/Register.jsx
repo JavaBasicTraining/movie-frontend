@@ -25,9 +25,7 @@ const RegistrationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const checkUser = getUserName(formData.username).then((res) => console.log(res)) // chỗ res chỗ này là sao
-    // lam sai r, hàm này đang async có khả năng chạy chưa xong mà sẽ chạy suống dưới luôn
-    // check dưới server lun
+   
     try {
       if (
         formData.username === '' ||

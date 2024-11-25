@@ -43,11 +43,8 @@ axiosInstance.interceptors.response.use(
     return config;
   },
   function (error) {
-    // Kiểm tra nếu có response từ server
     if (error.response) {
       console.log('Error response:', error.response);
-
-      // Kiểm tra status 401 và url nằm trong danh sách public API
       if (error.response.status === 401 && !isPathIgnored(error.config.url)) {
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         // Xóa token hiện tại
