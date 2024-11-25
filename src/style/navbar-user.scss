@@ -14,19 +14,20 @@
     }
 
     .nav-item-name {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       font-size: 20px;
       height: 30px;
       border: none;
       font-weight: bold;
       background-color: rgb(62, 61, 65);
       color: white;
+     
 
-      .link-item {
+      .link-item
+      {
         color: white;
         text-decoration: none;
       }
-
       &:hover {
         transition: 0.5s;
         background-color: black;
