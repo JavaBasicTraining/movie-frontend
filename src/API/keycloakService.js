@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { keycloak } from '../component/Account/KeycloakComponent';
-
+import { keycloak } from '../component/account/KeycloakComponent';
 class KeycloakService {
   exchangeTokenByCode(code) {
     const data = {

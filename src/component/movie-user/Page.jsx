@@ -29,7 +29,6 @@ export const Page = () => {
       genreName.name.toLowerCase().includes("phiêu lưu".toLowerCase())
     )
   );
-
   const cartoonMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
       genreName.name.toLowerCase().includes("hoạt hình".toLowerCase())
@@ -38,82 +37,86 @@ export const Page = () => {
 
   return (
     <div className="page-container">
-      <div className="nav-category">
-        <div className="article-item">
-          {movies.map((item) =>
-            item !== null ? (
-              <div key={item.id}>
-                <h2>Phim Đề Cử</h2>
-                <Link to={`/${item.id}`} className="list-item-page">
-                  <div className="img-item">
-                    <img src={item.posterUrl} alt={item.title} />
-                    <div className="icon-play">
-                      <PlayCircleOutlined />
-                    </div>
+   
+      {movies.length > 0 && (
+        <div className="nav-category">
+          <h>Phim Đề Cử</h>
+          <div className="article-item">
+            {movies.map((item) => (
+              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
                   </div>
-                  <span>{item.nameMovie}</span>
-                  <span>{item.enTitle}</span>
-                </Link>
-              </div>
-            ) : null
-          )}
-        </div>
-      </div>
-
-      <div className="nav-category">
-        <h>Phim Lẻ Mới Cập Nhật</h>
-        <div class="article-item">
-          {adventureMovies.map((item) => (
-            <Link to={`/${item.id}`} className="list-item-page">
-              <div className="img-item">
-                <img key={item.id} src={item.posterUrl} alt={item.title} />
-                <div className="icon-play">
-                  <PlayCircleOutlined />
                 </div>
-              </div>
-              <span>{item.nameMovie}</span>
-              <span>{item.enTitle}</span>
-            </Link>
-          ))}
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="nav-category">
-        <h>Phim Bộ Mới Cập Nhật</h>
-        <div class="article-item">
-          {horrifiedMovies.map((item) => (
-            <Link to={`/${item.id}`} className="list-item-page">
-              <div className="img-item">
-                <img key={item.id} src={item.posterUrl} alt={item.title} />
-                <div className="icon-play">
-                  <PlayCircleOutlined />
+      )} 
+      {adventureMovies.length > 0 && (
+        <div className="nav-category">
+          <h>Phim Lẻ Mới Cập Nhật</h>
+          <div className="article-item">
+            {adventureMovies.map((item) => (
+              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
                 </div>
-              </div>
-
-              <span>{item.nameMovie}</span>
-              <span>{item.enTitle}</span>
-            </Link>
-          ))}
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="nav-category">
-        <h>Phim Hoạt Hình</h>
-        <div class="article-item">
-          {cartoonMovies.map((item) => (
-            <Link to={`/${item.id}`} className="list-item-page">
-              <div className="img-item">
-                <img key={item.id} src={item.posterUrl} alt={item.title} />
-                <div className="icon-play">
-                  <PlayCircleOutlined />
+      {horrifiedMovies.length > 0 && (
+        <div className="nav-category">
+          <h>Phim Bộ Mới Cập Nhật</h>
+          <div className="article-item">
+            {horrifiedMovies.map((item) => (
+              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
                 </div>
-              </div>
-
-              <span>{item.nameMovie}</span>
-              <span>{item.enTitle}</span>
-            </Link>
-          ))}
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {cartoonMovies.length > 0 && (
+        <div className="nav-category">
+          <h>Phim Hoạt Hình</h>
+          <div className="article-item">
+            {cartoonMovies.map((item) => (
+              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
+                </div>
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       <span>
         Contact Info: Liên hệ ngay All content of this website is collected from
         official video websites on the Internet, and does not provide genuine
