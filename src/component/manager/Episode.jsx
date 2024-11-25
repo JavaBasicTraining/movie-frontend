@@ -29,6 +29,9 @@ export const Episode = ({ formChanged, episode, index }) => {
     };
   }, []);
 
+
+  // const upda 
+
   useEffect(() => {
     setData(episode);
     if (episode.poster) {
@@ -145,7 +148,7 @@ export const Episode = ({ formChanged, episode, index }) => {
       };
       setData(newData);
     }
-    formChanged(newData);
+    formChanged(newData, index); 
   };
   
 

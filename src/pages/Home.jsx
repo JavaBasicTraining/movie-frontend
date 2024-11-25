@@ -1,45 +1,52 @@
-import React, { useState } from "react";
-import { HiOutlineFilm } from "react-icons/hi";
-import { SearchOutlined } from "@ant-design/icons";
-import { axiosInstance } from "../API/axiosConfig";
-import { useNavigate } from "react-router-dom";
-
+import React, { useEffect, useState } from 'react';
+import { HiOutlineFilm } from 'react-icons/hi';
+import { SearchOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { KeycloakComponent } from '../component/account/KeycloakComponent';
+import { keycloak } from '../component/account/KeycloakComponent';
+import useAuth from '../hooks/useAuth';
 export const HomePage = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState('');
 
-  const [name, setName] = useState("");
+  const { token } = useAuth();
+
   const handleChange = (e) => {
     setName(e.target.value);
   };
 
   const isLoggedIn = () => {
-    const token = localStorage.getItem("token");
     return token !== null;
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
+    const loginUrl = `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=http://localhost:3000`;
+    window.open(loginUrl, '_self');
   };
+
+  useEffect(() => {
+    const tokenCleared = localStorage.getItem('tokenCleared');
+    if (!tokenCleared) {
+    }
+  }, []);
 
   const filterMovie = async (event, params) => {
     try {
-      if (event && event.key === "Enter") {
+      if (event && event.key === 'Enter') {
         event.preventDefault();
       }
-      if (params === "") {
-     
-      navigate('/')
-      } else      if (event.target) {
+      if (params === '') {
+        navigate('/');
+      } else if (event.target) {
         navigate(`/filter/${params}`);
       }
     } catch (error) {
-      
-        navigate(`/filter/${params}`);
-       return null;
-
+      navigate(`/filter/${params}`);
+      return null;
     }
   };
-  
+
   return (
     <div className="home-page">
       <div className="header">
@@ -60,7 +67,7 @@ export const HomePage = () => {
               value={name}
               onChange={handleChange}
               onKeyDown={(event) => {
-                if (event.key === "Enter") {
+                if (event.key === 'Enter') {
                   filterMovie(event, name);
                 }
               }}
@@ -73,13 +80,18 @@ export const HomePage = () => {
         </div>
         {!isLoggedIn() && (
           <div className="login-register">
-            <a href="/login">Đăng Nhập/ </a>
-            <a href="/register">Đăng Ký</a>
+            <KeycloakComponent className="keycloak" />
           </div>
         )}
         {isLoggedIn() && (
           <div className="login-register">
-            <a href="/" onClick={handleLogout}>
+            <a
+              href="/public"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLogout();
+              }}
+            >
               Đăng Xuất
             </a>
           </div>

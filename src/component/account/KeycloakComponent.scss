@@ -1,0 +1,13 @@
+.keycloak-container {
+  display: flex;
+  gap: 1px;
+
+  button {
+    font-size: 15px;
+    color: white;
+    border: none;
+    background: rgb(59, 58, 62);
+    text-decoration: underline;
+    padding: 0;
+  }
+}

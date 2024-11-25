@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { LikeOutlined, ShareAltOutlined } from "@ant-design/icons";
-import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from 'react';
+import { axiosInstance } from '../../API/axiosConfig';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { jwtDecode } from 'jwt-decode';
+import useAuth from '../../hooks/useAuth';
 
 export async function filterMovieSeriesLoader({ params }) {
-  const response = await axiosInstance.get(
-    `/api/v1/movies/name/${params.name}`
-  );
+  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
 
   return {
     movie: response.data,
@@ -15,7 +14,7 @@ export async function filterMovieSeriesLoader({ params }) {
 }
 
 export const MovieVideoSeries = () => {
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const { movie } = useLoaderData();
   const [selectEpisode, setSelectEpisode] = useState([]);
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
@@ -24,7 +23,8 @@ export const MovieVideoSeries = () => {
   const [jwt, setJwt] = useState(null);
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
-  const [editCommentContent, setEditCommentContent] = useState("");
+  const [editCommentContent, setEditCommentContent] = useState('');
+
   const fetchUser = async (userName) => {
     try {
       const response = await axiosInstance.get(`/api/account/getUser`, {
@@ -32,7 +32,7 @@ export const MovieVideoSeries = () => {
       });
       setUser(response.data ?? []);
     } catch (error) {
-      console.error("Error fetching user:", error);
+      console.error('Error fetching user:', error);
     }
   };
 
@@ -47,12 +47,11 @@ export const MovieVideoSeries = () => {
       );
       setSelectEpisode(response.data);
     } catch (error) {
-      console.error("Error fetching episodes:", error);
+      console.error('Error fetching episodes:', error);
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
@@ -65,31 +64,31 @@ export const MovieVideoSeries = () => {
   const fetchComment = async () => {
     try {
       const params = new URLSearchParams({ movieId: movie.id });
-      const response = await axiosInstance.get("/api/v1/comment", {
+      const response = await axiosInstance.get('/api/v1/comment', {
         params: params,
       });
       setListComment(response.data);
     } catch (error) {
-      console.error("Error fetching comments:", error);
+      console.error('Error fetching comments:', error);
     }
   };
+
   const handleKeyDownUpdateComment = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleUpdateComment();
     }
   };
-  const handleUpdateComment = async (event) => {
+
+  const handleUpdateComment = async () => {
     if (editCommentId && editCommentContent) {
       try {
         const request = {
           content: editCommentContent,
           idUser: user.id,
           user: user.userName,
-          idMovie
-          : [movie.id],
+          idMovie: [movie.id],
         };
-        console.log(user.id);
         await axiosInstance.put(`/api/v1/comment/update`, request, {
           params: {
             commentId: editCommentId,
@@ -97,20 +96,22 @@ export const MovieVideoSeries = () => {
         });
         fetchComment();
         setEditCommentId(null);
-        setEditCommentContent("");
+        setEditCommentContent('');
       } catch (error) {
-        console.error("Có lỗi xảy ra khi cập nhật bình luận:", error);
+        console.error('Có lỗi xảy ra khi cập nhật bình luận:', error);
       }
     }
   };
 
-  const handleDelete= async(params)=>
-    {
-      const response = await axiosInstance.delete(`/api/v1/comment/delete/${params}`);
-      alert(`Xóa Thành Công!!`)
+  const handleDelete = async (params) => {
+    try {
+      await axiosInstance.delete(`/api/v1/comment/delete/${params}`);
+      alert(`Xóa Thành Công!!`);
       fetchComment();
-  
+    } catch (error) {
+      console.error('Có lỗi xảy ra khi xóa bình luận:', error);
     }
+  };
 
   const handleSelectEpisode = async (episodeId) => {
     try {
@@ -119,49 +120,36 @@ export const MovieVideoSeries = () => {
       );
       setCurrentEpisodeIndex(response.data);
     } catch (error) {
-      console.error("Error fetching episode:", error);
+      console.error('Error fetching episode:', error);
     }
   };
 
-  // const handleNextEpisode = () => {
-  //   setCurrentEpisodeIndex((prevIndex) => {
-  //     const newIndex = prevIndex + 1;
-  //     console.log(newIndex < selectEpisode.length ? newIndex : prevIndex);
-
-  //     return newIndex < selectEpisode.length ? newIndex : prevIndex;
-  //   });
-  // };
-
   const handleKeyDown = async (event) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       event.preventDefault();
       if (jwt) {
         const request = new FormData();
-        request.append("content", comment);
-        request.append("idUser", user.id);
-        request.append("idMovie", movie.id);
-      
+        request.append('content', comment);
+        request.append('idUser', user.id);
+        request.append('idMovie', movie.id);
+
         try {
-          console.log(request)
-          const response =  await axiosInstance.post(`/api/v1/comment/create`, request);  
+          await axiosInstance.post(`/api/v1/comment/create`, request);
           fetchComment();
-          setComment("");
-          console.log(response)
+          setComment('');
         } catch (error) {
-          console.error("Error posting comment:", error);
-          alert("Có lỗi xảy ra khi đăng bình luận.");
+          console.error('Error posting comment:', error);
+          alert('Có lỗi xảy ra khi đăng bình luận.');
         }
       } else {
-        alert("Bạn phải đăng nhập");
+        alert('Bạn phải đăng nhập');
       }
     }
   };
+
   const handleEditClick = (commentId, content) => {
     setEditCommentId(commentId);
     setEditCommentContent(content);
-  };
-  const handleCommentChange = (e) => {
-    setComment(e.target.value);
   };
 
   useEffect(() => {
@@ -185,7 +173,6 @@ export const MovieVideoSeries = () => {
                 {item.episodeCount}
               </button>
             ))}
-
           <button>Tập Sau</button>
         </div>
         <div className="like-share">
@@ -198,51 +185,48 @@ export const MovieVideoSeries = () => {
         </div>
       </div>
       <div className="body">
-        <div className="comment">
+        <div className="comment-section">
           {showComment &&
             listComment.map((value) => (
               <div className="show-comment" key={value.id}>
-                <h1>@{value.user}: </h1>
-                {editCommentId === value.id ? (
-                  <div className="edit-comment">
-                    <input
-                      value={editCommentContent}
-                      onChange={(e) => setEditCommentContent(e.target.value)}
-                      onKeyDown={handleKeyDownUpdateComment}
-                    />
-                    <div>
-                      <button onClick={handleUpdateComment}>Lưu</button>
-                      <button onClick={() => setEditCommentId(null)}>
-                        Hủy
-                      </button>
+                <div className="comment-header">
+                  <h1>@{value.user.userName}:</h1>
+                  {editCommentId === value.id ? (
+                    <div className="edit-comment">
+                      <input
+                        value={editCommentContent}
+                        onChange={(e) => setEditCommentContent(e.target.value)}
+                        onKeyDown={handleKeyDownUpdateComment}
+                      />
+                      <div className="edit-comment-buttons">
+                        <button onClick={handleUpdateComment}>Lưu</button>
+                        <button onClick={() => setEditCommentId(null)}>Hủy</button>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="edit-comment">
-                    <label>{value.content}</label>
-                    <div className="choose-update-delete">
-                      <button
-                        onClick={() => handleEditClick(value.id, value.content)}
-                      >
-                        Chỉnh Sửa
-                      </button>
-                      <button>Xóa</button>
+                  ) : (
+                    <div className="comment-content">
+                      <label>{value.content}</label>
+                      <div className="comment-options">
+                        <button onClick={() => handleEditClick(value.id, value.content)}>Chỉnh Sửa</button>
+                        <button onClick={() => handleDelete(value.id)}>Xóa</button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ))}
-
-          <span>Bình Luận</span>
-          <input
-            className="input"
-            type="text"
-            value={comment}
-            placeholder="Nhập bình luận của bạn..."
-            onChange={handleCommentChange}
-            onKeyDown={handleKeyDown}
-            required
-          />
+          <div className="comment-form">
+            <span>Bình Luận</span>
+            <input
+              className="input"
+              type="text"
+              value={comment}
+              placeholder="Nhập bình luận của bạn..."
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              required
+            />
+          </div>
         </div>
       </div>
     </div>

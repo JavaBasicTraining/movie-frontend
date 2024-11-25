@@ -1,21 +1,38 @@
-import {  Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from 'react-router-dom';
 
-import { NavbarAdmin } from "./NavbarAdmin";
+import { NavbarAdmin } from './NavbarAdmin';
 
-import { useState } from "react";
-import { UnorderedListOutlined } from "@ant-design/icons";
+import { useEffect, useState } from 'react';
+import { UnorderedListOutlined } from '@ant-design/icons';
+import useFetchUser from '../../hooks/useFetchUser';
+import useAuth from '../../hooks/useAuth';
 
 export const Admin = () => {
   const [showNavbar, setShowNavbar] = useState(false);
+  const { token } = useAuth();
+  const { user, isUser, fetchUser } = useFetchUser(token);
+  const navigate = useNavigate(); // Thêm dòng này để sử dụng hàm navigate
 
   const onClickMenuNavbar = () => {
     setShowNavbar(!showNavbar);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchUser((userFetched) => {
+        if (!userFetched && !userFetched.authorities.includes('admin')) {
+          alert('Ba!!!');
+          navigate('/admin');
+        }
+      });
+    };
+  }, []);
+
   return (
     <div className="admin-container">
       <div className={`menu-navbar ${showNavbar ? 'navbar-show' : ''}`}>
-        <NavbarAdmin /></div>
+        <NavbarAdmin />
+      </div>
 
       <div className="right-container">
         <div className="header">
