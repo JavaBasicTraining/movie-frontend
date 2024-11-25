@@ -1,16 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { axiosInstance } from '../../API/axiosConfig';
-import { useLoaderData } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { notification } from 'antd'; 
+import { notification } from 'antd';
 import { jwtDecode } from 'jwt-decode';
-import useAuth from '../../hook/useAuth';
-import VideoPlayer from './Videos';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLoaderData } from 'react-router-dom';
+import { axiosInstance } from '../../API/axiosConfig';
+import useAuth from '../../hooks/useAuth';
+import VideoPlayer from '../../component/VideoPlayer';
 
 export async function filterMovieLoader({ params }) {
-  const response = await axiosInstance.get(
-    `/api/v1/movies/${params.id}`
-  );
+  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
   return { movie: response.data };
 }
 
@@ -27,28 +25,17 @@ export const MovieVideo = () => {
   const [showOptions, setShowOptions] = useState(false);
   const menuRef = useRef(null);
   const [replyComment, setReplyComment] = useState('');
-  const {token} = useAuth();
+  const { token } = useAuth();
 
-
-
-
-
-
-
-
-
-
-  
-  const handleClickReply= async ()=>
-  {
+  const handleClickReply = async () => {
     if (jwt && replyToCommentId) {
       const request = {
         content: replyComment,
         idUser: user.id,
         idMovie: movie.id,
         user: user,
-        replyToCommentId:  replyToCommentId
-      }
+        replyToCommentId: replyToCommentId,
+      };
 
       try {
         await axiosInstance.post(`/api/v1/comment/create`, request);
@@ -63,11 +50,11 @@ export const MovieVideo = () => {
         });
       }
     }
-  }
+  };
   const handleKeyDownReply = async (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      handleClickReply()
+      handleClickReply();
     }
   };
 
@@ -92,7 +79,6 @@ export const MovieVideo = () => {
         ...prevState,
         [commentId]: !prevState[commentId],
       };
-
 
       if (replyToCommentId && replyToCommentId !== commentId) {
         setReplyToCommentId(null);
@@ -139,7 +125,7 @@ export const MovieVideo = () => {
     try {
       const params = new URLSearchParams({ movieId: movie.id });
       const response = await axiosInstance.get('/api/v1/comment', { params });
-      setListComment(response.data); 
+      setListComment(response.data);
     } catch (error) {
       console.error('Error fetching comments:', error);
       notification.error({
@@ -148,7 +134,6 @@ export const MovieVideo = () => {
       });
     }
   };
-  
 
   const getTimeDifference = (currentDate) => {
     const now = new Date();
@@ -211,7 +196,7 @@ export const MovieVideo = () => {
       fetchComment();
     } catch (error) {
       console.error('Error deleting comment:', error);
-      notification.error({  
+      notification.error({
         message: 'Delete Comment Error',
       });
     }
@@ -228,12 +213,12 @@ export const MovieVideo = () => {
           user: user,
           replyToCommentId: replyToCommentId || null,
         };
-  
+
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
-          fetchComment(); 
-          setComment(''); 
-          setReplyToCommentId(null); 
+          fetchComment();
+          setComment('');
+          setReplyToCommentId(null);
         } catch (error) {
           console.error('Error posting comment:', error);
           notification.error({
@@ -249,7 +234,6 @@ export const MovieVideo = () => {
       }
     }
   };
-  
 
   const handleEditClick = (commentId, content) => {
     setEditCommentId(commentId);
@@ -291,7 +275,7 @@ export const MovieVideo = () => {
     <div className="container-movie">
       <div className="header-container">
         <div className="header">
-        <VideoPlayer fileName="movies/112/video/doibongthieulam.mp4" controls />
+          <VideoPlayer fileName={movie.videoUrl} controls />
         </div>
         <div className="like-share">
           <button>
@@ -388,9 +372,7 @@ export const MovieVideo = () => {
                       onKeyDown={handleKeyDownReply}
                       required
                     />
-                    <button onClick={handleClickReply}>
-                      Reply
-                    </button>
+                    <button onClick={handleClickReply}>Reply</button>
                     <button onClick={() => setReplyToCommentId(null)}>
                       Hủy Reply
                     </button>

@@ -2,36 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import Login from './component/account/Login';
-import Register from './component/account/Register';
 import { AddMovie, MovieDetailLoader } from './component/manager/AddMovie';
 import { Admin } from './component/manager/Admin';
-import {
-  ListMovie,
-  MovieManagerLoader,
-} from './component/manager/ListMovieAdmin';
-import {
-  CountryLoader,
-  Movie,
-  MovieLoader,
-} from './component/movie-user/ListMovieUser';
-import {
-  MovieDetail,
-  posterMovieLoader,
-} from './component/movie-user/MovieDetail';
-import {
-  filterMovieSeriesLoader,
-  MovieVideoSeries,
-} from './component/movie-user/MovieVideoSeries';
-import {
-  filterMovieLoader,
-  MovieVideo,
-} from './component/movie-user/MovieVideoSingle';
+import { ListMovie, MovieManagerLoader } from './component/manager/ListMovieAdmin';
+import { CountryLoader, Movie, MovieLoader } from './component/movie-user/ListMovieUser';
+import { MovieDetail, posterMovieLoader } from './component/movie-user/MovieDetail';
+import { filterMovieSeriesLoader, MovieVideoSeries } from './component/movie-user/MovieVideoSeries';
+import { filterMovieLoader, MovieVideo } from './component/movie-user/MovieVideoSingle';
 import { Page } from './component/movie-user/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { RedirectUriPage } from './component/account/RedirectUriPage';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
 
 const router = createBrowserRouter([
   {
@@ -41,7 +25,6 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Page />,
-        loader: MovieLoader,
       },
 
       {
@@ -101,8 +84,8 @@ const router = createBrowserRouter([
             loader: MovieDetailLoader,
           },
           {
-            path: '/admin/movie/:id', 
-            element: <AddMovie value="Edit" />, 
+            path: '/admin/movie/:id',
+            element: <AddMovie value="Edit" />,
             loader: MovieDetailLoader,
           },
         ],
@@ -116,7 +99,8 @@ const router = createBrowserRouter([
   },
   {
     path: '/redirect',
-    element: <RedirectUriPage />,
+    element: <Oauth2Redirect />,
+    loader: Oauth2RedirectLoader,
   },
   {
     path: '/register',
@@ -127,7 +111,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();

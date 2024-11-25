@@ -3,12 +3,10 @@ import { axiosInstance } from '../../API/axiosConfig';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { StarFilled, StarOutlined, StarTwoTone } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
-import useFetchUser from '../../hook/useFetchUser';
+import useFetchUser from '../../hooks/useFetchUser';
 
 export async function posterMovieLoader({ params }) {
-  const response = await axiosInstance.get(
-    `/api/v1/movies/${params.id}`
-  );
+  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
 
   return {
     movie: response.data,
@@ -72,7 +70,7 @@ export const MovieDetail = () => {
           const request = {
             star: index,
             userId: user.id,
-            movieId: movie.id,  
+            movieId: movie.id,
           };
           await axiosInstance.put(
             `/api/v1/evaluations/${response.data.id}`,
@@ -114,15 +112,11 @@ export const MovieDetail = () => {
               <img className="poster" src={movie.posterUrl} alt="" />
               <div className="list-btn">
                 {movie.category.id === 1 ? (
-                  <button
-                    onClick={() => navigate(`/xem-phim-bo/${movie.id}`)}
-                  >
+                  <button onClick={() => navigate(`/xem-phim-bo/${movie.id}`)}>
                     Xem Phim
                   </button>
                 ) : (
-                  <button
-                    onClick={() => navigate(`/xem-phim/${movie.id}`)}
-                  >
+                  <button onClick={() => navigate(`/xem-phim/${movie.id}`)}>
                     Xem Phim
                   </button>
                 )}
