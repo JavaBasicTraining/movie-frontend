@@ -6,13 +6,13 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { axiosInstance } from '../../../configs/axiosConfig';
+import { movieService } from '../../../services/movieService';
 import './ListMovieAdmin.scss';
+import { notification, Modal } from 'antd';
 
 export async function MovieManagerLoader({ params, request }) {
   const searchParams = new URL(request.url).searchParams;
-  const response = await axiosInstance.get(`/api/v1/movies`, {
-    params: searchParams,
-  });
+  const response = await movieService.query(searchParams);
 
   return { movies: response.data ?? [] };
 }
@@ -20,11 +20,6 @@ export async function MovieManagerLoader({ params, request }) {
 export const ListMovie = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
-
-  // const category = [
-  //   { id: 1, name: "Việt Nam" },
-  //   { id: 2, name: "Mỹ" },
-  // ];
 
   const countries = [
     { name: 'Việt Nam', path: 'viet-nam' },
@@ -37,6 +32,7 @@ export const ListMovie = () => {
   ];
 
   const { movies } = useLoaderData();
+  const [moviesState, setMoviesState] = useState(movies);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,15 +49,22 @@ export const ListMovie = () => {
   };
 
   const deleteMovie = async (id) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa phim này?')) {
-      try {
-        await axiosInstance.delete(`/api/v1/admin/movies/${id}`);
-        alert('Xóa thành công');
-        window.location.reload();
-      } catch (error) {
-        alert(`Lỗi khi xóa phim: ${error.message}`);
+    Modal.confirm({
+      title: 'Xác nhận xóa',
+      content: 'Bạn có chắc chắn muốn xóa phim này?',
+      okText: 'Xóa',
+      okType: 'danger',
+      cancelText: 'Hủy',
+      onOk: async () => {
+        try {
+          await movieService.delete(id);
+          setMoviesState(moviesState.filter((movie) => movie.id !== id));
+          notification.success({ message: 'Xóa thành công' });
+        } catch (error) {
+          notification.error({ message: `Lỗi khi xóa phim: ${error.message}` });
+        }
       }
-    }
+    });
   };
 
   const renderSelect = (items, paramName, placeholder) => {
@@ -116,7 +119,7 @@ export const ListMovie = () => {
           </tr>
         </thead>
         <tbody>
-          {movies.map((item) => (
+          {moviesState.map((item) => (
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.nameMovie}</td>
