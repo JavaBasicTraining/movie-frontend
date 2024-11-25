@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../../API/axiosConfig";
+import { axiosInstance } from "../../API/axiosConfig";
 import { Link, useLoaderData } from "react-router-dom";
 import "./ListMovieUser.scss"
 export async function MovieLoader({ params }) {

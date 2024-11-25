@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { HiOutlineFilm } from 'react-icons/hi';
 import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { KeycloakComponent } from '../../component/account/KeycloakComponent';
-import { keycloak } from '../../component/account/KeycloakComponent';
+import { KeycloakComponent } from '../../component/Account/KeycloakComponent';
+import { keycloak } from '../../component/Account/KeycloakComponent';
 import useAuth from '../../hooks/useAuth';
 import "./Home.scss";
 export const HomePage = () => {

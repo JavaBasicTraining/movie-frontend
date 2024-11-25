@@ -2,18 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import { ListMovie, MovieManagerLoader } from './component/manager/list-movie/ListMovieAdmin';
-import { CountryLoader, Movie, MovieLoader } from './component/movie-user/list-movie/ListMovieUser';
-import { MovieDetail, posterMovieLoader } from './component/movie-user/movie-detail/MovieDetail';
-import { filterMovieLoader, MovieVideo } from './component/movie-user/movie-player/MovieVideoSingle';
-import { Page } from './pages/Page';
+import { ListMovie, MovieManagerLoader } from './component/Manager/ListMovie/ListMovieAdmin';
+import { CountryLoader, Movie, MovieLoader } from './pages/ListMovie/ListMovieUser';
+import { MovieDetail, posterMovieLoader } from './pages/MovieDetail/MovieDetail';
+import { filterMovieLoader, MovieVideo } from './component/MovieUser/MoviePlayer/MovieVideoSingle';
+import { Page } from './pages/Page/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import Oauth2Redirect, { Oauth2RedirectLoader } from './component/account/Oauth2Redirect';
-import { AddMovie, MovieDetailLoader } from './component/manager/add-movie/AddMovie';
-import { Admin } from './component/manager/admin/Admin';
-import Login from './component/account/Login';
+import Oauth2Redirect, { Oauth2RedirectLoader } from './component/Account/Oauth2Redirect';
+import { AddMovie, MovieDetailLoader } from './component/Manager/AddMovie/AddMovie'
+import { Admin } from './pages/Admin/Admin';
 
 const router = createBrowserRouter([
   {
@@ -86,10 +85,7 @@ const router = createBrowserRouter([
     ],
   },
 
-  {
-    path: '/login',
-    element: <Login />,
-  },
+
   {
     path: '/redirect',
     element: <Oauth2Redirect />,

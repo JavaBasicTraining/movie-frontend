@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
 import { axiosInstance } from "../../../API/axiosConfig";
 import { Link } from "react-router-dom";
-import "./list-movie-admin.scss";
+import "./ListMovieAdmin.scss";
 export async function MovieManagerLoader({ params, request }) {
   const searchParams = new URL(request.url).searchParams; 
   const response = await axiosInstance.get(`/api/v1/movies`, {
