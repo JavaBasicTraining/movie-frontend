@@ -3,15 +3,21 @@ root{  background: rgb(85, 83, 87) !important;}
 
 .Page
 {
-    display: flex;
-    flex-direction: column;
-    width: 1200px;
-    margin: 0 auto;
-    background: rgb(85, 83, 87) !important;
-    
-  
+  display: flex;
+  flex-direction: column;
+  width: 1200px;
+  margin: 0 auto;
+  background: rgb(85, 83, 87) !important;
 }
 
 .h-fit {
-    height: fit-content;
+  height: fit-content;
+}
+
+.btn-non-style {
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  background: unset;
 }
