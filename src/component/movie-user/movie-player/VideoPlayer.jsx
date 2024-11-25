@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { axiosInstance } from '../API/axiosConfig';
+import { axiosInstance } from '../../../API/axiosConfig';
 
 const VideoPlayer = ({ fileName }) => {
   const [videoToken, setVideoToken] = useState(null);

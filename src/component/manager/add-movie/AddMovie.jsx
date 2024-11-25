@@ -1,12 +1,13 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { axiosInstance } from '../../API/axiosConfig';
+import { axiosInstance } from '../../../API/axiosConfig';
 import qs from 'qs';
-import { countries } from '../../static-data/countries';
-import { DEFAULT_EPISODE, Episode } from './Episode';
+import { countries } from '../../../static-data/countries';
+import { DEFAULT_EPISODE, Episode } from '../episode-manager/Episode';
 import { MultiSelect } from 'react-multi-select-component';
 import Select from 'react-select';
 import { v4 as uuidv4 } from 'uuid';
+import "./AddMovie.scss"
 export async function MovieDetailLoader({ params }) {
   if (params.id) {
     const res = await axiosInstance.get(`/api/v1/admin/movies/${params.id}`);

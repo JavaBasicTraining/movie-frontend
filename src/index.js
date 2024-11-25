@@ -2,19 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import { AddMovie, MovieDetailLoader } from './component/manager/AddMovie';
-import { Admin } from './component/manager/Admin';
-import { ListMovie, MovieManagerLoader } from './component/manager/ListMovieAdmin';
-import { CountryLoader, Movie, MovieLoader } from './component/movie-user/ListMovieUser';
-import { MovieDetail, posterMovieLoader } from './component/movie-user/MovieDetail';
-import { filterMovieLoader, MovieVideo } from './component/movie-user/MovieVideoSingle';
-import { Page } from './component/movie-user/Page';
+import { ListMovie, MovieManagerLoader } from './component/manager/list-movie/ListMovieAdmin';
+import { CountryLoader, Movie, MovieLoader } from './component/movie-user/list-movie/ListMovieUser';
+import { MovieDetail, posterMovieLoader } from './component/movie-user/movie-detail/MovieDetail';
+import { filterMovieLoader, MovieVideo } from './component/movie-user/movie-player/MovieVideoSingle';
+import { Page } from './pages/Page';
 import PrivateRoute from './component/PrivateRoute';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import Register from './pages/Register';
-import Login from './pages/Login';
-import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
+import Oauth2Redirect, { Oauth2RedirectLoader } from './component/account/Oauth2Redirect';
+import { AddMovie, MovieDetailLoader } from './component/manager/add-movie/AddMovie';
+import { Admin } from './component/manager/admin/Admin';
+import Login from './component/account/Login';
 
 const router = createBrowserRouter([
   {
@@ -51,7 +50,6 @@ const router = createBrowserRouter([
         element: <MovieVideo />,
         loader: filterMovieLoader,
       }
-     
     ],
   },
 
@@ -96,11 +94,7 @@ const router = createBrowserRouter([
     path: '/redirect',
     element: <Oauth2Redirect />,
     loader: Oauth2RedirectLoader,
-  },
-  {
-    path: '/register',
-    element: <Register />,
-  },
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

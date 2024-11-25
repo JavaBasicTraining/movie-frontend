@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./Episode.scss"
 
 export const DEFAULT_EPISODE = {
   episodeCount: "",

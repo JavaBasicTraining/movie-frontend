@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
+import { axiosInstance } from "../../../API/axiosConfig";
 import { useLoaderData } from "react-router-dom";
 import { LikeOutlined, ShareAltOutlined } from "@ant-design/icons";
 import { notification } from "antd"; // Import notification for user feedback
 import { jwtDecode } from "jwt-decode";
-import VideoPlayer from "../VideoPlayer";
-
+import VideoPlayer from "./VideoPlayer";
+import "./MovieVideo.scss"
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
   return { movie: response.data };
