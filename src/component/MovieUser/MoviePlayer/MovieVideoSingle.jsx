@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { axiosInstance } from "../../API/axiosConfig";
+import { axiosInstance } from "../../../API/axiosConfig";
 import { useLoaderData } from "react-router-dom";
 import { LikeOutlined, ShareAltOutlined } from "@ant-design/icons";
 import { notification } from "antd"; // Import notification for user feedback
 import { jwtDecode } from "jwt-decode";
-import VideoPlayer from "../VideoPlayer/VideoPlayer";
-
+import VideoPlayer from "./VideoPlayer";
+import "./MovieVideo.scss"
 export async function filterMovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
   return { movie: response.data };
@@ -74,7 +74,7 @@ export const MovieVideo = () => {
   const handleSelectEpisode = async (episodeId) => {
     try {
       const response = await axiosInstance.get(
-        `/api/v1/episode/movieId/${movie.id}/episode/${episodeId}`
+        `/api/v1/episode/getEpisodeByMovieId/movieId/${movie.id}/episode/${episodeId}`
       );
       setCurrentEpisodeIndex(response.data);
     } catch (error) {
@@ -166,6 +166,7 @@ export const MovieVideo = () => {
     const minutesDifference = Math.floor(timeDifference / (1000 * 60));
     const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
     if (minutesDifference < 1) return 'Vừa xong';
     if (minutesDifference < 60) return `${minutesDifference} phút trước`;
     if (hoursDifference < 24) return `${hoursDifference} giờ trước`;
@@ -242,9 +243,9 @@ export const MovieVideo = () => {
 
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
-          fetchComment();
-          setComment('');
-          setReplyToCommentId(null);
+          fetchComment(); 
+          setComment(''); 
+          setReplyToCommentId(null); 
         } catch (error) {
           console.error("Error posting comment:", error);
           notification.error({
@@ -416,8 +417,7 @@ export const MovieVideo = () => {
                       onChange={(e) => setReplyComment(e.target.value)}
                       onKeyDown={handleKeyDownReply}
                       required
-                    />
-                    <button onClick={() => setReplyToCommentId(null)}>
+                    />                    <button onClick={() => setReplyToCommentId(null)}>
                       Hủy Reply
                     </button>
                   </div>
