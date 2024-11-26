@@ -58,6 +58,12 @@ export const EpisodeForm = ({ formChanged, episode, index }) => {
     if (!value.trim()) {
       error = `(*) This field is required`;
     }
+    else if (name === 'episodeCount') {
+      const valueStr = String(value);
+      if (isNaN(valueStr) || parseInt(valueStr) <= 0 ) {
+        error = 'Episode must be a valid number';
+      }
+    }
     setErrors((prev) => ({ ...prev, [name]: error }));
     return !error;
   };
