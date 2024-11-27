@@ -1,18 +1,18 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import "./Admin.scss"
+import './Admin.scss';
 
 import { useEffect, useState } from 'react';
 import { UnorderedListOutlined } from '@ant-design/icons';
 import useFetchUser from '../../hooks/useFetchUser';
 import useAuth from '../../hooks/useAuth';
-import { NavbarAdmin } from '../../component/Manager/NavbarAdmin/NavbarAdmin';
+import { NavbarAdmin } from '../../component/NavbarAdmin/NavbarAdmin';
 
 export const Admin = () => {
   const [showNavbar, setShowNavbar] = useState(false);
   const { token } = useAuth();
   const { user, isUser, fetchUser } = useFetchUser(token);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const onClickMenuNavbar = () => {
     setShowNavbar(!showNavbar);

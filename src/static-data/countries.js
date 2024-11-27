@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 // export const countries = () => {
 //   const countryData = {
@@ -20,12 +20,12 @@ import React from "react";
 // };
 
 export const countries = [
-  "Việt Nam",
-  "Mỹ",
-  "Thái Lan",
-  "Hàn Quốc",
-  "Nhật Bản",
-  "Hồng Kông",
-  "Ấn Độ",
-  "Úc",
+  'Việt Nam',
+  'Mỹ',
+  'Thái Lan',
+  'Hàn Quốc',
+  'Nhật Bản',
+  'Hồng Kông',
+  'Ấn Độ',
+  'Úc',
 ];

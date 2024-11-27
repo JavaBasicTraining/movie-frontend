@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { axiosInstance } from '../../API/axiosConfig';
+import { axiosInstance } from '../../configs/axiosConfig';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { StarFilled, StarOutlined, StarTwoTone } from '@ant-design/icons';
+import { StarFilled, StarOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
 import useFetchUser from '../../hooks/useFetchUser';
-import "./MovieDetail.scss"
-export async function posterMovieLoader({ params }) {
-  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
+import './MovieDetail.scss';
 
+export async function MovieDetailLoader({ params }) {
+  const id = parseInt(params.id);
+  if (isNaN(id) || id === 0) {
+    throw new Error('Not found movie');
+  }
+
+  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
   return {
     movie: response.data,
   };
@@ -18,33 +23,17 @@ export const MovieDetail = () => {
   const navigate = useNavigate();
   const { movie } = useLoaderData();
   const [isShowTrailer, setIsShowTrailer] = useState(false);
-  const { user, isUser, fetchUser } = useFetchUser();
+  const { user, fetchUser } = useFetchUser();
   const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
   const [countRating, setCountRating] = useState(0);
+
   const evaluationsNumberReview = async (params) => {
     const response = await axiosInstance.get(
       `/api/v1/evaluations/numberOfReviews/${params}`
     );
     setCountRating(response.data);
   };
-  useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      setJwt(decodedToken);
-      fetchUser();
-    }
-    window.addEventListener('keyup', handleKeyup);
-    return () => {
-      window.removeEventListener('keyup', handleKeyup);
-    };
-  }, []);
-
-  useEffect(() => {
-    averageRating(movie.id);
-    evaluationsNumberReview(movie.id);
-  }, [average, rating]);
 
   const handleKeyup = (e) => {
     if (e.code === 'Escape') {
@@ -103,15 +92,33 @@ export const MovieDetail = () => {
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setJwt(decodedToken);
+      fetchUser().then();
+    }
+    window.addEventListener('keyup', handleKeyup);
+    return () => {
+      window.removeEventListener('keyup', handleKeyup);
+    };
+  }, []);
+
+  useEffect(() => {
+    averageRating(movie.id).then();
+    evaluationsNumberReview(movie.id).then();
+  }, [average, rating]);
+
   return (
     <div style={{ position: 'relative' }}>
       <div className="container">
         <div className="header">
           <div className="content">
             <div className="btn-poster">
-              <img className="poster" src={movie.posterUrl} alt="" />
+              <img className="poster" src={movie?.posterUrl} alt="" />
               <div className="list-btn">
-                {movie.category.id === 1 ? (
+                {movie?.category?.id === 1 ? (
                   <button onClick={() => navigate(`/xem-phim/${movie.id}`)}>
                     Xem Phim
                   </button>
@@ -126,7 +133,7 @@ export const MovieDetail = () => {
               </div>
             </div>
             <div className="info">
-              <span> {movie.nameMovie} </span>
+              <span> {movie?.nameMovie} </span>
               <div>
                 <span>Đánh Giá: </span>
                 {[...Array(5)].map((_, i) => {

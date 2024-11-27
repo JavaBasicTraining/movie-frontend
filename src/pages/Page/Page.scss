@@ -30,7 +30,7 @@
     .list-item-page {
       flex: 1 1 18%;
       max-width: 18%;
-      overflow: hidden; 
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-items: center;
@@ -52,7 +52,7 @@
       .img-item {
         overflow: hidden;
         position: relative;
-        width: 100%; 
+        width: 100%;
         height: calc(100% * 4 / 3);
         span {
           color: rgb(241, 241, 240);

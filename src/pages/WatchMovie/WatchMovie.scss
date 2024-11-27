@@ -1,0 +1,229 @@
+.container-movie {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+
+  .header-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 20px;
+
+    .header {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+      flex-direction: column;
+
+      video {
+        width: 100%;
+        max-height: 500px;
+      }
+      .btn-episode {
+        background: #201f1f;
+        border-radius: 5px;
+        margin-top: 20px;
+
+        width: 100%;
+        height: 60px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        button {
+          height: 30px;
+        }
+      }
+    }
+
+    .like-share {
+      display: flex;
+      justify-content: space-around;
+
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+      }
+    }
+  }
+
+  .body {
+    width: 100%;
+    max-width: 800px;
+
+    .comment {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      position: relative;
+
+      .show-comment {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+
+        h1 {
+          margin: 0;
+          font-size: 16px;
+          color: #333;
+        }
+
+        label {
+          display: block;
+          font-size: 14px;
+          color: #888;
+        }
+
+        .like-reply {
+          margin: 10px 0;
+          display: flex;
+          button {
+            background: none;
+            border: none;
+            color: #007bff;
+            cursor: pointer;
+          }
+
+          label {
+            font-size: 14px;
+            color: red;
+          }
+        }
+
+        .edit-comment {
+          display: flex;
+          align-items: center;
+          margin-top: 10px;
+          flex-direction: column;
+          input {
+            border: 1px solid #ddd;
+            padding: 5px;
+            margin-right: 10px;
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid black;
+            flex: 1;
+            color: black;
+          }
+          .save-cancel {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+          }
+
+          button {
+            color: black;
+            border: none;
+            font-weight: bold;
+            border-radius: 5px;
+            color: black;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-right: 5px;
+
+            &:hover {
+              background-color: #1a1a1b;
+            }
+          }
+        }
+
+        .content-icon {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .edit-comment {
+            position: relative;
+
+            button {
+              background: none;
+              border: none;
+              padding: 5px;
+              cursor: pointer;
+              font-size: 16px;
+              position: relative;
+
+              &:hover {
+                background-color: #f1f1f1;
+              }
+            }
+
+            .choose-update-delete {
+              position: absolute;
+              top: 100%;
+              right: 0;
+              background: white;
+              z-index: 9999;
+
+              border: 1px solid #ddd;
+              border-radius: 5px;
+              white-space: nowrap;
+              z-index: 1000;
+              display: flex;
+              flex-direction: column;
+              font-size: 14px;
+
+              button {
+                background: none;
+                border: none;
+                font-weight: normal;
+                font-size: 14px;
+
+                cursor: pointer;
+                text-align: left;
+
+                &:hover {
+                  transition: 0.2s;
+                  width: 100%;
+                  background-color: rgb(164, 156, 156);
+                }
+              }
+            }
+          }
+
+          label {
+            margin: 10px 0;
+          }
+        }
+      }
+
+      .reply-input {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+
+        .input {
+          border: none;
+          border-bottom: 1px solid black;
+          padding: 5px;
+          flex: 1;
+
+          &:focus {
+            border: none;
+            border-bottom: 1px solid black;
+            outline: none;
+          }
+        }
+
+        button {
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          padding: 5px 10px;
+          cursor: pointer;
+          margin-left: 10px;
+
+          &:hover {
+            background-color: #0056b3;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,11 +1,12 @@
 import { Outlet } from 'react-router-dom';
 import './App.scss';
-import { HomePage } from '../src/pages/Home/Home'
-import { NavbarUser } from './component/MovieUser/NavbarUser/NavbarUser';
+import { NavbarUser } from './component/NavbarUser/NavbarUser';
+import { Header } from './pages/Home/Home';
+
 function App() {
   return (
     <div className="Page">
-      <HomePage />
+      <Header />
       <NavbarUser />
       <Outlet />
     </div>

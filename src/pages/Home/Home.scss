@@ -1,89 +1,87 @@
 .home-page {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(59, 58, 62);
+  color: white;
+  font-size: 40px;
+  width: 100%;
+  border-bottom: 3px solid rgb(196, 196, 15);
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  .header {
     display: flex;
-    flex-direction: column;
-    background-color: rgb(59, 58, 62);
-    color: white;
-    font-size: 40px;
-    width: 100%;
-    border-bottom: 3px solid rgb(196, 196, 15);
-    font-weight: bold;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  
-    .header {
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid black;
+    padding-inline-end: 30px;
+
+    .login-register {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      border: 1px solid black;
-      padding-inline-end: 30px;
-     
-  
-      .login-register {
-        display: flex;
-        align-items: center;
-        a {
-          font-size: 15px;
-          color: white;
-        }
-  
-        .keycloak {
-          font-size: 15px;
-          color: white;
-        }
+      a {
+        font-size: 15px;
+        color: white;
       }
-  
-      .header-title {
+
+      .keycloak {
+        font-size: 15px;
+        color: white;
+      }
+    }
+
+    .header-title {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+
+      .header-title-icon {
+        flex-direction: column;
+        margin-left: 100px;
         display: flex;
         flex-direction: row;
-        gap: 20px;
-  
-        .header-title-icon {
+        align-items: center;
+
+        .title {
+          display: flex;
           flex-direction: column;
-          margin-left: 100px;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-  
-          .title {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 75px;
-          }
-  
-          label {
-            color: rgb(18, 196, 212);
-            font-size: 12px;
-          }
-  
-          .icon {
-            width: 100%;
-            height: 75px;
-          }
+          width: 100%;
+          height: 75px;
         }
-  
-        .search {
+
+        label {
+          color: rgb(18, 196, 212);
+          font-size: 12px;
+        }
+
+        .icon {
+          width: 100%;
+          height: 75px;
+        }
+      }
+
+      .search {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        button {
+          width: 50px;
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+          height: 27px;
+          border: none;
+        }
+
+        .search-input {
+          border: none;
           display: flex;
-          justify-content: center;
-          align-items: center;
-  
-          button {
-            width: 50px;
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
-            height: 27px;
-            border: none;
-          }
-  
-          .search-input {
-            border: none;
-            display: flex;
-            width: 240px;
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
-            height: 25px;
-          }
+          width: 240px;
+          border-top-left-radius: 10px;
+          border-bottom-left-radius: 10px;
+          height: 25px;
         }
       }
     }
   }
-  
+}
