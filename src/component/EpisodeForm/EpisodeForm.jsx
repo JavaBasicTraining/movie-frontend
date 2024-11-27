@@ -55,18 +55,19 @@ export const EpisodeForm = ({ formChanged, episode, index }) => {
 
   const checkFieldError = (name, value) => {
     let error = '';
-    if (!value.trim()) {
-      error = `(*) This field is required`;
-    } else if (name === 'episodeCount') {
+        if (!value.trim()) {
+      error = 'This field is required';
+    } 
+    else if (name === 'episodeCount') {
       const num = parseInt(value);
-      if (isNaN(num))
-        if (isNaN(num)) {
-          error = 'Episode must be a valid number';
-        }
+      if (isNaN(num)) {
+        error = 'Episode must be a valid number';
+      }
     }
-    setErrors((prev) => ({ ...prev, [name]: error }));
-    return !error;
+        setErrors((prev) => ({ ...prev, [name]: error }));
+    return !error; 
   };
+  
   const validateForm = () => {
     let isValid = true;
     fields.forEach((field) => {

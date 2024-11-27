@@ -50,12 +50,12 @@ const router = createBrowserRouter([
         loader: MovieLoader,
       },
       {
-        path: '/:pathMovie',
+        path: '/:path',
         element: <MovieDetail />,
         loader: MovieDetailLoader,
       },
       {
-        path: '/xem-phim/:pathMovie',
+        path: '/xem-phim/:path',
         element: <WatchMovie />,
         loader: MovieDetailLoader,
       },
@@ -85,7 +85,7 @@ const router = createBrowserRouter([
             element: <AddMovie />,
           },
           {
-            path: '/admin/movie/:pathMovie',
+            path: '/admin/movie/:path',
             element: <AddMovie value="Edit" />,
             loader: AddMovieLoader,
           },

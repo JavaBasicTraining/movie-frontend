@@ -163,14 +163,16 @@ export const AddMovie = () => {
       'video/vnd.dlna.mpeg-tts',
     ];
 
-    if (type === 'poster') {
-      return validImageTypes.includes(file.type);
-    } else if (type === 'video') {
-      return validVideoTypes.includes(file.type);
-    } else if (type === 'trailer') {
-      return validVideoTypes.includes(file.type);
+    switch (type) {
+      case 'poster':
+        return validImageTypes.includes(file.type);
+      case 'video':
+      case 'trailer':
+        return validVideoTypes.includes(file.type);
+      default:
+        return false; 
     }
-    return false;
+    
   };
   const handleFileUpload = (e) => {
     const { name, files } = e.target;
@@ -187,14 +189,16 @@ export const AddMovie = () => {
     }
 
     let isValid = false;
-    if (name === 'poster') {
-      isValid = validateFile(file, 'poster');
-    } else if (name === 'video') {
-      isValid = validateFile(file, 'video');
-    } else if (name === 'trailer') {
-      isValid = validateFile(file, 'trailer');
+    switch (name) {
+      case 'poster':
+      case 'video':
+      case 'trailer':
+        isValid = validateFile(file, name);
+        break;
+      default:
+        isValid = false; 
     }
-
+    
     if (!isValid) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
@@ -204,13 +208,17 @@ export const AddMovie = () => {
             : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI, FLV, MKV, 3GP).',
       }));
       e.target.value = '';
-      if (name === 'poster') {
-        setShowFilePoster(false);
-      } else if (name === 'trailer') {
-        setShowTrailer(false);
-      } else {
-        setShowFileVideo(false);
-      }
+      switch (name) {
+        case 'poster':
+          setShowFilePoster(false);
+          break;
+        case 'trailer':
+          setShowTrailer(false);
+          break;
+        default:
+          setShowFileVideo(false);
+          break;
+      }      
       return;
     }
 
