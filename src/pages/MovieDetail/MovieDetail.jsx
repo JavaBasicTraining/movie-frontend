@@ -7,12 +7,12 @@ import useFetchUser from '../../hooks/useFetchUser';
 import './MovieDetail.scss';
 
 export async function MovieDetailLoader({ params }) {
-  const id = parseInt(params.id);
-  if (isNaN(id) || id === 0) {
-    throw new Error('Not found movie');
-  }
+  // const id = parseInt(params.id);
+  // if (isNaN(id) || id === 0) {
+  //   throw new Error('Not found movie');
+  // }
 
-  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
+  const response = await axiosInstance.get(`/api/v1/movies/${params.pathMovie }`);
   return {
     movie: response.data,
   };
@@ -119,11 +119,11 @@ export const MovieDetail = () => {
               <img className="poster" src={movie?.posterUrl} alt="" />
               <div className="list-btn">
                 {movie?.category?.id === 1 ? (
-                  <button onClick={() => navigate(`/xem-phim/${movie.id}`)}>
+                  <button onClick={() => navigate(`/xem-phim/${movie.pathMovie}`)}>
                     Xem Phim
                   </button>
                 ) : (
-                  <button onClick={() => navigate(`/xem-phim/${movie.id}`)}>
+                  <button onClick={() => navigate(`/xem-phim/${movie.pathMovie}`)}>
                     Xem Phim
                   </button>
                 )}
@@ -198,7 +198,7 @@ export const MovieDetail = () => {
           ></div>
 
           <video
-            src={movie.videoUrl}
+            src={movie.trailerUrl}
             controls
             style={{
               position: 'absolute',

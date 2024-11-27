@@ -30,9 +30,11 @@ export const AddMovie = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [showFileVideo, setShowFileVideo] = useState(true);
+
+  const [showTrailer, setShowTrailer] = useState(false);
   const [errors, setErrors] = useState({});
   const [isEdit, setIsEdit] = useState(false);
-  const loader  = useLoaderData();
+  const loader = useLoaderData();
   const [errorsFile, setErrorsFile] = useState({});
   const [data, setData] = useState({
     nameMovie: '',
@@ -40,12 +42,14 @@ export const AddMovie = () => {
     enTitle: '',
     description: '',
     country: '',
+    trailer: '',
     poster: '',
     video: '',
     idCategory: [],
     year: 0,
     prevPosterUrl: '',
     prevVideoUrl: '',
+    prevTrailerUrl: '',
     idGenre: [],
     episodes: [],
   });
@@ -70,7 +74,7 @@ export const AddMovie = () => {
 
   useEffect(() => {
     setIsEdit(!!loader?.movie);
-  }, [loader?.movie  ]);
+  }, [loader?.movie]);
 
   useEffect(() => {
     if (isEdit) {
@@ -86,7 +90,6 @@ export const AddMovie = () => {
       setShowFileVideo(false);
     }
   }, [isEdit]);
-  
 
   const updatePosterHeight = () => {
     if (posterRef?.current) {
@@ -139,7 +142,6 @@ export const AddMovie = () => {
   const formatValue = (value) => {
     return value;
   };
-  
 
   const validateFile = (file, type) => {
     const validImageTypes = [
@@ -165,6 +167,8 @@ export const AddMovie = () => {
       return validImageTypes.includes(file.type);
     } else if (type === 'video') {
       return validVideoTypes.includes(file.type);
+    } else if (type === 'trailer') {
+      return validVideoTypes.includes(file.type);
     }
     return false;
   };
@@ -185,8 +189,10 @@ export const AddMovie = () => {
     let isValid = false;
     if (name === 'poster') {
       isValid = validateFile(file, 'poster');
-        } else if (name === 'video') {
+    } else if (name === 'video') {
       isValid = validateFile(file, 'video');
+    } else if (name === 'trailer') {
+      isValid = validateFile(file, 'trailer');
     }
 
     if (!isValid) {
@@ -194,11 +200,17 @@ export const AddMovie = () => {
         ...prevErrors,
         [name]:
           name === 'poster'
-            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).' 
+            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).'
             : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI, FLV, MKV, 3GP).',
       }));
       e.target.value = '';
-      name === 'poster' ? setShowFilePoster(false) : setShowFileVideo(false);
+      if (name === 'poster') {
+        setShowFilePoster(false);
+      } else if (name === 'trailer') {
+        setShowTrailer(false);
+      } else {
+        setShowFileVideo(false);
+      }
       return;
     }
 
@@ -218,7 +230,18 @@ export const AddMovie = () => {
       }));
     } else if (name === 'poster') {
       setShowFilePoster(true);
-      setData((prev) => ({ ...prev, poster: file, prevPosterUrl: previewUrl }));
+      setData((prev) => ({
+        ...prev,
+        poster: file,
+        prevPosterUrl: previewUrl,
+      }));
+    } else if (name === 'trailer') {
+      setShowTrailer(true);
+      setData((prev) => ({
+        ...prev,
+        trailer: file,
+        prevTrailerUrl: previewUrl,
+      }));
     }
   };
 
@@ -323,9 +346,11 @@ export const AddMovie = () => {
       if (data.video && !isSeries()) {
         await uploadFileMovie(response.data.id, 'video', data.video);
       }
+      if (data.trailer && !isSeries()) {
+        await uploadFileMovie(response.data.id, 'trailer', data.trailer);
+      }
 
       if (isSeries(response.data.category)) {
-
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
           if (episodeMap.poster && episodeMap.video) {
@@ -356,6 +381,8 @@ export const AddMovie = () => {
     if (!isSeries() && data.poster && data.video) {
       uploadFileMovie(response.data.id, 'poster', data.poster);
       uploadFileMovie(response.data.id, 'video', data.video);
+      uploadFileMovie(response.data.id, 'trailer', data.trailer);
+
     } else if (data.poster) {
       const formData = new FormData();
       formData.append('file', data.poster);
@@ -393,13 +420,13 @@ export const AddMovie = () => {
     setShowEpisode(isSeries);
 
     if (isSeries) {
-      setShowButtonUploadMovie(false);  
+      setShowButtonUploadMovie(false);
       setData((prev) => ({
         ...prev,
         episodes: [DEFAULT_EPISODE],
       }));
     } else {
-      setShowButtonUploadMovie(true);  
+      setShowButtonUploadMovie(true);
 
       setData((prev) => ({
         ...prev,
@@ -614,7 +641,7 @@ export const AddMovie = () => {
               onChange={handleFileUpload}
               required
             />
-            { errorsFile.poster && (
+            {errorsFile.poster && (
               <small className="error">{errorsFile.poster}</small>
             )}
           </div>
@@ -671,9 +698,37 @@ export const AddMovie = () => {
         )}
 
         {isEdit && !errorsFile.video && showButtonUploadMovie ? (
-          <video src={data.prevVideoUrl || loader?.movie.videoUrl} controls></video>
+          <video
+            src={data.prevVideoUrl || loader?.movie.videoUrl}
+            controls
+          ></video>
         ) : (
           showFileVideo && <video src={data.prevVideoUrl} controls></video>
+        )}
+
+        <div className="selected-input-form">
+          <label id="title-file-trailer">Tải Trailer</label>
+          <div className="validate">
+            <input
+              id="file-trailer"
+              type="file"
+              name="trailer"
+              onChange={handleFileUpload}
+              required
+            />
+            {errorsFile.trailer && (
+              <small className="error">{errorsFile.trailer}</small>
+            )}
+          </div>
+        </div>
+
+        {isEdit && !errorsFile.trailer && showButtonUploadMovie ? (
+          <video
+            src={data.prevTrailerUrl || loader?.movie.trailer}
+            controls
+          ></video>
+        ) : (
+          showTrailer && <video src={data.prevTrailerUrl} controls></video>
         )}
 
         <button onClick={handleSubmit}>
