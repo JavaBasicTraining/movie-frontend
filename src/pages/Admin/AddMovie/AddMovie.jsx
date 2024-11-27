@@ -43,7 +43,7 @@ export const AddMovie = () => {
     poster: '',
     video: '',
     idCategory: [],
-    year: [],
+    year: 0,
     prevPosterUrl: '',
     prevVideoUrl: '',
     idGenre: [],
@@ -185,8 +185,7 @@ export const AddMovie = () => {
     let isValid = false;
     if (name === 'poster') {
       isValid = validateFile(file, 'poster');
-      // setShowFilePoster(false);
-    } else if (name === 'video') {
+        } else if (name === 'video') {
       isValid = validateFile(file, 'video');
     }
 
