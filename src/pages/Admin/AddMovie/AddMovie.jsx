@@ -620,7 +620,7 @@ export const AddMovie = () => {
           </div>
         </div>
 
-        {isEdit ? (
+        {isEdit && !errorsFile.poster ? (
           <img
             ref={posterRef}
             src={data.prevPosterUrl || loader?.movie.posterUrl}
@@ -670,7 +670,7 @@ export const AddMovie = () => {
           </div>
         )}
 
-        {isEdit && showButtonUploadMovie ? (
+        {isEdit && !errorsFile.video && showButtonUploadMovie ? (
           <video src={data.prevVideoUrl || loader?.movie.videoUrl} controls></video>
         ) : (
           showFileVideo && <video src={data.prevVideoUrl} controls></video>
