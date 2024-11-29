@@ -85,7 +85,7 @@ const router = createBrowserRouter([
             element: <AddMovie />,
           },
           {
-            path: '/admin/movie/:path',
+            path: '/admin/movie/:id',
             element: <AddMovie value="Edit" />,
             loader: AddMovieLoader,
           },
