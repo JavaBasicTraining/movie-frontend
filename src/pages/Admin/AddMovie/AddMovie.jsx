@@ -26,13 +26,13 @@ export const AddMovie = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [showEpisode, setShowEpisode] = useState(false);
+  const [showButtonUploadMovie, setShowButtonUploadMovie] = useState(true);
   const [suggestions, setSuggestions] = useState([]);
   const [showFilePoster, setShowFilePoster] = useState(false);
-  const [showFileVideo, setShowFileVideo] = useState(false);
+  const [showFileVideo, setShowFileVideo] = useState(true);
   const [errors, setErrors] = useState({});
   const [isEdit, setIsEdit] = useState(false);
-  const { movie } = useLoaderData();
-
+  const loader  = useLoaderData();
   const [errorsFile, setErrorsFile] = useState({});
   const [data, setData] = useState({
     nameMovie: '',
@@ -43,7 +43,7 @@ export const AddMovie = () => {
     poster: '',
     video: '',
     idCategory: [],
-    year: '',
+    year: 0,
     prevPosterUrl: '',
     prevVideoUrl: '',
     idGenre: [],
@@ -69,14 +69,15 @@ export const AddMovie = () => {
   }, [data.poster]);
 
   useEffect(() => {
-    setIsEdit(!!movie);
-  }, [movie]);
+    setIsEdit(!!loader?.movie);
+  }, [loader?.movie  ]);
 
   useEffect(() => {
     if (isEdit) {
-      fetchDataUpdate(movie);
-      setShowEpisode(movie?.category?.id === 1);
-      if (movie?.category?.id === 1) {
+      fetchDataUpdate(loader?.movie);
+      setShowEpisode(loader?.movie?.category?.id === 1);
+      if (loader?.movie?.category?.id === 1) {
+        setShowButtonUploadMovie(false);
         setShowFileVideo(false);
       }
     } else {
@@ -85,6 +86,7 @@ export const AddMovie = () => {
       setShowFileVideo(false);
     }
   }, [isEdit]);
+  
 
   const updatePosterHeight = () => {
     if (posterRef?.current) {
@@ -135,12 +137,9 @@ export const AddMovie = () => {
   };
 
   const formatValue = (value) => {
-    if (value && typeof value === 'string') {
-      return value.trim();
-    }
-
     return value;
   };
+  
 
   const validateFile = (file, type) => {
     const validImageTypes = [
@@ -186,7 +185,7 @@ export const AddMovie = () => {
     let isValid = false;
     if (name === 'poster') {
       isValid = validateFile(file, 'poster');
-    } else if (name === 'video') {
+        } else if (name === 'video') {
       isValid = validateFile(file, 'video');
     }
 
@@ -195,7 +194,7 @@ export const AddMovie = () => {
         ...prevErrors,
         [name]:
           name === 'poster'
-            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).'
+            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).' 
             : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI, FLV, MKV, 3GP).',
       }));
       e.target.value = '';
@@ -302,7 +301,7 @@ export const AddMovie = () => {
     try {
       // Gửi yêu cầu cập nhật thông tin phim
       const response = await axiosInstance.put(
-        `/api/v1/admin/movies/${movie.id}`,
+        `/api/v1/admin/movies/${loader?.movie.id}`,
         {
           ...newData,
           poster: undefined,
@@ -326,6 +325,7 @@ export const AddMovie = () => {
       }
 
       if (isSeries(response.data.category)) {
+
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
           if (episodeMap.poster && episodeMap.video) {
@@ -391,14 +391,16 @@ export const AddMovie = () => {
   const handleShowEpisode = (e) => {
     const isSeries = e.target.value === '1';
     setShowEpisode(isSeries);
-    // setShowUploadFileMovie(!isSeries);
 
     if (isSeries) {
+      setShowButtonUploadMovie(false);  
       setData((prev) => ({
         ...prev,
         episodes: [DEFAULT_EPISODE],
       }));
     } else {
+      setShowButtonUploadMovie(true);  
+
       setData((prev) => ({
         ...prev,
         episodes: [],
@@ -431,8 +433,6 @@ export const AddMovie = () => {
       ...(isEdit && { genreSelectedData: selectedItems }),
     }));
   };
-
-  console.log(suggestions);
   return (
     <div className="container-addmovie">
       <h1>{isEdit ? 'Sửa Thông Tin Phim' : 'Thêm Phim Mới'}</h1>
@@ -614,16 +614,16 @@ export const AddMovie = () => {
               onChange={handleFileUpload}
               required
             />
-            {errorsFile.poster && (
+            { errorsFile.poster && (
               <small className="error">{errorsFile.poster}</small>
             )}
           </div>
         </div>
 
-        {isEdit ? (
+        {isEdit && !errorsFile.poster ? (
           <img
             ref={posterRef}
-            src={data.prevPosterUrl || movie.posterUrl}
+            src={data.prevPosterUrl || loader?.movie.posterUrl}
             alt="Poster"
           />
         ) : (
@@ -652,7 +652,7 @@ export const AddMovie = () => {
           </div>
         )}
 
-        {showFileVideo && !isEdit && (
+        {showButtonUploadMovie && (
           <div className="selected-input-form">
             <label id="title-file-video">Tải Phim</label>
             <div className="validate">
@@ -670,8 +670,8 @@ export const AddMovie = () => {
           </div>
         )}
 
-        {isEdit ? (
-          <video src={data.prevVideoUrl || movie.videoUrl} controls></video>
+        {isEdit && !errorsFile.video && showButtonUploadMovie ? (
+          <video src={data.prevVideoUrl || loader?.movie.videoUrl} controls></video>
         ) : (
           showFileVideo && <video src={data.prevVideoUrl} controls></video>
         )}
