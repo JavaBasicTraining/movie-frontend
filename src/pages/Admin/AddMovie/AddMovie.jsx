@@ -352,6 +352,7 @@ export const AddMovie = () => {
 
       newData
     );
+    
 
     if (!isSeries() && data.poster && data.video) {
       uploadFileMovie(response.data.id, 'poster', data.poster);

@@ -30,14 +30,12 @@ export const EpisodeForm = ({ formChanged, episode, index }) => {
     };
   }, []);
 
-  // const upda
-
   useEffect(() => {
     setData(episode);
-    if (episode.poster) {
+    if (episode.posterUrl) {
       setShowFilePoster(true);
     }
-    if (episode.video) {
+    if (episode.videoUrl) {
       setShowFileVideo(true);
     }
   }, [episode]);
