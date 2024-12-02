@@ -57,9 +57,9 @@ export const EpisodeForm = ({ formChanged, episode, index }) => {
       error = `(*) This field is required`;
     } else if (name === 'episodeCount') {
       const num = parseInt(value);
-        if (isNaN(num)) {
-          error = 'Episode must be a valid number';
-        }
+      if (isNaN(num)) {
+        error = 'Episode must be a valid number';
+      }
     }
     setErrors((prev) => ({ ...prev, [name]: error }));
     return !error;
@@ -106,12 +106,13 @@ export const EpisodeForm = ({ formChanged, episode, index }) => {
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     const file = files[0];
-
     if (!file) {
       setErrorsFile((prevErrors) => ({
         ...prevErrors,
         [name]: 'Không có tệp nào được chọn.',
       }));
+      setData((prev) => ({ ...prev, [name]: '' }));
+      setShowFileVideo(false);
       return;
     }
 

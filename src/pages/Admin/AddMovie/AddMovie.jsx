@@ -32,8 +32,10 @@ export const AddMovie = () => {
   const [showFileVideo, setShowFileVideo] = useState(true);
   const [errors, setErrors] = useState({});
   const [isEdit, setIsEdit] = useState(false);
-  const loader  = useLoaderData();
+  const loader = useLoaderData();
   const [errorsFile, setErrorsFile] = useState({});
+  const [originalData, setOriginalData] = useState(null);
+
   const [data, setData] = useState({
     nameMovie: '',
     viTitle: '',
@@ -70,7 +72,8 @@ export const AddMovie = () => {
 
   useEffect(() => {
     setIsEdit(!!loader?.movie);
-  }, [loader?.movie  ]);
+    setIsEdit(hasChanges(data));
+  }, [loader?.movie]);
 
   useEffect(() => {
     if (isEdit) {
@@ -86,7 +89,6 @@ export const AddMovie = () => {
       setShowFileVideo(false);
     }
   }, [isEdit]);
-  
 
   const updatePosterHeight = () => {
     if (posterRef?.current) {
@@ -112,7 +114,7 @@ export const AddMovie = () => {
   };
 
   const fetchDataUpdate = (newData) => {
-    setData({
+    const updatedData = {
       ...data,
       ...newData,
       idCategory: newData?.category?.id,
@@ -123,9 +125,14 @@ export const AddMovie = () => {
           value: item,
           key: item.id,
         })) || [],
-    });
+    };
+    setData(updatedData);
+    setOriginalData(updatedData);
   };
 
+  const hasChanges = (dataChange) => {
+    return JSON.stringify(dataChange) !== JSON.stringify(originalData);
+  };
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
     setData((prev) => {
@@ -139,7 +146,6 @@ export const AddMovie = () => {
   const formatValue = (value) => {
     return value;
   };
-  
 
   const validateFile = (file, type) => {
     const validImageTypes = [
@@ -181,11 +187,10 @@ export const AddMovie = () => {
       setShowFileVideo(false);
       return;
     }
-
     let isValid = false;
     if (name === 'poster') {
       isValid = validateFile(file, 'poster');
-        } else if (name === 'video') {
+    } else if (name === 'video') {
       isValid = validateFile(file, 'video');
     }
 
@@ -194,7 +199,7 @@ export const AddMovie = () => {
         ...prevErrors,
         [name]:
           name === 'poster'
-            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).' 
+            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).'
             : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI, FLV, MKV, 3GP).',
       }));
       e.target.value = '';
@@ -270,6 +275,7 @@ export const AddMovie = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!validateForm()) {
       return;
     } else {
@@ -299,7 +305,6 @@ export const AddMovie = () => {
 
   const apiUpdate = async (newData, episodesMap) => {
     try {
-      // Gửi yêu cầu cập nhật thông tin phim
       const response = await axiosInstance.put(
         `/api/v1/admin/movies/${loader?.movie.id}`,
         {
@@ -325,7 +330,6 @@ export const AddMovie = () => {
       }
 
       if (isSeries(response.data.category)) {
-
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
           if (episodeMap.poster && episodeMap.video) {
@@ -352,7 +356,6 @@ export const AddMovie = () => {
 
       newData
     );
-    
 
     if (!isSeries() && data.poster && data.video) {
       uploadFileMovie(response.data.id, 'poster', data.poster);
@@ -394,13 +397,13 @@ export const AddMovie = () => {
     setShowEpisode(isSeries);
 
     if (isSeries) {
-      setShowButtonUploadMovie(false);  
+      setShowButtonUploadMovie(false);
       setData((prev) => ({
         ...prev,
         episodes: [DEFAULT_EPISODE],
       }));
     } else {
-      setShowButtonUploadMovie(true);  
+      setShowButtonUploadMovie(true);
 
       setData((prev) => ({
         ...prev,
@@ -615,7 +618,7 @@ export const AddMovie = () => {
               onChange={handleFileUpload}
               required
             />
-            { errorsFile.poster && (
+            {errorsFile.poster && (
               <small className="error">{errorsFile.poster}</small>
             )}
           </div>
@@ -672,12 +675,15 @@ export const AddMovie = () => {
         )}
 
         {isEdit && !errorsFile.video && showButtonUploadMovie ? (
-          <video src={data.prevVideoUrl || loader?.movie.videoUrl} controls></video>
+          <video
+            src={data.prevVideoUrl || loader?.movie.videoUrl}
+            controls
+          ></video>
         ) : (
           showFileVideo && <video src={data.prevVideoUrl} controls></video>
         )}
 
-        <button onClick={handleSubmit}>
+        <button onClick={handleSubmit} disabled={!hasChanges(data)}>
           {isEdit ? 'Sửa Thông Tin Phim' : 'Thêm'}
         </button>
       </div>
