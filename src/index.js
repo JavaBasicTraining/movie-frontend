@@ -23,6 +23,7 @@ import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
 import { Page } from './pages/Page/Page';
 import { WatchMovie } from './pages/WatchMovie/WatchMovie';
 import reportWebVitals from './reportWebVitals';
+import WatchParty from './pages/WatchParty/WatchParty';
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,6 @@ const router = createBrowserRouter([
         path: '/',
         element: <Page />,
       },
-
       {
         path: '/the-loai/:keyword?',
         element: <Movie />,
@@ -58,6 +58,10 @@ const router = createBrowserRouter([
         path: '/xem-phim/:id',
         element: <WatchMovie />,
         loader: MovieDetailLoader,
+      },
+      {
+        path: '/watch-party/:roomId',
+        element: <WatchParty />,
       },
     ],
   },

@@ -1,0 +1,128 @@
+.watch-party-video-player {
+  position: relative;
+  width: 100%;
+  background: #000;
+
+  .player-wrapper {
+    position: relative;
+
+    .react-player {
+      width: 100% !important;
+      height: auto !important;
+    }
+  }
+
+  .controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      i {
+        font-size: 20px;
+      }
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+
+      &:hover {
+        height: 6px;
+
+        .progress-bar-filled {
+          background: #1db954;
+        }
+      }
+
+      .progress-bar-filled {
+        height: 100%;
+        background: white;
+        border-radius: 2px;
+        transition: width 0.1s ease-out;
+      }
+
+      .progress-time {
+        position: absolute;
+        top: -20px;
+        right: 0;
+        color: white;
+        font-size: 12px;
+      }
+    }
+
+    .volume-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .volume-slider {
+        width: 80px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+        cursor: pointer;
+        position: relative;
+
+        &:hover {
+          height: 6px;
+
+          .volume-slider-filled {
+            background: #1db954;
+          }
+        }
+
+        .volume-slider-filled {
+          height: 100%;
+          background: white;
+          border-radius: 2px;
+          transition: width 0.1s ease-out;
+        }
+      }
+    }
+  }
+
+  .viewer-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+}

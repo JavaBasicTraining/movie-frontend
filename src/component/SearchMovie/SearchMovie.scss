@@ -1,0 +1,52 @@
+.search-movie {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__input-group {
+    display: flex;
+  }
+
+  &__result {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__result-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    background: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    &-image {
+      min-width: 100px;
+      min-height: 100px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    &-info {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: flex-start;
+      gap: 5px;
+    }
+  }
+}

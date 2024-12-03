@@ -1,0 +1,26 @@
+.participant-list {
+  width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__header {
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  &__participants {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__participant {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+}

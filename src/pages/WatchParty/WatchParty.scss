@@ -1,0 +1,32 @@
+.watch-party {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__room-name {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  &__participants-count {
+    font-size: 16px;
+  }
+
+  &__content {
+    display: flex;
+  }
+
+  &__participant-list {
+    width: 300px;
+    display: flex;
+  }
+
+  &__no-movie {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    border: 1px solid #ccc;
+    align-items: center;
+    justify-content: center;
+  }
+}

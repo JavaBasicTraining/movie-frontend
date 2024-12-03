@@ -39,7 +39,7 @@ export const Page = () => {
     <div className="page-container">
       {movies.length > 0 && (
         <div className="nav-category">
-          <h>Phim Đề Cử</h>
+          <h1>Phim Đề Cử</h1>
           <div className="article-item">
             {movies.map((item) => (
               <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
@@ -60,7 +60,7 @@ export const Page = () => {
       {/* Phim Lẻ Mới Cập Nhật */}
       {adventureMovies.length > 0 && (
         <div className="nav-category">
-          <h>Phim Lẻ Mới Cập Nhật</h>
+          <h1>Phim Lẻ Mới Cập Nhật</h1>
           <div className="article-item">
             {adventureMovies.map((item) => (
               <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
@@ -81,7 +81,7 @@ export const Page = () => {
       {/* Phim Bộ Mới Cập Nhật */}
       {horrifiedMovies.length > 0 && (
         <div className="nav-category">
-          <h>Phim Bộ Mới Cập Nhật</h>
+          <h1>Phim Bộ Mới Cập Nhật</h1>
           <div className="article-item">
             {horrifiedMovies.map((item) => (
               <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
@@ -102,7 +102,7 @@ export const Page = () => {
       {/* Phim Hoạt Hình */}
       {cartoonMovies.length > 0 && (
         <div className="nav-category">
-          <h>Phim Hoạt Hình</h>
+          <h1>Phim Hoạt Hình</h1>
           <div className="article-item">
             {cartoonMovies.map((item) => (
               <Link to={`/${item.id}`} className="list-item-page" key={item.id}>

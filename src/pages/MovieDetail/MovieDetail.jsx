@@ -5,6 +5,8 @@ import { StarFilled, StarOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
 import useFetchUser from '../../hooks/useFetchUser';
 import './MovieDetail.scss';
+import { movieService, roomService } from '../../services';
+import Password from 'antd/es/input/Password';
 
 export async function MovieDetailLoader({ params }) {
   const id = parseInt(params.id);
@@ -12,7 +14,7 @@ export async function MovieDetailLoader({ params }) {
     throw new Error('Not found movie');
   }
 
-  const response = await axiosInstance.get(`/api/v1/movies/${params.id}`);
+  const response = await movieService.getMovieDetail(params.id);
   return {
     movie: response.data,
   };
@@ -27,6 +29,24 @@ export const MovieDetail = () => {
   const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
   const [countRating, setCountRating] = useState(0);
+
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setJwt(decodedToken);
+      fetchUser().then();
+    }
+    window.addEventListener('keyup', handleKeyup);
+    return () => {
+      window.removeEventListener('keyup', handleKeyup);
+    };
+  }, []);
+
+  useEffect(() => {
+    averageRating(movie.id).then();
+    evaluationsNumberReview(movie.id).then();
+  }, [average, movie.id, rating]);
 
   const evaluationsNumberReview = async (params) => {
     const response = await axiosInstance.get(
@@ -92,23 +112,18 @@ export const MovieDetail = () => {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      setJwt(decodedToken);
-      fetchUser().then();
-    }
-    window.addEventListener('keyup', handleKeyup);
-    return () => {
-      window.removeEventListener('keyup', handleKeyup);
+  const handleWatchParty = () => {
+    // create room
+    const request = {
+      host: { id: user.id },
+      name: 'Watch Party',
+      password: '123456',
     };
-  }, []);
-
-  useEffect(() => {
-    averageRating(movie.id).then();
-    evaluationsNumberReview(movie.id).then();
-  }, [average, rating]);
+    roomService.createRoom(request).then((response) => {
+      const roomId = response.data.id;
+      navigate(`/watch-party/${roomId}`);
+    });
+  };
 
   return (
     <div style={{ position: 'relative' }}>
@@ -118,15 +133,10 @@ export const MovieDetail = () => {
             <div className="btn-poster">
               <img className="poster" src={movie?.posterUrl} alt="" />
               <div className="list-btn">
-                {movie?.category?.id === 1 ? (
-                  <button onClick={() => navigate(`/xem-phim/${movie.id}`)}>
-                    Xem Phim
-                  </button>
-                ) : (
-                  <button onClick={() => navigate(`/xem-phim/${movie.id}`)}>
-                    Xem Phim
-                  </button>
-                )}
+                <button onClick={() => navigate(`/xem-phim/${movie.id}`)}>
+                  Xem Phim
+                </button>
+                <button onClick={handleWatchParty}>Xem cùng nhau</button>
                 <button onClick={() => setIsShowTrailer(true)}>
                   Xem Trailer
                 </button>
@@ -184,7 +194,7 @@ export const MovieDetail = () => {
             height: '100%',
           }}
         >
-          <div
+          <button
             style={{
               position: 'absolute',
               top: 0,
@@ -194,8 +204,9 @@ export const MovieDetail = () => {
               width: '100%',
               height: '100%',
             }}
+            className="btn-none-style"
             onClick={() => setIsShowTrailer(false)}
-          ></div>
+          ></button>
 
           <video
             src={movie.videoUrl}
@@ -207,7 +218,9 @@ export const MovieDetail = () => {
               transform: 'translate(-50%, -50%)',
               width: '50%',
             }}
-          ></video>
+          >
+            <track kind="captions" srcLang="vi" src="" />
+          </video>
         </div>
       )}
     </div>
