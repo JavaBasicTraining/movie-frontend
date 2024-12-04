@@ -34,9 +34,10 @@ export default function Oauth2Redirect() {
 
   useEffect(() => {
     if (loaderData.token) {
-      navigate('/');
+      // navigate to previous page before login
+      navigate(-1);
     } else {
-      navigate('/login');
+      navigate('/');
     }
   }, [loaderData.token, navigate]);
 

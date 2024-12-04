@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { socketService } from '../../services/socketService';
 import WatchPartyVideoPlayer from '../../component/WatchPartyVideoPlayer/WatchPartyVideoPlayer';
@@ -7,83 +7,97 @@ import { roomService } from '../../services';
 import SearchMovie from '../../component/SearchMovie/SearchMovie';
 import './WatchParty.scss';
 import useFetchUser from '../../hooks/useFetchUser';
-
-const defaultParticipants = [
-  {
-    id: 1,
-    username: 'Huy',
-  },
-  {
-    id: 2,
-    username: 'Hai',
-  },
-];
+import { notification } from 'antd';
 
 const WatchParty = () => {
   const { roomId } = useParams();
   const [room, setRoom] = useState(null);
-  const [movie, setMovie] = useState(null);
-  const [connected, setConnected] = useState(false);
-  const [participants, setParticipants] = useState(defaultParticipants);
+  const [participants, setParticipants] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [videoState, setVideoState] = useState({
-    playing: false,
-    timestamp: 0,
-  });
-  const [isHost, setIsHost] = useState(true);
+  const [videoState, setVideoState] = useState({});
+  const [isHost, setIsHost] = useState(false);
   const { user } = useFetchUser();
 
   useEffect(() => {
-    fetchRoom();
-    socketService.connect(() => {
-      setConnected(true);
-      setupSubscriptions();
-    });
+    let isSubscribed = true; // For cleanup handling
 
-    return () => socketService.disconnect();
-  }, []);
+    if (user) {
+      // Disconnect any existing connection first
+      socketService.disconnect();
+
+      socketService.connect(() => {
+        if (isSubscribed) {
+          setupSubscriptions();
+          sendParticipantUpdate({
+            roomId,
+            user: { id: user?.id, username: user?.username },
+          });
+          fetchRoom();
+        }
+      });
+    }
+
+    return () => {
+      isSubscribed = false;
+      socketService.disconnect();
+    };
+  }, [roomId, user]);
 
   useEffect(() => {
     if (user && room?.host) {
+      console.log('room?.host: ', room?.host.id === user.id);
       setIsHost(room?.host.id === user.id);
+    }
+
+    if (user && socketService.connected) {
       sendParticipantUpdate({
         roomId,
         user: { id: user?.id, username: user?.username },
       });
     }
-  }, [room, user]);
+  }, [roomId, user, room?.host]);
 
-  const fetchRoom = () => {
+  const fetchRoom = useCallback(() => {
     roomService.getRoomInfo(roomId).then((response) => {
       const room = response.data;
       setRoom(room);
     });
-  };
+  }, []);
 
-  const setupSubscriptions = () => {
+  const setupSubscriptions = useCallback(() => {
     // Subscribe to chat messages
     socketService.subscribe(`/topic/room/${roomId}/chat`, (message) => {
       setMessages((prev) => [...prev, message]);
+      notification.info({
+        message: buildMessage(message),
+      });
     });
 
     // Subscribe to video state updates
     socketService.subscribe(`/topic/room/${roomId}/video`, (state) => {
-      setVideoState(state);
-      console.log(state);
+      console.log('state isHost: ', isHost);
+      if (!isHost) {
+        console.log('state: ', state);
+        setVideoState(state);
+      }
     });
 
     // Subscribe to participant updates
-    socketService.subscribe(`/topic/room/${roomId}/participants`, (participants) => {
-      console.log('participants: ', participants);
-      setParticipants(participants);
-    });
+    socketService.subscribe(
+      `/topic/room/${roomId}/participants`,
+      (participants) => {
+        setParticipants(participants);
+      }
+    );
+  }, []);
 
-    sendChatMessage({
-      roomId,
-      username: user?.username,
-      content: '',
-      type: 'JOIN',
-    });
+  const buildMessage = (message) => {
+    if (message.type === 'JOIN') {
+      return `${message.username} joined the room`;
+    } else if (message.type === 'LEAVE') {
+      return `${message.username} left the room`;
+    }
+    return `${message.username}: ${message.content}`;
   };
 
   const sendParticipantUpdate = ({ roomId, user }) => {
@@ -98,16 +112,21 @@ const WatchParty = () => {
   };
 
   const updateVideoState = (state) => {
-    socketService.send(`/app/room/${roomId}/video`, {
-      roomId,
-      username: user?.username,
-      ...state,
-      eventTime: new Date().toISOString(),
-    });
+    if (isHost) {
+      setVideoState(state);
+      socketService.send(`/app/room/${roomId}/video`, state);
+    }
   };
 
   const handleMovieSelected = (movie) => {
-    setMovie(movie);
+    const newState = {
+      ...videoState,
+      movie,
+      action: 'CHANGE',
+      playing: false,
+    };
+    setVideoState(newState);
+    updateVideoState(newState);
   };
 
   return (
@@ -120,12 +139,11 @@ const WatchParty = () => {
       {isHost && <SearchMovie onMovieSelected={handleMovieSelected} />}
 
       <div className="watch-party__content">
-        {movie ? (
+        {videoState.movie ? (
           <WatchPartyVideoPlayer
             videoState={videoState}
             onStateChange={updateVideoState}
             isHost={isHost}
-            videoUrl={movie.videoUrl}
           />
         ) : (
           <div className="watch-party__no-movie">No movie selected</div>
@@ -133,6 +151,11 @@ const WatchParty = () => {
         <div className="watch-party__participant-list">
           <ParticipantList participants={participants ?? []} />
         </div>
+      </div>
+      <div className="watch-party__chat">
+        <div>playing: {JSON.stringify(videoState.playing)}</div>
+        <div>action: {JSON.stringify(videoState.action)}</div>
+        <div>timestamp: {JSON.stringify(videoState.timestamp)}</div>
       </div>
     </div>
   );

@@ -1,9 +1,13 @@
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { storageService } from './storageService';
-import { ACCESS_TOKEN } from '../constants/storage';
 
 class SocketService {
+  _connected = false;
+
+  get connected() {
+    return this._connected;
+  }
+
   constructor() {
     this.client = null;
     this.subscriptions = new Map();
@@ -15,7 +19,7 @@ class SocketService {
     this.client = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {
-        console.log(str);
+        // console.log(str);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -25,6 +29,7 @@ class SocketService {
     this.client.onConnect = () => {
       console.log('Connected to WebSocket');
       if (onConnect) onConnect();
+      this._connected = true;
     };
 
     this.client.activate();
@@ -47,7 +52,7 @@ class SocketService {
     if (!this.client?.connected) {
       throw new Error('Socket not connected');
     }
-
+    console.log('send message: ', message);
     this.client.publish({
       destination,
       body: JSON.stringify(message),
@@ -57,6 +62,7 @@ class SocketService {
   disconnect() {
     if (this.client) {
       this.client.deactivate();
+      this._connected = false;
     }
   }
 }

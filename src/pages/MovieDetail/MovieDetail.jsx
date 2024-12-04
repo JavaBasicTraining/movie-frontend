@@ -5,8 +5,9 @@ import { StarFilled, StarOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
 import useFetchUser from '../../hooks/useFetchUser';
 import './MovieDetail.scss';
-import { movieService, roomService } from '../../services';
+import { keycloakService, movieService, roomService } from '../../services';
 import Password from 'antd/es/input/Password';
+import { notification } from 'antd';
 
 export async function MovieDetailLoader({ params }) {
   const id = parseInt(params.id);
@@ -113,9 +114,16 @@ export const MovieDetail = () => {
   };
 
   const handleWatchParty = () => {
+    if (!user) {
+      notification.error({
+        message: 'Bạn phải đăng nhập để xem phim cùng nhau',
+      });
+      keycloakService.openLoginPage();
+      return;
+    }
     // create room
     const request = {
-      host: { id: user.id },
+      host: { id: user?.id },
       name: 'Watch Party',
       password: '123456',
     };

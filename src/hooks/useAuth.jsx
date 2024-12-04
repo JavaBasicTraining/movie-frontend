@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { axiosInstance } from '../configs/axiosConfig';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import { storageService } from '../services';
+import { ACCESS_TOKEN } from '../constants/storage';
 
 const useAuth = () => {
   const [isAuth, setIsAuth] = useState(null);
   const navigate = useNavigate();
-  const token = localStorage.getItem('access_token');
+  const token = storageService.get(ACCESS_TOKEN);
 
   useEffect(() => {
     if (!token) {
@@ -28,11 +30,12 @@ const useAuth = () => {
             });
         } else {
           setIsAuth(false);
-          navigate(`/`);
+          navigate(-2);
         }
       } catch (error) {
         console.error('Invalid token:', error);
         setIsAuth(false);
+        navigate(-2);
       }
     }
   }, []);

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player';
 import './WatchPartyVideoPlayer.scss';
@@ -7,70 +7,77 @@ export default function WatchPartyVideoPlayer({
   videoState,
   onStateChange,
   isHost,
-  videoUrl,
 }) {
   const playerRef = useRef(null);
-  const [playing, setPlaying] = useState(false);
-  const [seeking] = useState(false);
   const lastUpdateRef = useRef(0);
 
-  useEffect(() => {
-    if (!isHost && !seeking) {
-      const timeDiff = Math.abs(
-        playerRef.current?.getCurrentTime() - videoState.timestamp
-      );
-      if (timeDiff > 1) {
-        playerRef.current?.seekTo(videoState.timestamp, 'seconds');
-      }
-      setPlaying(videoState.playing);
-    }
-  }, [videoState, isHost, seeking]);
+  useLayoutEffect(() => {
+    playerRef.current?.seekTo(videoState.timestamp);
+  }, [videoState]);
 
-  const debounceUpdate = (action, value) => {
-    const now = Date.now();
-    if (now - lastUpdateRef.current > 500) {
-      lastUpdateRef.current = now;
+  const handlePlay = () => {
+    if (isHost) {
       onStateChange({
-        action,
-        timestamp: value || playerRef.current?.getCurrentTime() || 0,
-        playing,
+        ...videoState,
+        action: 'PLAY',
+        timestamp: playerRef.current?.getCurrentTime() || 0,
+        playing: true,
       });
     }
   };
 
-  const handlePlay = () => {
-    setPlaying(true);
-    if (isHost) {
-      debounceUpdate('PLAY');
-    }
-  };
-
   const handlePause = () => {
-    setPlaying(false);
     if (isHost) {
-      debounceUpdate('PAUSE');
+      onStateChange({
+        ...videoState,
+        action: 'PAUSE',
+        timestamp: playerRef.current?.getCurrentTime() || 0,
+        playing: false,
+      });
     }
   };
 
   const handleProgress = (progress) => {
-    // if (isHost) {
-    //   debounceUpdate('PROGRESS', progress);
-    // }
+    if (isHost) {
+      const timeDiff = Math.abs(lastUpdateRef.current - progress.playedSeconds);
+      if (timeDiff > 5) {
+        onStateChange({
+          ...videoState,
+          action: 'PROGRESS',
+          progress
+        });
+        lastUpdateRef.current = progress.playedSeconds;
+      }
+    }
+  };
+
+  const handleSeeked = ({ timeStamp }) => {
+    if (isHost) {
+      // onStateChange({
+      //   ...videoState,
+      //   action: 'SEEKED',
+      //   timestamp: timeStamp,
+      // });
+    }
   };
 
   return (
-    <div className="watch-party-video-player">
-      <div className="player-wrapper">
-        <ReactPlayer
-          ref={playerRef}
-          url={videoUrl}
-          className="react-player"
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onProgress={handleProgress}
-          progressInterval={500}
-          controls={isHost}
-        />
+    <div>
+      <div className="watch-party-video-player">
+        <div className="player-wrapper">
+          <ReactPlayer
+            ref={playerRef}
+            url={`${videoState?.movie?.videoUrl}`}
+            className="react-player"
+            onPlay={handlePlay}
+            onPause={handlePause}
+            onProgress={handleProgress}
+            onSeeked={handleSeeked}
+            progressInterval={500}
+            controls={isHost}
+            playing={videoState.playing}
+          />
+        </div>
       </div>
     </div>
   );
@@ -80,5 +87,4 @@ WatchPartyVideoPlayer.propTypes = {
   videoState: PropTypes.object.isRequired,
   onStateChange: PropTypes.func.isRequired,
   isHost: PropTypes.bool.isRequired,
-  videoUrl: PropTypes.string.isRequired,
 };

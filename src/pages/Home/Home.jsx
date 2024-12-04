@@ -1,31 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { HiOutlineFilm } from 'react-icons/hi';
 import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
 import './Home.scss';
 import { KeycloakComponent } from '../../component/KeycloakComponent/KeycloakComponent';
 import { keycloakService } from '../../services/keycloakService';
+import { useUser } from '../../contexts/UserContext';
 
 export const Header = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
 
-  const { token } = useAuth();
+  const { user, logout } = useUser();
 
   const handleChange = (e) => {
     setName(e.target.value);
   };
 
   const isLoggedIn = () => {
-    return token !== null;
+    return !!user;
   };
-
-  useEffect(() => {
-    const tokenCleared = localStorage.getItem('tokenCleared');
-    if (!tokenCleared) {
-    }
-  }, []);
 
   const filterMovie = async (event, params) => {
     try {
@@ -85,6 +79,7 @@ export const Header = () => {
               href="/public"
               onClick={(e) => {
                 e.preventDefault();
+                logout();
                 keycloakService.openLogoutPage();
               }}
             >
