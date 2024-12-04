@@ -732,7 +732,7 @@ export const AddMovie = () => {
 
         {isEdit && !errorsFile.trailer && showButtonUploadMovie ? (
           <video
-            src={data.prevTrailerUrl || loader?.movie.trailer}
+            src={data.prevTrailerUrl || loader?.movie.trailerUrl}
             controls
           ></video>
         ) : (
