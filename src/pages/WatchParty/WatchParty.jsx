@@ -1,13 +1,15 @@
+import { notification } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { socketService } from '../../services/socketService';
-import WatchPartyVideoPlayer from '../../component/WatchPartyVideoPlayer/WatchPartyVideoPlayer';
 import ParticipantList from '../../component/ParticipantList/ParticipantList';
-import { roomService } from '../../services';
 import SearchMovie from '../../component/SearchMovie/SearchMovie';
+import TabControl from '../../component/TabControl/TabControl';
+import WatchPartyChat from '../../component/WatchPartyChat/WatchPartyChat';
+import WatchPartyVideoPlayer from '../../component/WatchPartyVideoPlayer/WatchPartyVideoPlayer';
+import { useUser } from '../../contexts/UserContext';
+import { roomService } from '../../services';
+import { socketService } from '../../services/socketService';
 import './WatchParty.scss';
-import useFetchUser from '../../hooks/useFetchUser';
-import { notification } from 'antd';
 
 const WatchParty = () => {
   const { roomId } = useParams();
@@ -16,7 +18,7 @@ const WatchParty = () => {
   const [messages, setMessages] = useState([]);
   const [videoState, setVideoState] = useState({});
   const [isHost, setIsHost] = useState(false);
-  const { user } = useFetchUser();
+  const { user } = useUser();
 
   useEffect(() => {
     let isSubscribed = true; // For cleanup handling
@@ -24,13 +26,17 @@ const WatchParty = () => {
     if (user) {
       // Disconnect any existing connection first
       socketService.disconnect();
-
       socketService.connect(() => {
         if (isSubscribed) {
           setupSubscriptions();
           sendParticipantUpdate({
             roomId,
             user: { id: user?.id, username: user?.username },
+          });
+          sendChatMessage({
+            content: `${user?.username} joined the room`,
+            type: 'JOIN',
+            sender: { id: user?.id, username: user?.username },
           });
           fetchRoom();
         }
@@ -39,6 +45,11 @@ const WatchParty = () => {
 
     return () => {
       isSubscribed = false;
+      // sendChatMessage({
+      //   content: 'Goodbye',
+      //   type: 'LEAVE',
+      //   sender: { id: user?.id, username: user?.username },
+      // });    
       socketService.disconnect();
     };
   }, [roomId, user]);
@@ -68,16 +79,17 @@ const WatchParty = () => {
     // Subscribe to chat messages
     socketService.subscribe(`/topic/room/${roomId}/chat`, (message) => {
       setMessages((prev) => [...prev, message]);
-      notification.info({
-        message: buildMessage(message),
-      });
+      if (user?.id !== message.sender.id) {
+        notification.info({
+          message: buildMessage(message),
+        });
+      }
     });
 
     // Subscribe to video state updates
     socketService.subscribe(`/topic/room/${roomId}/video`, (state) => {
       console.log('state isHost: ', isHost);
       if (!isHost) {
-        console.log('state: ', state);
         setVideoState(state);
       }
     });
@@ -89,15 +101,15 @@ const WatchParty = () => {
         setParticipants(participants);
       }
     );
-  }, []);
+  }, [isHost, roomId, user?.id]);
 
   const buildMessage = (message) => {
     if (message.type === 'JOIN') {
-      return `${message.username} joined the room`;
+      return `${message.sender.username} joined the room`;
     } else if (message.type === 'LEAVE') {
-      return `${message.username} left the room`;
+      return `${message.sender.username} left the room`;
     }
-    return `${message.username}: ${message.content}`;
+    return `${message.sender.username}: ${message.content}`;
   };
 
   const sendParticipantUpdate = ({ roomId, user }) => {
@@ -129,12 +141,21 @@ const WatchParty = () => {
     updateVideoState(newState);
   };
 
+  const handleSendChatMessage = (message) => {
+    const chatMessage = {
+      content: message,
+      type: 'CHAT',
+      sender: {
+        id: user?.id,
+        username: user?.username,
+      },
+    };
+    sendChatMessage(chatMessage);
+  };
+
   return (
     <div className="watch-party">
       <span className="watch-party__room-name">Room: {room?.name}</span>
-      <span className="watch-party__participants-count">
-        - Joined: {participants?.length ?? 0}
-      </span>
       {/* Search movie */}
       {isHost && <SearchMovie onMovieSelected={handleMovieSelected} />}
 
@@ -148,8 +169,18 @@ const WatchParty = () => {
         ) : (
           <div className="watch-party__no-movie">No movie selected</div>
         )}
-        <div className="watch-party__participant-list">
-          <ParticipantList participants={participants ?? []} />
+        <div className="watch-party__tab-control">
+          <TabControl tabs={['Chat', 'Participants']}>
+            <TabControl.TabContent name="Chat">
+              <WatchPartyChat
+                messages={messages.filter((message) => message.type === 'CHAT')}
+                onSendMessage={handleSendChatMessage}
+              />
+            </TabControl.TabContent>
+            <TabControl.TabContent name="Participants">
+              <ParticipantList participants={participants ?? []} />
+            </TabControl.TabContent>
+          </TabControl>
         </div>
       </div>
       <div className="watch-party__chat">

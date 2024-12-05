@@ -2,10 +2,12 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 
   &__room-name {
     font-size: 24px;
     font-weight: bold;
+    text-align: center;
   }
 
   &__participants-count {
@@ -16,8 +18,8 @@
     display: flex;
   }
 
-  &__participant-list {
-    width: 300px;
+  &__tab-control {
+    min-width: 300px;
     display: flex;
   }
 

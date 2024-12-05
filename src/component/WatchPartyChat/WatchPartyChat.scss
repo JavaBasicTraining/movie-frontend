@@ -1,0 +1,40 @@
+.watch-party-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: space-between;
+  width: 100%;
+
+  &__message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-bottom: 10px;
+    padding-right: 4px;
+  }
+
+  &__message {
+    padding: 10px;
+    background-color: #f0f0f084;
+    border-radius: 5px;
+
+    &--self {
+      background-color: white;
+    }
+  }
+
+  &__message-input {
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+
+    &-textarea {
+      flex: 1;
+    }
+  }
+}

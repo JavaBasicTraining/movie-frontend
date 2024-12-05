@@ -6,12 +6,12 @@ export default function ParticipantList({ participants = [] }) {
   return (
     <div className="participant-list">
       <div className="participant-list__header">
-        <span>Participants</span>
+        <span>Participants ({participants.length})</span>
       </div>
       <div className="participant-list__participants">
         {participants.map((participant) => (
           <div key={participant.id} className="participant-list__participant">
-            {participant.userName}
+            {participant.username}
           </div>
         ))}
       </div>

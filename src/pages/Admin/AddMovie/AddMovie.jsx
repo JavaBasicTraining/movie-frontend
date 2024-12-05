@@ -32,7 +32,7 @@ export const AddMovie = () => {
   const [showFileVideo, setShowFileVideo] = useState(true);
   const [errors, setErrors] = useState({});
   const [isEdit, setIsEdit] = useState(false);
-  const loader  = useLoaderData();
+  const loader = useLoaderData();
   const [errorsFile, setErrorsFile] = useState({});
   const [data, setData] = useState({
     nameMovie: '',
@@ -70,7 +70,7 @@ export const AddMovie = () => {
 
   useEffect(() => {
     setIsEdit(!!loader?.movie);
-  }, [loader?.movie  ]);
+  }, [loader?.movie]);
 
   useEffect(() => {
     if (isEdit) {
@@ -86,7 +86,6 @@ export const AddMovie = () => {
       setShowFileVideo(false);
     }
   }, [isEdit]);
-  
 
   const updatePosterHeight = () => {
     if (posterRef?.current) {
@@ -139,7 +138,6 @@ export const AddMovie = () => {
   const formatValue = (value) => {
     return value;
   };
-  
 
   const validateFile = (file, type) => {
     const validImageTypes = [
@@ -185,7 +183,7 @@ export const AddMovie = () => {
     let isValid = false;
     if (name === 'poster') {
       isValid = validateFile(file, 'poster');
-        } else if (name === 'video') {
+    } else if (name === 'video') {
       isValid = validateFile(file, 'video');
     }
 
@@ -194,7 +192,7 @@ export const AddMovie = () => {
         ...prevErrors,
         [name]:
           name === 'poster'
-            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).' 
+            ? 'Chỉ được phép tải lên các tệp hình ảnh (JPEG, PNG, GIF, SVG, WEBP).'
             : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI, FLV, MKV, 3GP).',
       }));
       e.target.value = '';
@@ -325,7 +323,6 @@ export const AddMovie = () => {
       }
 
       if (isSeries(response.data.category)) {
-
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
           if (episodeMap.poster && episodeMap.video) {
@@ -393,13 +390,13 @@ export const AddMovie = () => {
     setShowEpisode(isSeries);
 
     if (isSeries) {
-      setShowButtonUploadMovie(false);  
+      setShowButtonUploadMovie(false);
       setData((prev) => ({
         ...prev,
         episodes: [DEFAULT_EPISODE],
       }));
     } else {
-      setShowButtonUploadMovie(true);  
+      setShowButtonUploadMovie(true);
 
       setData((prev) => ({
         ...prev,
@@ -614,7 +611,7 @@ export const AddMovie = () => {
               onChange={handleFileUpload}
               required
             />
-            { errorsFile.poster && (
+            {errorsFile.poster && (
               <small className="error">{errorsFile.poster}</small>
             )}
           </div>
@@ -671,7 +668,10 @@ export const AddMovie = () => {
         )}
 
         {isEdit && !errorsFile.video && showButtonUploadMovie ? (
-          <video src={data.prevVideoUrl || loader?.movie.videoUrl} controls></video>
+          <video
+            src={data.prevVideoUrl || loader?.movie.videoUrl}
+            controls
+          ></video>
         ) : (
           showFileVideo && <video src={data.prevVideoUrl} controls></video>
         )}
