@@ -229,28 +229,35 @@ export const AddMovie = () => {
 
     const previewUrl = URL.createObjectURL(file);
 
-    if (name === 'video') {
-      setShowFileVideo(true);
-      setData((prev) => ({
-        ...prev,
-        video: file,
-        prevVideoUrl: previewUrl,
-      }));
-    } else if (name === 'poster') {
-      setShowFilePoster(true);
-      setData((prev) => ({
-        ...prev,
-        poster: file,
-        prevPosterUrl: previewUrl,
-      }));
-    } else if (name === 'trailer') {
-      setShowTrailer(true);
-      setData((prev) => ({
-        ...prev,
-        trailer: file,
-        prevTrailerUrl: previewUrl,
-      }));
+    switch (name) {
+      case 'video':
+        setShowFileVideo(true);
+        setData((prev) => ({
+          ...prev,
+          video: file,
+          prevVideoUrl: previewUrl,
+        }));
+        break;
+      case 'poster':
+        setShowFilePoster(true);
+        setData((prev) => ({
+          ...prev,
+          poster: file,
+          prevPosterUrl: previewUrl,
+        }));
+        break;
+      case 'trailer':
+        setShowTrailer(true);
+        setData((prev) => ({
+          ...prev,
+          trailer: file,
+          prevTrailerUrl: previewUrl,
+        }));
+        break;
+      default:
+        break;
     }
+    
   };
 
   const isSeries = () => data?.idCategory?.toString() === '1';
@@ -330,7 +337,6 @@ export const AddMovie = () => {
 
   const apiUpdate = async (newData, episodesMap) => {
     try {
-      // Gửi yêu cầu cập nhật thông tin phim
       const response = await axiosInstance.put(
         `/api/v1/admin/movies/${loader?.movie.id}`,
         {
@@ -347,17 +353,12 @@ export const AddMovie = () => {
         }
       );
 
-      // Xử lý việc tải lên poster và video
-      if (data.poster) {
-        await uploadFileMovie(response.data.id, 'poster', data.poster);
+      for (const [key, value] of Object.entries({ poster: data.poster, video: data.video, trailer: data.trailer })) {
+        if (value && (key === 'poster' || !isSeries())) {
+          await uploadFileMovie(loader?.movie.id, key, value);
+        }
       }
-      if (data.video && !isSeries()) {
-        await uploadFileMovie(response.data.id, 'video', data.video);
-      }
-      if (data.trailer && !isSeries()) {
-        await uploadFileMovie(response.data.id, 'trailer', data.trailer);
-      }
-
+    
       if (isSeries(response.data.category)) {
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
