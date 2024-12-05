@@ -71,9 +71,15 @@ export const AddMovie = () => {
   }, [data.poster]);
 
   useEffect(() => {
-    setIsEdit(!!loader?.movie);
-    setIsEdit(hasChanges(data));
-  }, [loader?.movie]);
+    if (loader?.movie) {
+      setIsEdit(true);
+      if (hasChanges(data)) {
+        setIsEdit(true);
+      }
+    } else {
+      setIsEdit(false);
+    }
+  }, [loader?.movie, data]);
 
   useEffect(() => {
     if (isEdit) {
