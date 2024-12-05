@@ -13,15 +13,17 @@ export default function WatchPartyChat(props) {
   }, [messages]);
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      onSendMessage?.(message);
+    if (e.key === 'Enter' && message.trim().length > 0) {
+      onSendMessage?.(message.trim());
       setMessage('');
     }
   };
 
   const handleSendClick = (e) => {
-    onSendMessage?.(message);
-    setMessage('');
+    if (message.trim().length > 0) {
+      onSendMessage?.(message.trim());
+      setMessage('');
+    }
   };
 
   return (
@@ -38,7 +40,8 @@ export default function WatchPartyChat(props) {
             }`}
           >
             <span className="watch-party-chat__message-sender">
-              {message.sender.id === user?.id ? 'You' : message.sender.username}:
+              {message.sender.id === user?.id ? 'You' : message.sender.username}
+              :
             </span>
             <span className="watch-party-chat__message-content">
               {message.content}

@@ -5,7 +5,7 @@ import { ACCESS_TOKEN } from '../constants/storage';
 import { notification } from 'antd';
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8081',
+  baseURL: 'http://192.168.1.201:8081',
 });
 
 const publicAPI = [

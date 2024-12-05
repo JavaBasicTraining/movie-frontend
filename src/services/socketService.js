@@ -14,7 +14,7 @@ class SocketService {
   }
 
   connect(onConnect) {
-    const socket = new SockJS('http://localhost:8081/ws');
+    const socket = new SockJS('http://192.168.1.201:8081/ws');
 
     this.client = new Client({
       webSocketFactory: () => socket,

@@ -10,7 +10,7 @@ class KeycloakService {
       grant_type: 'authorization_code',
       code: code,
       client_id: keycloak.clientId,
-      redirect_uri: 'http://localhost:3000/redirect',
+      redirect_uri: REDIRECT_URL,
     };
 
     return axios.post(
