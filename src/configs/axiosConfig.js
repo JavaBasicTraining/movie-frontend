@@ -4,8 +4,10 @@ import { storageService } from '../services/storageService';
 import { ACCESS_TOKEN } from '../constants/storage';
 import { notification } from 'antd';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 export const axiosInstance = axios.create({
-  baseURL: 'http://192.168.1.201:8081',
+  baseURL: apiUrl,
 });
 
 const publicAPI = [
@@ -55,7 +57,7 @@ axiosInstance.interceptors.response.use(
   function (error) {
     if (error?.response?.status === 401 && !isPathIgnored(error.config.url)) {
       notification.info({
-        message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+        message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhp lại.',
       });
 
       storageService.remove(ACCESS_TOKEN);
@@ -64,9 +66,9 @@ axiosInstance.interceptors.response.use(
         keycloakService.openLoginPage();
       }, 1000);
 
-      return Promise.reject(error);
+      return Promise.reject(new Error(error.message || 'Unknown error'));
     }
 
-    return Promise.reject(error);
+    return Promise.reject(new Error(error.message || 'Unknown error'));
   }
 );

@@ -29,8 +29,8 @@ export const Movie = () => {
       {
         <div className="item">
           {movies?.map((item) => (
-            <Link to={`/${item.nameMovie}`}>
-              <div className="poster" key={item.id}>
+            <Link key={item.id} to={`/${item.nameMovie}`}>
+              <div className="poster">
                 <div className="img-item-filter">
                   <img src={item.posterUrl} alt="" />
                 </div>
