@@ -8,7 +8,6 @@ import VideoPlayer from '../../component/VideoPlayer';
 import './WatchMovie.scss';
 import { storageService } from '../../services/storageService';
 import { ACCESS_TOKEN } from '../../constants/storage';
-import { keycloak } from '../../configs/keycloak';
 
 export const WatchMovie = () => {
   const [comment, setComment] = useState('');
@@ -18,7 +17,6 @@ export const WatchMovie = () => {
   const [jwt, setJwt] = useState(null);
   const [selectEpisode, setSelectEpisode] = useState([]);
   const [, setCurrentEpisodeIndex] = useState(0);
-
   const [showComment, setShowComment] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');

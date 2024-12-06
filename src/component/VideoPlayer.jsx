@@ -10,7 +10,6 @@ const VideoPlayer = ({ fileName }) => {
   const watermarkRef = useRef(null);
 
   useEffect(() => {
-    // Fetch video token
     const fetchToken = async () => {
       try {
         const response = await axiosInstance.get(
@@ -23,8 +22,6 @@ const VideoPlayer = ({ fileName }) => {
     };
 
     fetchToken();
-
-    // Update watermark position randomly
     const intervalId = setInterval(() => {
       if (watermarkRef.current) {
         const x = Math.random() * 60;

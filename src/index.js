@@ -23,6 +23,7 @@ import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
 import { Page } from './pages/Page/Page';
 import { WatchMovie } from './pages/WatchMovie/WatchMovie';
 import reportWebVitals from './reportWebVitals';
+import MovieRom from './pages/Room/MovieRom';
 
 const router = createBrowserRouter([
   {
@@ -57,6 +58,11 @@ const router = createBrowserRouter([
       {
         path: '/xem-phim/:id',
         element: <WatchMovie />,
+        loader: MovieDetailLoader,
+      },
+      {
+        path: '/room/:id',
+        element: <MovieRom />,
         loader: MovieDetailLoader,
       },
     ],

@@ -17,6 +17,8 @@ const publicAPI = [
   '/api/v1/evaluations/numberOfReviews',
   '/api/v1/evaluations/average/',
   '/api/v1/episode',
+  '/message/getAll',
+  '/ws',
   '/api/v1/minio/video',
 ];
 

@@ -63,7 +63,7 @@ export const Page = () => {
           <h>Phim Lẻ Mới Cập Nhật</h>
           <div className="article-item">
             {adventureMovies.map((item) => (
-              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+              <Link to={`/${item.path}`} className="list-item-page" key={item.path}>
                 <div className="img-item">
                   <img src={item.posterUrl} alt={item.title} />
                   <div className="icon-play">
@@ -77,14 +77,12 @@ export const Page = () => {
           </div>
         </div>
       )}
-
-      {/* Phim Bộ Mới Cập Nhật */}
       {horrifiedMovies.length > 0 && (
         <div className="nav-category">
           <h>Phim Bộ Mới Cập Nhật</h>
           <div className="article-item">
             {horrifiedMovies.map((item) => (
-              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+              <Link to={`/${item.path}`} className="list-item-page" key={item.path}>
                 <div className="img-item">
                   <img src={item.posterUrl} alt={item.title} />
                   <div className="icon-play">
@@ -105,7 +103,7 @@ export const Page = () => {
           <h>Phim Hoạt Hình</h>
           <div className="article-item">
             {cartoonMovies.map((item) => (
-              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+              <Link to={`/${item.path}`} className="list-item-page" key={item.path}>
                 <div className="img-item">
                   <img src={item.posterUrl} alt={item.title} />
                   <div className="icon-play">

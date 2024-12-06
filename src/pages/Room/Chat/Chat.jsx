@@ -35,6 +35,8 @@ const Chat = () => {
     fetchMessage();
   }, []);
 
+  
+
   useEffect(() => {
     if (lastMessage) {
       setMessages((prevMessages) => {
@@ -47,7 +49,6 @@ const Chat = () => {
 
   return (
     <div className="chat">
-    
       <div className="chat__container">
         {messages.length === 0 ? (
           <p>Chưa có tin nhắn</p>
