@@ -24,6 +24,7 @@ import { Page } from './pages/Page/Page';
 import { WatchMovie } from './pages/WatchMovie/WatchMovie';
 import reportWebVitals from './reportWebVitals';
 import WatchParty from './pages/WatchParty/WatchParty';
+import { PrivatePage } from './component/PrivatePage';
 
 const router = createBrowserRouter([
   {
@@ -61,7 +62,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/watch-party/:roomId',
-        element: <WatchParty />,
+        element: (
+          <PrivatePage>
+            <WatchParty />
+          </PrivatePage>
+        ),
       },
     ],
   },

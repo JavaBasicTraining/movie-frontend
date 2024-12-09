@@ -1,6 +1,6 @@
 import { notification } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import ParticipantList from '../../component/ParticipantList/ParticipantList';
 import SearchMovie from '../../component/SearchMovie/SearchMovie';
 import TabControl from '../../component/TabControl/TabControl';
@@ -12,47 +12,121 @@ import { socketService } from '../../services/socketService';
 import './WatchParty.scss';
 
 const WatchParty = () => {
+  const navigate = useNavigate();
   const { roomId } = useParams();
   const [room, setRoom] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [messages, setMessages] = useState([]);
   const [videoState, setVideoState] = useState({});
   const [isHost, setIsHost] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const { user } = useUser();
 
-  useEffect(() => {
-    let isSubscribed = true; // For cleanup handling
+  const isHostRef = useRef(isHost);
 
-    if (user) {
-      // Disconnect any existing connection first
-      socketService.disconnect();
+  const fetchRoom = useCallback(() => {
+    roomService.getRoomInfo(roomId).then((response) => {
+      const room = response.data;
+      setRoom(room);
+    });
+  }, [roomId]);
+
+  const handleHostLeave = useCallback(() => {
+    notification.info({
+      message: `You will disconnect from the room`,
+    });
+    socketService.disconnect();
+    // go to home page
+    navigate('/');
+  }, [navigate]);
+
+  const setupSubscriptions = useCallback(() => {
+    // Subscribe to chat messages
+    socketService.subscribe(`/topic/room/${roomId}/chat`, (message) => {
+      setMessages((prev) => [...prev, message]);
+      if (user?.id !== message.sender.id) {
+        notification.info({
+          message: buildMessage(message),
+        });
+      }
+      console.log('message.isHost: ', message.isHost, message.type);
+      if (message.isHost && 'LEAVE' === message.type) {
+        handleHostLeave();
+      }
+    });
+
+    // Subscribe to video state updates
+    socketService.subscribe(`/topic/room/${roomId}/video`, (state) => {
+      if (!isHost) {
+        setVideoState(state);
+      }
+    });
+
+    // Subscribe to participant updates
+    socketService.subscribe(
+      `/topic/room/${roomId}/participants`,
+      (participants) => {
+        setParticipants(participants);
+      }
+    );
+  }, [handleHostLeave, isHost, roomId, user?.id]);
+
+  const sendChatMessage = useCallback(
+    (chatMessage) => {
+      socketService.send(`/app/room/${roomId}/chat`, {
+        isHost,
+        timestamp: new Date().toISOString(),
+        ...chatMessage,
+      });
+    },
+    [roomId, isHost]
+  );
+
+  useEffect(() => {
+    if (user && !socketService.connected && !isSubscribed) {
       socketService.connect(() => {
-        if (isSubscribed) {
-          setupSubscriptions();
-          sendParticipantUpdate({
-            roomId,
-            user: { id: user?.id, username: user?.username },
-          });
-          sendChatMessage({
-            content: `${user?.username} joined the room`,
-            type: 'JOIN',
-            sender: { id: user?.id, username: user?.username },
-          });
-          fetchRoom();
-        }
+        console.log('socketService.connected: ', socketService.connected);
+        setupSubscriptions();
+        setIsSubscribed(true);
+        sendParticipantUpdate({
+          roomId,
+          user: { id: user?.id, username: user?.username },
+        });
+        sendChatMessage({
+          content: `${user?.username} joined the room`,
+          type: 'JOIN',
+          sender: { id: user?.id, username: user?.username },
+        });
+        fetchRoom();
       });
     }
+  }, [
+    fetchRoom,
+    roomId,
+    sendChatMessage,
+    setupSubscriptions,
+    user,
+    isSubscribed,
+  ]);
 
+  useEffect(() => {
+    isHostRef.current = isHost;
+  }, [isHost]);
+
+  useEffect(() => {
     return () => {
-      isSubscribed = false;
-      // sendChatMessage({
-      //   content: 'Goodbye',
-      //   type: 'LEAVE',
-      //   sender: { id: user?.id, username: user?.username },
-      // });    
-      socketService.disconnect();
+      if (socketService.connected) {
+        console.log('host leave: ', isHostRef.current);
+        sendChatMessage({
+          content: `${user?.username} left the room`,
+          type: 'LEAVE',
+          sender: { id: user?.id, username: user?.username },
+          isHost: isHostRef.current,
+        });
+        socketService.disconnect();
+      }
     };
-  }, [roomId, user]);
+  }, []);
 
   useEffect(() => {
     if (user && room?.host) {
@@ -68,41 +142,6 @@ const WatchParty = () => {
     }
   }, [roomId, user, room?.host]);
 
-  const fetchRoom = useCallback(() => {
-    roomService.getRoomInfo(roomId).then((response) => {
-      const room = response.data;
-      setRoom(room);
-    });
-  }, []);
-
-  const setupSubscriptions = useCallback(() => {
-    // Subscribe to chat messages
-    socketService.subscribe(`/topic/room/${roomId}/chat`, (message) => {
-      setMessages((prev) => [...prev, message]);
-      if (user?.id !== message.sender.id) {
-        notification.info({
-          message: buildMessage(message),
-        });
-      }
-    });
-
-    // Subscribe to video state updates
-    socketService.subscribe(`/topic/room/${roomId}/video`, (state) => {
-      console.log('state isHost: ', isHost);
-      if (!isHost) {
-        setVideoState(state);
-      }
-    });
-
-    // Subscribe to participant updates
-    socketService.subscribe(
-      `/topic/room/${roomId}/participants`,
-      (participants) => {
-        setParticipants(participants);
-      }
-    );
-  }, [isHost, roomId, user?.id]);
-
   const buildMessage = (message) => {
     if (message.type === 'JOIN') {
       return `${message.sender.username} joined the room`;
@@ -114,13 +153,6 @@ const WatchParty = () => {
 
   const sendParticipantUpdate = ({ roomId, user }) => {
     socketService.send(`/app/room/${roomId}/participants`, user);
-  };
-
-  const sendChatMessage = (chatMessage) => {
-    socketService.send(`/app/room/${roomId}/chat`, {
-      ...chatMessage,
-      timestamp: new Date().toISOString(),
-    });
   };
 
   const updateVideoState = (state) => {

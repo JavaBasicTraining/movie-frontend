@@ -299,15 +299,14 @@ export const WatchMovie = () => {
               <VideoPlayer fileName={movie.videoUrl} controls />
               <div className="btn-episode">
                 <button>Tập Trước</button>
-                {selectEpisode &&
-                  selectEpisode.map((item) => (
-                    <button
-                      onClick={() => handleSelectEpisode(item.episodeCount)}
-                      key={item.id}
-                    >
-                      {item.episodeCount}
-                    </button>
-                  ))}
+                {selectEpisode?.map((item) => (
+                  <button
+                    onClick={() => handleSelectEpisode(item.episodeCount)}
+                    key={item.id}
+                  >
+                    {item.episodeCount}
+                  </button>
+                ))}
                 <button>Tập Sau</button>
               </div>
             </>

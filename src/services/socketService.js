@@ -14,7 +14,7 @@ class SocketService {
   }
 
   connect(onConnect) {
-    const socket = new SockJS('http://192.168.1.201:8081/ws');
+    const socket = new SockJS(`${process.env.REACT_APP_SOCKET_URL}`);
 
     this.client = new Client({
       webSocketFactory: () => socket,
@@ -52,7 +52,6 @@ class SocketService {
     if (!this.client?.connected) {
       throw new Error('Socket not connected');
     }
-    console.log('send message: ', message);
     this.client.publish({
       destination,
       body: JSON.stringify(message),
