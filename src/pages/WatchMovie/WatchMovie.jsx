@@ -271,7 +271,7 @@ export const WatchMovie = () => {
       try {
         const decodedToken = jwtDecode(token);
         setJwt(decodedToken);
-        fetchUser(decodedToken.sub).then();
+        fetchUser(decodedToken.preferred_username).then();
         fetchComment().then();
         setShowComment(true);
       } catch (error) {
