@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { keycloakService } from '../services/keycloakService';
-import { storageService } from '../services/storageService';
+import { keycloakService, storageService } from '../services';
 import { ACCESS_TOKEN } from '../constants/storage';
 import { notification } from 'antd';
 
