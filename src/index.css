@@ -8,6 +8,10 @@ body {
   background: rgb(85, 83, 87) !important;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
