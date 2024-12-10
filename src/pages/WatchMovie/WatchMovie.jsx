@@ -31,12 +31,14 @@ export const WatchMovie = () => {
     if (event.key === 'Enter') {
       event.preventDefault();
       if (jwt && replyToCommentId) {
-        const request = new FormData();
-        request.append('content', replyComment);
-        request.append('idUser', user.id);
-        request.append('idMovie', movie.id);
-        request.append('user', user);
-        request.append('replyToCommentId', replyToCommentId);
+        const request = {
+          content: replyComment,
+          idUser: user.id,
+          idMovie: movie.id,
+          user: user,
+          parentCommentId: replyToCommentId
+        };
+      
 
         try {
           await axiosInstance.post(`/api/v1/comment/create`, request);
@@ -239,8 +241,9 @@ export const WatchMovie = () => {
   const handleClickLike = async (commentId) => {
     try {
       const response = await axiosInstance.get(
-        `/api/v1/like_comment/user/${user.id}/movie/${movie.id}`
+        `/api/v1/like-comment/user/${user.id}/movie/${movie.id}`
       );
+      console.log(response.data);
       const likedComment = response.data.find(
         (item) => item.idComment === commentId
       );
@@ -251,9 +254,9 @@ export const WatchMovie = () => {
           idMovie: movie.id,
           idComment: commentId,
         };
-        await axiosInstance.post('/api/v1/like_comment', request);
+        await axiosInstance.post('/api/v1/like-comment', request);
       } else {
-        await axiosInstance.delete(`/api/v1/like_comment/${likedComment.id}`);
+        await axiosInstance.delete(`/api/v1/like-comment/${likedComment.id}`);
       }
       fetchComment();
     } catch (error) {
