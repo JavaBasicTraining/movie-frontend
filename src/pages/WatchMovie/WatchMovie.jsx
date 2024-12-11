@@ -20,6 +20,7 @@ export const WatchMovie = () => {
   const [selectEpisode, setSelectEpisode] = useState([]);
   const [, setCurrentEpisodeIndex] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [lastCommentCreatedDate, setLastCommentCreatedDate] = useState(null);
   const [page, setPage] = useState(0);
 
   const getEpisodes = useCallback(() => {
@@ -46,12 +47,20 @@ export const WatchMovie = () => {
 
   const fetchComment = async (page = 0, size = COMMENTS_PER_PAGE) => {
     try {
-      const response = await commentService.getComments(movie.id, page, size);
+      const response = await commentService.getComments(
+        movie.id,
+        page,
+        size,
+        lastCommentCreatedDate
+      );
       const newComments = response.data;
       const totalPages = response.headers['x-total-pages'];
       const updatedComments = [...listComment, ...newComments];
       setListComment(updatedComments);
       setHasMore(updatedComments.length < totalPages);
+      setLastCommentCreatedDate(
+        updatedComments[updatedComments.length - 1].createdDate
+      );
     } catch (error) {
       notification.error({
         message: 'Fetch Comments Error',
@@ -84,8 +93,8 @@ export const WatchMovie = () => {
 
       commentService
         .create(request)
-        .then(() => {
-          fetchComment();
+        .then((res) => {
+          setListComment([res.data, ...listComment]);
           setCommentContent('');
         })
         .catch((error) => {
@@ -101,6 +110,10 @@ export const WatchMovie = () => {
         description: 'Please log in to post a comment.',
       });
     }
+  };
+
+  const handleDeleteComment = (commentId) => {
+    setListComment(listComment.filter((comment) => comment.id !== commentId));
   };
 
   useEffect(() => {
@@ -173,9 +186,12 @@ export const WatchMovie = () => {
             next={fetchMoreData}
             hasMore={hasMore}
             scrollableTarget="scrollableDiv"
-            loader={<h4>Loading...</h4>}
           >
-            <CommentList comments={listComment} movieId={movie.id} />
+            <CommentList
+              comments={listComment}
+              movieId={movie.id}
+              onDeleted={handleDeleteComment}
+            />
           </InfiniteScroll>
         </div>
       </div>

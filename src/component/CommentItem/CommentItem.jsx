@@ -1,27 +1,28 @@
 import { LikeOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Modal, notification } from 'antd';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { CommentInput } from '../';
 import useFetchUser from '../../hooks/useFetchUser';
 import { commentService } from '../../services/commentService';
 import './CommentItem.scss';
-import { CommentInput } from '../';
 
 export function CommentItem(props) {
-  const { comment, movieId } = props;
+  const { comment, movieId, onDeleted } = props;
   const { user } = useFetchUser();
   const [showOptions, setShowOptions] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const [showReplyList, setShowReplyList] = useState(false);
+  const [replies, setReplies] = useState([]);
   const [editing, setEditing] = useState(false);
-  const [editComment, setEditComment] = useState(comment);
+  const [editComment, setEditComment] = useState(() => comment);
   const [replyContent, setReplyContent] = useState('');
 
   const fetchLikeCount = useCallback(() => {
     commentService.getLikeCount(comment.id).then((res) => {
       setEditComment({
         ...comment,
-        likeCount: res.data.likeCount,
+        totalLikes: res.data.totalLikes,
       });
     });
   }, [comment]);
@@ -71,7 +72,24 @@ export function CommentItem(props) {
   };
 
   const handleDelete = () => {
-    setEditing(false);
+    Modal.confirm({
+      title: 'Xác nhận xóa',
+      content: 'Bạn có chắc chắn muốn xóa bình luận này?',
+      okText: 'Xóa',
+      okType: 'danger',
+      cancelText: 'Hủy',
+      onOk: async () => {
+        try {
+          await commentService.delete(comment.id);
+          notification.success({ message: 'Xóa thành công' });
+          onDeleted?.(comment.id);
+        } catch (error) {
+          notification.error({
+            message: `Lỗi khi xóa bình luận: ${error.message}`,
+          });
+        }
+      },
+    });
   };
 
   const toggleReply = () => {
@@ -79,10 +97,10 @@ export function CommentItem(props) {
   };
 
   const handleLike = () => {
-    commentService.likeComment(comment.id, true).then(() => {
+    commentService.likeComment(comment.id, true).then((res) => {
       setEditComment({
         ...comment,
-        likeCount: (comment.likeCount ?? 0) + 1,
+        totalLikes: res.data.totalLikes ?? 0,
       });
     });
   };
@@ -102,6 +120,7 @@ export function CommentItem(props) {
     };
     commentService.create(request).then(() => {
       setReplyContent('');
+      setShowReply(false);
     });
   };
 
@@ -135,12 +154,23 @@ export function CommentItem(props) {
     setEditing(false);
   };
 
+  const handleToggleReplyList = () => {
+    fetchReplies();
+    setShowReplyList(!showReplyList);
+  };
+
+  const fetchReplies = (page = 0) => {
+    commentService.getReplies(comment.id, page).then((res) => {
+      setReplies(res.data);
+    });
+  };
+
   return (
     <div className="comment">
       <div className="comment__header">
         <span className="comment__username">@{comment.user.userName} </span>
         <span className="comment__time">
-          {getTimeDifference(comment.currentDate)}
+          {getTimeDifference(comment.createdDate)}
         </span>
       </div>
       <div className="comment__content-container">
@@ -190,7 +220,7 @@ export function CommentItem(props) {
             onClick={handleLike}
             icon={<LikeOutlined />}
           >
-            ({editComment.likeCount ?? 0})
+            ({editComment.totalLikes ?? 0})
           </Button>
           <Button className="comment__action" onClick={toggleReply}>
             Trả lời
@@ -209,22 +239,28 @@ export function CommentItem(props) {
             />
           )}
 
-          {editComment.replies?.length > 0 && (
-            <button
+          {editComment.totalReplies > 0 && (
+            <Button
               className="comment__reply-list-toggle"
-              onClick={() => setShowReplyList(!showReplyList)}
+              onClick={handleToggleReplyList}
             >
               {showReplyList
                 ? 'Ẩn'
-                : `Xem ${editComment.replies.length} phản hồi`}
-            </button>
+                : `Xem ${editComment.totalReplies} phản hồi`}
+            </Button>
           )}
 
           {showReplyList && (
-            <div className="comment__reply-list">
-              {editComment.replies.map((reply) => (
-                <CommentItem key={reply.id} comment={reply} movieId={movieId} />
-              ))}
+            <div className="comment__reply-list-container">
+              <div className="comment__reply-list-tree"></div>
+              <div className="comment__reply-list">
+                {replies.map((reply) => (
+                  <div key={reply.id} className="comment__reply-list-item">
+                    <div className="comment__reply-list-item-left-line"></div>
+                    <CommentItem comment={reply} movieId={movieId} />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -236,4 +272,5 @@ export function CommentItem(props) {
 CommentItem.propTypes = {
   comment: PropTypes.object.isRequired,
   movieId: PropTypes.number.isRequired,
+  onDeleted: PropTypes.func,
 };
