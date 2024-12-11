@@ -50,8 +50,6 @@ export const WatchMovie = () => {
       const newComments = response.data;
       const totalPages = response.headers['x-total-pages'];
       const updatedComments = [...listComment, ...newComments];
-      console.log('totalPages: ', totalPages);
-      console.log('updatedComments.length: ', updatedComments.length);
       setListComment(updatedComments);
       setHasMore(updatedComments.length < totalPages);
     } catch (error) {
