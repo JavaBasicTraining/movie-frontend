@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import PrivateRoute from './component/PrivateRoute';
-import './index.css';
+import { PrivateRoute } from './component/PrivateRoute';
+import './index.scss';
 import { AddMovie, AddMovieLoader } from './pages/Admin/AddMovie/AddMovie';
 import { Admin } from './pages/Admin/Admin';
 import {

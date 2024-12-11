@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { axiosInstance } from '../configs/axiosConfig';
 
-const VideoPlayer = ({ fileName }) => {
+export const VideoPlayer = ({ fileName }) => {
   const [videoToken, setVideoToken] = useState(null);
   const [playing] = useState(false);
   const [volume] = useState(0.8);
@@ -113,5 +113,3 @@ const VideoPlayer = ({ fileName }) => {
     </div>
   );
 };
-
-export default VideoPlayer;

@@ -10,9 +10,23 @@ body {
 
 * {
   box-sizing: border-box;
+  @extend .common-scrollbar;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.common-scrollbar {
+  &::-webkit-scrollbar {
+    width: 4px;
+    background-color: white;
+  }
+
+  &::-webkit-scrollbar-thumb
+  {
+    background-color: #8e8d8d;
+    border-radius: 10px;
+  }
 }

@@ -11,8 +11,13 @@ class CommentService {
     return axiosInstance.put(`${this.baseUrl}/${commentId}`, comment);
   }
 
-  getComments(movieId) {
-    return axiosInstance.get(`${this.baseUrl}?movieId=${movieId}`);
+  getComments(movieId, page, size) {
+    const params = {
+      movieId,
+      page,
+      size,
+    };
+    return axiosInstance.get(`${this.baseUrl}`, { params });
   }
 
   likeComment(commentId, isLike) {

@@ -65,5 +65,10 @@
       flex-direction: column;
       gap: 10px;
     }
+
+    &__body {
+      height: 400px;
+      overflow: auto;
+    }
   }
 }

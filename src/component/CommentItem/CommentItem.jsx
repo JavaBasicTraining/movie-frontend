@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import useFetchUser from '../../hooks/useFetchUser';
 import { commentService } from '../../services/commentService';
-import CommentInput from '../CommentInput/CommentInput';
 import './CommentItem.scss';
+import { CommentInput } from '../';
 
-export default function CommentItem(props) {
+export function CommentItem(props) {
   const { comment, movieId } = props;
   const { user } = useFetchUser();
   const [showOptions, setShowOptions] = useState(false);
@@ -235,5 +235,5 @@ export default function CommentItem(props) {
 
 CommentItem.propTypes = {
   comment: PropTypes.object.isRequired,
-  movieId: PropTypes.string.isRequired,
+  movieId: PropTypes.number.isRequired,
 };

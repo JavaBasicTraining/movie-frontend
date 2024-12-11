@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CommentItem from '../CommentItem/CommentItem';
+import { CommentItem } from '../CommentItem/CommentItem';
 import './CommentList.scss';
-export default function CommentList(props) {
+
+export function CommentList(props) {
   const { comments = [], movieId } = props;
   return (
-    <div className="comment-list">
+    <div className="comment-list common-scrollbar">
       {comments.map((comment) => (
         <CommentItem key={comment.id} comment={comment} movieId={movieId} />
       ))}
@@ -15,5 +16,5 @@ export default function CommentList(props) {
 
 CommentList.propTypes = {
   comments: PropTypes.array.isRequired,
-  movieId: PropTypes.string.isRequired,
+  movieId: PropTypes.number.isRequired,
 };

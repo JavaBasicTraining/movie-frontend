@@ -2,25 +2,25 @@ import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 import { jwtDecode } from 'jwt-decode';
 import React, { useCallback, useEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { useLoaderData } from 'react-router-dom';
-import CommentInput from '../../component/CommentInput/CommentInput';
-import CommentList from '../../component/CommentList/CommentList';
-import VideoPlayer from '../../component/VideoPlayer';
+import { CommentInput, CommentList, VideoPlayer } from '../../component';
 import { axiosInstance } from '../../configs/axiosConfig';
-import { ACCESS_TOKEN } from '../../constants/storage';
-import { commentService } from '../../services/commentService';
-import { episodeService } from '../../services/episodeService';
-import { storageService } from '../../services/storageService';
+import { ACCESS_TOKEN, COMMENTS_PER_PAGE } from '../../constants';
+import useFetchUser from '../../hooks/useFetchUser';
+import { commentService, episodeService, storageService } from '../../services';
 import './WatchMovie.scss';
 
 export const WatchMovie = () => {
+  const { movie } = useLoaderData();
+  const { user } = useFetchUser();
   const [commentContent, setCommentContent] = useState('');
   const [listComment, setListComment] = useState([]);
-  const { movie } = useLoaderData();
-  const [user, setUser] = useState({});
   const [jwt, setJwt] = useState(null);
   const [selectEpisode, setSelectEpisode] = useState([]);
   const [, setCurrentEpisodeIndex] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
 
   const getEpisodes = useCallback(() => {
     episodeService
@@ -44,32 +44,29 @@ export const WatchMovie = () => {
     }
   };
 
-  const fetchUser = async (userName) => {
+  const fetchComment = async (page = 0, size = COMMENTS_PER_PAGE) => {
     try {
-      const response = await axiosInstance.get(`/api/account/getUser`, {
-        params: { userName },
-      });
-      setUser(response.data ?? {});
+      const response = await commentService.getComments(movie.id, page, size);
+      const newComments = response.data;
+      const totalPages = response.headers['x-total-pages'];
+      const updatedComments = [...listComment, ...newComments];
+      console.log('totalPages: ', totalPages);
+      console.log('updatedComments.length: ', updatedComments.length);
+      setListComment(updatedComments);
+      setHasMore(updatedComments.length < totalPages);
     } catch (error) {
-      console.error('Error fetching user:', error);
-      notification.error({
-        message: 'Fetch User Error',
-        description: 'Unable to fetch user data.',
-      });
-    }
-  };
-
-  const fetchComment = async () => {
-    try {
-      const response = await commentService.getComments(movie.id);
-      setListComment(response.data);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
       notification.error({
         message: 'Fetch Comments Error',
         description: 'Unable to fetch comments.',
       });
     }
+  };
+
+  const fetchMoreData = () => {
+    const newPage = page + 1;
+    setPage(newPage);
+
+    fetchComment(newPage, COMMENTS_PER_PAGE);
   };
 
   const handleCommentChange = (e) => setCommentContent(e.target.value);
@@ -89,7 +86,7 @@ export const WatchMovie = () => {
 
       commentService
         .create(request)
-        .then((res) => {
+        .then(() => {
           fetchComment();
           setCommentContent('');
         })
@@ -114,7 +111,6 @@ export const WatchMovie = () => {
       try {
         const decodedToken = jwtDecode(token);
         setJwt(decodedToken);
-        fetchUser(decodedToken.preferred_username).then();
         fetchComment().then();
       } catch (error) {
         notification.error({
@@ -173,7 +169,17 @@ export const WatchMovie = () => {
           />
         </div>
 
-        <CommentList comments={listComment} movieId={movie.id} />
+        <div id="scrollableDiv" className="comment-section__body">
+          <InfiniteScroll
+            dataLength={listComment.length}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            scrollableTarget="scrollableDiv"
+            loader={<h4>Loading...</h4>}
+          >
+            <CommentList comments={listComment} movieId={movie.id} />
+          </InfiniteScroll>
+        </div>
       </div>
     </div>
   );

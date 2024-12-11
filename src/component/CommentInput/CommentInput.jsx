@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './CommentInput.scss';
 
-export default function CommentInput(props) {
+export function CommentInput(props) {
   const {
     value,
     onChange,
