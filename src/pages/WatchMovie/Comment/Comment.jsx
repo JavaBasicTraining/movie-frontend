@@ -10,6 +10,9 @@ import './Comment.scss';
 const Comment = memo(() => {
   const [comment, setComment] = useState('');
   const [listComment, setListComment] = useState([]);
+  const [listReplies, setListReplies] = useState([]);
+  const [showReplies, setShowReplies] = useState({}); // Object to track visibility of replies for each comment
+
   const [user, setUser] = useState({});
   const menuRef = useRef(null);
   const [showOptions, setShowOptions] = useState(false);
@@ -20,10 +23,16 @@ const Comment = memo(() => {
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState(null);
-  const [showReplyOptions, setShowReplyOptions] = useState({});
   const [editReplyId, setEditReplyId] = useState(null);
   const [editReplyContent, setEditReplyContent] = useState('');
-  const handleKeyDownReply = async (event) => {
+
+  const toggleRepliesVisibility = (commentId) => {
+    setShowReplies((prevState) => ({
+      ...prevState,
+      [commentId]: !prevState[commentId], // Toggle the visibility of replies for the specific comment
+    }));
+  };
+  const handleKeyDown = async (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       if (jwt && replyToCommentId) {
@@ -47,23 +56,38 @@ const Comment = memo(() => {
             description: 'Unable to post reply.',
           });
         }
+      } else if (jwt) {
+        const request = {
+          content: comment,
+          idUser: user.id,
+          idMovie: movie.id,
+          user: user.userName,
+        };
+
+        if (replyToCommentId) {
+          request.append('replyToCommentId', replyToCommentId);
+        }
+
+        try {
+          await axiosInstance.post(`/api/v1/comment/create`, request);
+          fetchComment();
+          fetchReplies();
+          setComment('');
+          setReplyToCommentId(null);
+        } catch (error) {
+          console.error('Error posting comment:', error);
+          notification.error({
+            message: 'Post Comment Error',
+            description: 'Unable to post comment.',
+          });
+        }
+      } else {
+        notification.warning({
+          message: 'Login Required',
+          description: 'Please log in to post a comment.',
+        });
       }
     }
-  };
-
-  const toggleReplyOptions = (replyId) => {
-    setShowReplyOptions((prevState) => {
-      const newState = {
-        ...prevState,
-        [replyId]: !prevState[replyId],
-      };
-      Object.keys(newState).forEach((key) => {
-        if (key !== replyId.toString()) {
-          newState[key] = false;
-        }
-      });
-      return newState;
-    });
   };
 
   const toggleOptions = (commentId) => {
@@ -109,6 +133,33 @@ const Comment = memo(() => {
       const params = new URLSearchParams({ movieId: movie.id });
       const response = await axiosInstance.get('/api/v1/comment', { params });
       setListComment(response.data);
+      console.log(listComment);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      notification.error({
+        message: 'Fetch Comments Error',
+        description: 'Unable to fetch comments.',
+      });
+    }
+  };
+
+  const fetchReplies = async () => {
+    try {
+      const updatedComments = await Promise.all(
+        listComment.map(async (item) => {
+          const params = new URLSearchParams({
+            movieId: movie.id,
+            parentComment: item.id,
+          });
+          const response = await axiosInstance.get(
+            '/api/v1/comment/get-replies',
+            { params }
+          );
+          console.log('Fetched comments:', response.data);
+          return response.data;
+        })
+      );
+      setListReplies(updatedComments.flat());
     } catch (error) {
       console.error('Error fetching comments:', error);
       notification.error({
@@ -139,18 +190,18 @@ const Comment = memo(() => {
 
   const handleCommentChange = (e) => setComment(e.target.value);
 
-  const handleKeyDownUpdateComment = (e) => {
+  const handleKeyDownUpdateComment = (e, parentCommentId) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleUpdateComment();
+      handleUpdateComment(parentCommentId);
     }
   };
 
-  const handleUpdateComment = async () => {
+  const handleUpdateComment = async (parentCommentId) => {
     if (editCommentId && editCommentContent) {
       try {
         const request = {
-          content: replyComment,
+          content: editCommentContent,
           idUser: user.id,
           idMovie: movie.id,
           user: user,
@@ -160,6 +211,8 @@ const Comment = memo(() => {
           params: { commentId: editCommentId },
         });
         fetchComment();
+
+        fetchReplies();
         setEditCommentId(null);
         setEditCommentContent('');
       } catch (error) {
@@ -168,40 +221,7 @@ const Comment = memo(() => {
           message: 'Update Comment Error',
         });
       }
-    }
-  };
-
-  const handleDeleteReply = async (replyId) => {
-    try {
-      await axiosInstance.delete(`/api/v1/comment/${replyId}`);
-      notification.success({
-        message: 'Success',
-        description: 'Reply deleted successfully.',
-      });
-      fetchComment();
-    } catch (error) {
-      console.error('Error deleting reply:', error);
-      notification.error({
-        message: 'Delete Reply Error',
-      });
-    }
-  };
-
-  const handleKeyDownUpdateReply = (event, parentCommentId) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleUpdateReply(parentCommentId);
-    }
-  };
-
-  const handleEditReplyClick = (replyId, content) => {
-    setEditReplyId(replyId);
-    setEditReplyContent(content);
-    setShowReplyOptions({ [replyId]: true });
-  };
-
-  const handleUpdateReply = async (parentCommentId) => {
-    if (editReplyId && editReplyContent) {
+    } else if (editReplyId && editReplyContent) {
       try {
         const request = {
           content: editReplyContent,
@@ -213,6 +233,7 @@ const Comment = memo(() => {
           params: { commentId: editReplyId },
         });
         fetchComment();
+        fetchReplies();
         setEditReplyId(null);
         setEditReplyContent('');
       } catch (error) {
@@ -223,7 +244,10 @@ const Comment = memo(() => {
       }
     }
   };
-
+  const handleEditReplyClick = (replyId, content) => {
+    setEditReplyId(replyId);
+    setEditReplyContent(content);
+  };
   const handleDelete = async (commentId) => {
     try {
       await axiosInstance.delete(`/api/v1/comment/${commentId}`);
@@ -232,47 +256,12 @@ const Comment = memo(() => {
         description: 'Comment deleted successfully.',
       });
       fetchComment();
+      fetchReplies();
     } catch (error) {
       console.error('Error deleting comment:', error);
       notification.error({
         message: 'Delete Comment Error',
       });
-    }
-  };
-
-  const handleKeyDown = async (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      if (jwt) {
-        const request = {
-          content: comment,
-          idUser: user.id,
-          idMovie: movie.id,
-          user: user.userName,
-        };
-
-        if (replyToCommentId) {
-          request.append('replyToCommentId', replyToCommentId);
-        }
-
-        try {
-          await axiosInstance.post(`/api/v1/comment/create`, request);
-          fetchComment();
-          setComment('');
-          setReplyToCommentId(null);
-        } catch (error) {
-          console.error('Error posting comment:', error);
-          notification.error({
-            message: 'Post Comment Error',
-            description: 'Unable to post comment.',
-          });
-        }
-      } else {
-        notification.warning({
-          message: 'Login Required',
-          description: 'Please log in to post a comment.',
-        });
-      }
     }
   };
 
@@ -304,6 +293,7 @@ const Comment = memo(() => {
         await axiosInstance.delete(`/api/v1/like-comment/${likedComment.id}`);
       }
       fetchComment();
+      fetchReplies();
     } catch (error) {
       console.error('Error liking comment:', error);
       notification.error({
@@ -316,19 +306,18 @@ const Comment = memo(() => {
   const handleClickOutside = (event) => {
     if (!event.target.closest('.options')) {
       setShowOptions({});
-      setShowReplyOptions({});
       if (replyToCommentId) {
         setReplyToCommentId(null);
       }
     }
   };
 
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [showOptions]);
+  // useEffect(() => {
+  //   // document.addEventListener('click', handleClickOutside);
+  //   return () => {
+  //     // document.removeEventListener('click', handleClickOutside);
+  //   };
+  // }, [showOptions]);
   useEffect(() => {
     const token = storageService.get(ACCESS_TOKEN);
     if (token) {
@@ -337,6 +326,7 @@ const Comment = memo(() => {
         setJwt(decodedToken);
         fetchUser(decodedToken.preferred_username).then();
         fetchComment().then();
+        fetchReplies().then();
         setShowComment(true);
       } catch (error) {
         notification.error({
@@ -345,10 +335,10 @@ const Comment = memo(() => {
         });
       }
     }
-  }, []);
+  }, [, movie.id,listComment.id,]);
 
   return (
-    <div className="body">
+    <div className="body-comment">
       <div className="comment">
         {showComment &&
           listComment
@@ -427,9 +417,15 @@ const Comment = memo(() => {
                   </div>
                   <button onClick={() => handleReply(value.id)}>Reply</button>
                 </div>
-                {value.replies && value.replies.length > 0 && (
+                <button className='show-'
+                  onClick={() => toggleRepliesVisibility(value.id)}
+                >
+{showReplies[value.id] ? "Ẩn Reply" : `${listReplies.length} Reply`}
+                </button>
+
+                {showReplies[value.id] && listReplies && listReplies.length > 0 && (
                   <div className="replies">
-                    {value.replies.map((reply) => (
+                    {listReplies.map((reply) => (
                       <div key={reply.id} className="reply-item">
                         <div
                           style={{
@@ -450,7 +446,7 @@ const Comment = memo(() => {
                                   setEditReplyContent(e.target.value)
                                 }
                                 onKeyDown={(e) =>
-                                  handleKeyDownUpdateReply(
+                                  handleKeyDownUpdateComment(
                                     e,
                                     reply.parentCommentId
                                   )
@@ -459,7 +455,7 @@ const Comment = memo(() => {
                               <div className="save-cancel">
                                 <button
                                   onClick={() =>
-                                    handleUpdateReply(reply.parentCommentId)
+                                    handleUpdateComment(reply.parentCommentId)
                                   }
                                 >
                                   Lưu
@@ -468,7 +464,7 @@ const Comment = memo(() => {
                                   onClick={() => {
                                     setEditReplyId(null);
                                     setEditReplyContent('');
-                                    setShowReplyOptions((prev) => {
+                                    setShowOptions((prev) => {
                                       const newState = { ...prev };
                                       delete newState[editReplyId];
                                       return newState;
@@ -485,11 +481,11 @@ const Comment = memo(() => {
                               <div ref={menuRef} className="reply-options">
                                 <button
                                   className="options"
-                                  onClick={() => toggleReplyOptions(reply.id)}
+                                  onClick={() => toggleOptions(reply.id)}
                                 >
                                   ...
                                 </button>
-                                {showReplyOptions[reply.id] && (
+                                {showOptions[reply.id] && (
                                   <div className="choose-update-delete">
                                     <button
                                       onClick={() =>
@@ -502,9 +498,7 @@ const Comment = memo(() => {
                                       Chỉnh Sửa
                                     </button>
                                     <button
-                                      onClick={() =>
-                                        handleDeleteReply(reply.id)
-                                      }
+                                      onClick={() => handleDelete(reply.id)}
                                     >
                                       Xóa
                                     </button>
@@ -519,7 +513,7 @@ const Comment = memo(() => {
                             <button onClick={() => handleClickLike(reply.id)}>
                               Thích
                             </button>
-                            <label>{value.totalLikes}</label>
+                            <label>{reply.totalLikes}</label>
                           </div>
                           <button onClick={() => handleReply(reply.id)}>
                             Trả lời
@@ -529,6 +523,7 @@ const Comment = memo(() => {
                     ))}
                   </div>
                 )}
+
                 {replyToCommentId === value.id && (
                   <div className="reply-input">
                     <input
@@ -537,7 +532,7 @@ const Comment = memo(() => {
                       value={replyComment}
                       placeholder="Nhập phản hồi của bạn..."
                       onChange={(e) => setReplyComment(e.target.value)}
-                      onKeyDown={handleKeyDownReply}
+                      onKeyDown={handleKeyDown}
                       required
                     />
                     <button onClick={() => setReplyToCommentId(null)}>

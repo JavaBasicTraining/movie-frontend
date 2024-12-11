@@ -1,4 +1,4 @@
-.body {
+.body-comment {
   background-color: #f9f9f9;
   position: relative;
   width: 100%;
@@ -17,6 +17,18 @@
       padding: 10px;
 
       border-radius: 5px;
+
+     
+       button{
+        background: none;
+        border: none;
+        color: blue;
+        font-size: 14px;
+      &:hover{
+        background-color: #ccc;
+        border-radius: 5px;
+      }
+      }
       h1 {
         margin: 0;
         font-size: 16px;
