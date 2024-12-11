@@ -20,7 +20,8 @@ code {
 
 .common-scrollbar {
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 4px; // for vertical scrollbar 
+    height: 4px; // for horizontal scrollbar
     background-color: white;
   }
 
