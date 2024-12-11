@@ -11,7 +11,7 @@ export function CommentItem(props) {
   const { comment, movieId, onDeleted } = props;
   const { user } = useFetchUser();
   const [showOptions, setShowOptions] = useState(false);
-  const [showReply, setShowReply] = useState(false);
+  const [showReplyInput, setShowReplyInput] = useState(false);
   const [showReplyList, setShowReplyList] = useState(false);
   const [replies, setReplies] = useState([]);
   const [editing, setEditing] = useState(false);
@@ -93,7 +93,7 @@ export function CommentItem(props) {
   };
 
   const toggleReply = () => {
-    setShowReply(!showReply);
+    setShowReplyInput(!showReplyInput);
   };
 
   const handleLike = () => {
@@ -120,7 +120,9 @@ export function CommentItem(props) {
     };
     commentService.create(request).then(() => {
       setReplyContent('');
-      setShowReply(false);
+      setShowReplyList(true);
+      setShowReplyInput(false);
+      fetchReplies();
     });
   };
 
@@ -137,7 +139,7 @@ export function CommentItem(props) {
 
   const handleCancelReply = () => {
     setReplyContent('');
-    setShowReply(false);
+    setShowReplyInput(false);
   };
 
   const handleSubmitEdit = () => {
@@ -162,7 +164,15 @@ export function CommentItem(props) {
   const fetchReplies = (page = 0) => {
     commentService.getReplies(comment.id, page).then((res) => {
       setReplies(res.data);
+      setEditComment({
+        ...comment,
+        totalReplies: res.data.length ?? 0,
+      });
     });
+  };
+
+  const handleReplyDeleted = (replyId) => {
+    setReplies(replies.filter((reply) => reply.id !== replyId));
   };
 
   return (
@@ -197,7 +207,7 @@ export function CommentItem(props) {
                 ...
               </button>
 
-              {showOptions && (
+              {showOptions && user.id === comment.user.id && (
                 <div className="comment__option-list">
                   <Button className="comment__option-item" onClick={handleEdit}>
                     Sửa
@@ -228,7 +238,7 @@ export function CommentItem(props) {
         </div>
 
         <div className="comment__reply">
-          {showReply && (
+          {showReplyInput && (
             <CommentInput
               value={replyContent}
               onChange={handleReplyContentChange}
@@ -257,7 +267,7 @@ export function CommentItem(props) {
                 {replies.map((reply) => (
                   <div key={reply.id} className="comment__reply-list-item">
                     <div className="comment__reply-list-item-left-line"></div>
-                    <CommentItem comment={reply} movieId={movieId} />
+                    <CommentItem comment={reply} movieId={movieId} onDeleted={handleReplyDeleted}/>
                   </div>
                 ))}
               </div>

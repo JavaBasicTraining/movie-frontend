@@ -12,29 +12,28 @@ export function CommentInput(props) {
     onSubmit,
     onCancel,
   } = props;
-
-  const [comment, setComment] = useState(value);
   const [showActions, setShowActions] = useState(false);
 
   const handleCommentChange = (e) => {
-    setComment(e.target.value);
     onChange?.(e);
+    setShowActions(true);
   };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      onSubmit?.(comment);
+      onSubmit?.(value);
+      setShowActions(false);
     }
   };
 
   const handleCancel = () => {
-    setComment('');
     onCancel?.();
     setShowActions(false);
   };
 
   const handleSubmit = () => {
-    onSubmit?.(comment);
+    onSubmit?.(value);
+    setShowActions(false);
   };
 
   const handleFocus = () => {
@@ -46,7 +45,7 @@ export function CommentInput(props) {
       <Input
         className="input"
         type="text"
-        value={comment}
+        value={value}
         placeholder="Nhập bình luận của bạn..."
         onChange={handleCommentChange}
         onKeyDown={handleKeyDown}
@@ -56,7 +55,7 @@ export function CommentInput(props) {
       {showActions && (
         <div className="comment-input__actions">
           <Button onClick={handleCancel}>{cancelText}</Button>
-          <Button onClick={handleSubmit} disabled={!comment.trim()}>
+          <Button onClick={handleSubmit} disabled={!value.trim()}>
             {submitText}
           </Button>
         </div>
