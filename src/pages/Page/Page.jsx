@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../../configs/axiosConfig';
 import { Link } from 'react-router-dom';
 import { PlayCircleOutlined } from '@ant-design/icons';
-import './Page.scss';
-
+import "./Page.scss"
 export const Page = () => {
   const [movies, setMovies] = useState([]);
 
@@ -13,7 +12,7 @@ export const Page = () => {
         const response = await axiosInstance.get(`/api/v1/movies`);
         setMovies(response.data);
       } catch (error) {
-        console.error('Failed to fetch movies', error);
+        console.error("Failed to fetch movies", error);
       }
     };
 
@@ -21,97 +20,106 @@ export const Page = () => {
   }, []);
 
   const horrifiedMovies = movies.filter((movie) =>
-    movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
+  movie.genres.some((genreName) =>
+    genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
     )
   );
   const adventureMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase())
+      genreName.name.toLowerCase().includes("phiêu lưu".toLowerCase())
     )
   );
-
   const cartoonMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase())
+      genreName.name.toLowerCase().includes("hoạt hình".toLowerCase())
     )
   );
 
   return (
     <div className="page-container">
-      <div className="nav-category">
-        <h>Phim Đề Cử</h>
-        <div class="article-item">
-          {movies.map((item) => (
-            <Link to={`/${item.path}`} className="list-item-page">
-              <div className="img-item">
-                <img key={item.path} src={item.posterUrl} alt={item.title} />
-                <div className="icon-play">
-                  <PlayCircleOutlined />
+      {movies.length > 0 && (
+        <div className="nav-category">
+          <h>Phim Đề Cử</h>
+          <div className="article-item">
+            {movies.map((item) => (
+              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
                 </div>
-              </div>
-
-              <span>{item.nameMovie}</span>
-              <span>{item.enTitle}</span>
-            </Link>
-          ))}
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="nav-category">
-        <h>Phim Lẻ Mới Cập Nhật</h>
-        <div class="article-item">
-          {adventureMovies.map((item) => (
-            <Link to={`/${item.path}`} className="list-item-page">
-              <div className="img-item">
-                <img key={item.path} src={item.posterUrl} alt={item.title} />
-                <div className="icon-play">
-                  <PlayCircleOutlined />
+      {/* Phim Lẻ Mới Cập Nhật */}
+      {adventureMovies.length > 0 && (
+        <div className="nav-category">
+          <h>Phim Lẻ Mới Cập Nhật</h>
+          <div className="article-item">
+            {adventureMovies.map((item) => (
+              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
                 </div>
-              </div>
-              <span>{item.nameMovie}</span>
-              <span>{item.enTitle}</span>
-            </Link>
-          ))}
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="nav-category">
-        <h>Phim Bộ Mới Cập Nhật</h>
-        <div class="article-item">
-          {horrifiedMovies.map((item) => (
-            <Link to={`/${item.path}`} className="list-item-page">
-              <div className="img-item">
-                <img key={item.path} src={item.posterUrl} alt={item.title} />
-                <div className="icon-play">
-                  <PlayCircleOutlined />
+      )}
+
+      {/* Phim Bộ Mới Cập Nhật */}
+      {horrifiedMovies.length > 0 && (
+        <div className="nav-category">
+          <h>Phim Bộ Mới Cập Nhật</h>
+          <div className="article-item">
+            {horrifiedMovies.map((item) => (
+              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
                 </div>
-              </div>
-
-              <span>{item.nameMovie}</span>
-              <span>{item.enTitle}</span>
-            </Link>
-          ))}
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="nav-category">
-        <h>Phim Hoạt Hình</h>
-        <div class="article-item">
-          {cartoonMovies.map((item) => (
-            <Link to={`/${item.path}`} className="list-item-page">
-              <div className="img-item">
-                <img key={item.path} src={item.posterUrl} alt={item.title} />
-                <div className="icon-play">
-                  <PlayCircleOutlined />
+      {/* Phim Hoạt Hình */}
+      {cartoonMovies.length > 0 && (
+        <div className="nav-category">
+          <h>Phim Hoạt Hình</h>
+          <div className="article-item">
+            {cartoonMovies.map((item) => (
+              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
                 </div>
-              </div>
-
-              <span>{item.nameMovie}</span>
-              <span>{item.enTitle}</span>
-            </Link>
-          ))}
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
       <span>
         Contact Info: Liên hệ ngay All content of this website is collected from
         official video websites on the Internet, and does not provide genuine
