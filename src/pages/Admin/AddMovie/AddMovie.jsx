@@ -204,7 +204,7 @@ export const AddMovie = () => {
     let isValid = false;
     if (name === 'poster') {
       isValid = validateFile(file, 'poster');
-    } else if (name === 'video') {
+        } else if (name === 'video') {
       isValid = validateFile(file, 'video');
     }
     
@@ -723,6 +723,31 @@ export const AddMovie = () => {
           ></video>
         ) : (
           showFileVideo && <video src={data.prevVideoUrl} controls></video>
+        )}
+
+        <div className="selected-input-form">
+          <label id="title-file-trailer">Tải Trailer</label>
+          <div className="validate">
+            <input
+              id="file-trailer"
+              type="file"
+              name="trailer"
+              onChange={handleFileUpload}
+              required
+            />
+            {errorsFile.trailer && (
+              <small className="error">{errorsFile.trailer}</small>
+            )}
+          </div>
+        </div>
+
+        {isEdit && !errorsFile.trailer && showButtonUploadMovie ? (
+          <video
+            src={data.prevTrailerUrl || loader?.movie.trailerUrl}
+            controls
+          ></video>
+        ) : (
+          showTrailer && <video src={data.prevTrailerUrl} controls></video>
         )}
 
         <button onClick={handleSubmit} disabled={!hasChanges(data)}>
