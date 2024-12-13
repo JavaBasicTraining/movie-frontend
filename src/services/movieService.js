@@ -6,7 +6,7 @@ class MovieService {
   }
 
   delete(movieId) {
-    return axiosInstance.delete(`/api/v1/movies/${movieId}`);
+    return axiosInstance.delete(`api/v1/admin/movies/${movieId}`);
   }
 }
 
