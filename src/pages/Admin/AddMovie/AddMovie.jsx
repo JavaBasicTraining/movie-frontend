@@ -36,8 +36,6 @@ export const AddMovie = () => {
   const [isEdit, setIsEdit] = useState(false);
   const loader = useLoaderData();
   const [errorsFile, setErrorsFile] = useState({});
-  const [originalData, setOriginalData] = useState(null);
-
   const [data, setData] = useState({
     nameMovie: '',
     viTitle: '',
@@ -75,15 +73,8 @@ export const AddMovie = () => {
   }, [data.poster]);
 
   useEffect(() => {
-    if (loader?.movie) {
-      setIsEdit(true);
-      if (hasChanges(data)) {
-        setIsEdit(true);
-      }
-    } else {
-      setIsEdit(false);
-    }
-  }, [loader?.movie, data]);
+    setIsEdit(!!loader?.movie);
+  }, [loader?.movie]);
 
   useEffect(() => {
     if (isEdit) {
@@ -124,7 +115,7 @@ export const AddMovie = () => {
   };
 
   const fetchDataUpdate = (newData) => {
-    const updatedData = {
+    setData({
       ...data,
       ...newData,
       idCategory: newData?.category?.id,
@@ -135,14 +126,9 @@ export const AddMovie = () => {
           value: item,
           key: item.id,
         })) || [],
-    };
-    setData(updatedData);
-    setOriginalData(updatedData);
+    });
   };
 
-  const hasChanges = (dataChange) => {
-    return JSON.stringify(dataChange) !== JSON.stringify(originalData);
-  };
   const handleChange = (e, onSuccess) => {
     const { name, value } = e.target;
     setData((prev) => {
@@ -201,11 +187,16 @@ export const AddMovie = () => {
       setShowFileVideo(false);
       return;
     }
+
     let isValid = false;
-    if (name === 'poster') {
-      isValid = validateFile(file, 'poster');
-        } else if (name === 'video') {
-      isValid = validateFile(file, 'video');
+    switch (name) {
+      case 'poster':
+      case 'video':
+      case 'trailer':
+        isValid = validateFile(file, name);
+        break;
+      default:
+        isValid = false; 
     }
     
     if (!isValid) {
@@ -317,7 +308,6 @@ export const AddMovie = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) {
       return;
     } else {
@@ -750,7 +740,7 @@ export const AddMovie = () => {
           showTrailer && <video src={data.prevTrailerUrl} controls></video>
         )}
 
-        <button onClick={handleSubmit} disabled={!hasChanges(data)}>
+        <button onClick={handleSubmit}>
           {isEdit ? 'Sửa Thông Tin Phim' : 'Thêm'}
         </button>
       </div>
