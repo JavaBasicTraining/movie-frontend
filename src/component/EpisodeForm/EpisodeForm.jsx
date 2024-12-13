@@ -54,7 +54,7 @@ export const EpisodeForm = ({ formChanged, episode, index }) => {
   const checkFieldError = (name, value) => {
     let error = '';
     if (!value.trim()) {
-      error = `(*) This field is required`;
+      error = 'This field is required';
     } else if (name === 'episodeCount') {
       const num = parseInt(value);
       if (isNaN(num)) {
@@ -64,6 +64,7 @@ export const EpisodeForm = ({ formChanged, episode, index }) => {
     setErrors((prev) => ({ ...prev, [name]: error }));
     return !error;
   };
+
   const validateForm = () => {
     let isValid = true;
     fields.forEach((field) => {
