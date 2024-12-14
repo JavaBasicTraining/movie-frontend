@@ -99,7 +99,7 @@ export function CommentItem(props) {
   const handleLike = () => {
     commentService.likeComment(comment.id, true).then((res) => {
       setEditComment({
-        ...comment,
+        ...editComment,
         totalLikes: res.data.totalLikes ?? 0,
       });
     });
