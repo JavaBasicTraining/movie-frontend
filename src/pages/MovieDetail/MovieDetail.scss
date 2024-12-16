@@ -6,7 +6,7 @@
     display: flex;
     width: 100%;
     flex-direction: column;
-    gap: 50px;
+    gap: 35px;
 
     .content {
       display: flex;
@@ -45,10 +45,9 @@
             font-weight: bold;
             color: white;
             background-color: rgb(211, 90, 90);
-            // width: 100px; // k xi nhê, oke a, e hỉu r
-            white-space: nowrap; // chặn xuống dòng, hiện tại nó đang xuống dòng dựa vào khoảng trắng
-            // ngoài cái này, dùng width 100% cx ddc hảm a, k, bth nó sẽ k xuống dòng, tại vì cái width nhỏ lại
-            // nếu set width cho nó thì cũng như k, trừ khi set cứng 1 số vừa đủ, ok a, em toàn dùng width: auto :))
+    
+            white-space: nowrap; 
+           
           }
         }
       }
@@ -66,7 +65,19 @@
         color: white;
       }
     }
+    .btn-with-friend {
+      margin: 0;
+      padding: 0;
+      button {
+        height: 30px;
+        border: none;
+        font-weight: bold;
+        color: white;
+        background-color: rgb(211, 90, 90);
 
+        white-space: nowrap; 
+      }
+    }
     .body {
       h1 {
         font-weight: bold;

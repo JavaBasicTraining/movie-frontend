@@ -22,7 +22,6 @@ export const MovieDetail = () => {
   const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
   const [countRating, setCountRating] = useState(0);
-
   const evaluationsNumberReview = async (params) => {
     const response = await axiosInstance.get(
       `/api/v1/evaluations/numberOfReviews/${params}`
@@ -36,6 +35,21 @@ export const MovieDetail = () => {
     }
   };
 
+  const createRoom = async () => {
+    try {
+      const response = await axiosInstance.post(
+        `/api/v1/room-chat/create`,
+        { roomName: user.userName } 
+      );
+      return {
+        movie: response.data,
+      };
+    } catch (error) {
+      console.error("Error creating room:", error);
+      throw error; 
+    }
+  };
+  
   const averageRating = async (params) => {
     const response = await axiosInstance.get(
       `/api/v1/evaluations/average/${params}`
@@ -155,6 +169,16 @@ export const MovieDetail = () => {
                 {movie.genres.map((category) => category.name).join(', ')}
               </span>
             </div>
+          </div>
+          <div className="btn-with-friend">
+            <button
+              onClick={() => {
+                navigate(`/room/${movie.id}`);
+                createRoom();
+              }}
+            >
+              Xem cùng bạn bè
+            </button>
           </div>
           <div className="body">
             <h1>Nội dung:</h1>
