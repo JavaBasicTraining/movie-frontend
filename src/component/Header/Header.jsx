@@ -4,7 +4,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import './Header.scss';
-import { KeycloakComponent } from '../../component/KeycloakComponent/KeycloakComponent';
+import { KeycloakComponent } from '../KeycloakComponent/KeycloakComponent';
 import { keycloakService } from '../../services/keycloakService';
 
 export const Header = () => {
