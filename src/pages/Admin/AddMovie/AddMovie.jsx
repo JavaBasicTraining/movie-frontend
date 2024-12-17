@@ -320,8 +320,6 @@ export const AddMovie = () => {
             : [],
         }
       );
-
-      // Xử lý việc tải lên poster và video
       if (data.poster) {
         await uploadFileMovie(response.data.id, 'poster', data.poster);
       }
@@ -332,18 +330,27 @@ export const AddMovie = () => {
       if (isSeries(response.data.category)) {
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
-          if (episodeMap.poster && episodeMap.video) {
-            const formDataEpisode = new FormData();
-            formDataEpisode.append('poster', episodeMap.poster);
-            formDataEpisode.append('video', episodeMap.video);
+           
+          if (episodeMap.poster && episodeMap.video == null) {
+            const formDataPoster = new FormData();
+            formDataPoster.append('file', episodeMap.poster);
             await axiosInstance.patch(
-              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
-              formDataEpisode
+              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=poster`,
+              formDataPoster
+            );
+          }
+          
+          if (episodeMap.video && episodeMap.poster == null) {
+            const formDataVideo = new FormData();
+            formDataVideo.append('file', episodeMap.video);
+            await axiosInstance.patch(
+              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=video`,
+              formDataVideo
             );
           }
         }
       }
-
+      
       alert('Cập nhật thành công');
     } catch (error) {
       console.error('Error updating movie:', error);
@@ -353,7 +360,6 @@ export const AddMovie = () => {
   const apiCreate = async (newData, episodesMap) => {
     const response = await axiosInstance.post(
       `/api/v1/admin/movies`,
-
       newData
     );
 
