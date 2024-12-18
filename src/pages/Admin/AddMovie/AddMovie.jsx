@@ -30,6 +30,8 @@ export const AddMovie = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [showFilePoster, setShowFilePoster] = useState(false);
   const [showFileVideo, setShowFileVideo] = useState(true);
+
+  const [showTrailer, setShowTrailer] = useState(false);
   const [errors, setErrors] = useState({});
   const [isEdit, setIsEdit] = useState(false);
   const loader = useLoaderData();
@@ -42,12 +44,14 @@ export const AddMovie = () => {
     enTitle: '',
     description: '',
     country: '',
+    trailer: '',
     poster: '',
     video: '',
     idCategory: [],
     year: 0,
     prevPosterUrl: '',
     prevVideoUrl: '',
+    prevTrailerUrl: '',
     idGenre: [],
     episodes: [],
   });
@@ -71,10 +75,9 @@ export const AddMovie = () => {
   }, [data.poster]);
 
   useEffect(() => {
-    setIsEdit(!!loader?.movie);
-    setIsEdit(hasChanges(data));
-  }, [loader?.movie]);
-
+    setIsEdit(!!loader?.movie || hasChanges(data));
+  }, [loader?.movie, data]);
+  
   useEffect(() => {
     if (isEdit) {
       fetchDataUpdate(loader?.movie);
@@ -129,8 +132,9 @@ export const AddMovie = () => {
     setData(updatedData);
     setOriginalData(updatedData);
   };
-
   const hasChanges = (dataChange) => {
+    console.log( originalData);
+
     return JSON.stringify(dataChange) !== JSON.stringify(originalData);
   };
   const handleChange = (e, onSuccess) => {
@@ -167,12 +171,15 @@ export const AddMovie = () => {
       'video/vnd.dlna.mpeg-tts',
     ];
 
-    if (type === 'poster') {
-      return validImageTypes.includes(file.type);
-    } else if (type === 'video') {
-      return validVideoTypes.includes(file.type);
+    switch (type) {
+      case 'poster':
+        return validImageTypes.includes(file.type);
+      case 'video':
+      case 'trailer':
+        return validVideoTypes.includes(file.type);
+      default:
+        return false;
     }
-    return false;
   };
   const handleFileUpload = (e) => {
     const { name, files } = e.target;
@@ -187,11 +194,16 @@ export const AddMovie = () => {
       setShowFileVideo(false);
       return;
     }
+
     let isValid = false;
-    if (name === 'poster') {
-      isValid = validateFile(file, 'poster');
-    } else if (name === 'video') {
-      isValid = validateFile(file, 'video');
+    switch (name) {
+      case 'poster':
+      case 'video':
+      case 'trailer':
+        isValid = validateFile(file, name);
+        break;
+      default:
+        isValid = false;
     }
 
     if (!isValid) {
@@ -203,7 +215,17 @@ export const AddMovie = () => {
             : 'Chỉ được phép tải lên các tệp video (MP4, WebM, OGG, MOV, AVI, FLV, MKV, 3GP).',
       }));
       e.target.value = '';
-      name === 'poster' ? setShowFilePoster(false) : setShowFileVideo(false);
+      switch (name) {
+        case 'poster':
+          setShowFilePoster(false);
+          break;
+        case 'trailer':
+          setShowTrailer(false);
+          break;
+        default:
+          setShowFileVideo(false);
+          break;
+      }
       return;
     }
 
@@ -214,16 +236,33 @@ export const AddMovie = () => {
 
     const previewUrl = URL.createObjectURL(file);
 
-    if (name === 'video') {
-      setShowFileVideo(true);
-      setData((prev) => ({
-        ...prev,
-        video: file,
-        prevVideoUrl: previewUrl,
-      }));
-    } else if (name === 'poster') {
-      setShowFilePoster(true);
-      setData((prev) => ({ ...prev, poster: file, prevPosterUrl: previewUrl }));
+    switch (name) {
+      case 'video':
+        setShowFileVideo(true);
+        setData((prev) => ({
+          ...prev,
+          video: file,
+          prevVideoUrl: previewUrl,
+        }));
+        break;
+      case 'poster':
+        setShowFilePoster(true);
+        setData((prev) => ({
+          ...prev,
+          poster: file,
+          prevPosterUrl: previewUrl,
+        }));
+        break;
+      case 'trailer':
+        setShowTrailer(true);
+        setData((prev) => ({
+          ...prev,
+          trailer: file,
+          prevTrailerUrl: previewUrl,
+        }));
+        break;
+      default:
+        break;
     }
   };
 
@@ -275,7 +314,6 @@ export const AddMovie = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) {
       return;
     } else {
@@ -330,7 +368,7 @@ export const AddMovie = () => {
       if (isSeries(response.data.category)) {
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
-           
+
           if (episodeMap.poster && episodeMap.video == null) {
             const formDataPoster = new FormData();
             formDataPoster.append('file', episodeMap.poster);
@@ -339,8 +377,24 @@ export const AddMovie = () => {
               formDataPoster
             );
           }
-          
+
           if (episodeMap.video && episodeMap.poster == null) {
+            const formDataVideo = new FormData();
+            formDataVideo.append('file', episodeMap.video);
+            await axiosInstance.patch(
+              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=video`,
+              formDataVideo
+            );
+          }
+
+          if (episodeMap.poster && episodeMap.video) {
+            const formDataPoster = new FormData();
+            formDataPoster.append('file', episodeMap.poster);
+            await axiosInstance.patch(
+              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=poster`,
+              formDataPoster
+            );
+
             const formDataVideo = new FormData();
             formDataVideo.append('file', episodeMap.video);
             await axiosInstance.patch(
@@ -350,7 +404,7 @@ export const AddMovie = () => {
           }
         }
       }
-      
+
       alert('Cập nhật thành công');
     } catch (error) {
       console.error('Error updating movie:', error);
@@ -360,13 +414,16 @@ export const AddMovie = () => {
   const apiCreate = async (newData, episodesMap) => {
     const response = await axiosInstance.post(
       `/api/v1/admin/movies`,
+
       newData
     );
 
     if (!isSeries() && data.poster && data.video) {
       uploadFileMovie(response.data.id, 'poster', data.poster);
       uploadFileMovie(response.data.id, 'video', data.video);
+      uploadFileMovie(response.data.id, 'trailer', data.trailer);
     } else if (data.poster) {
+      uploadFileMovie(response.data.id, 'trailer', data.trailer);
       const formData = new FormData();
       formData.append('file', data.poster);
       const res = await axiosInstance.patch(
@@ -376,12 +433,18 @@ export const AddMovie = () => {
       for (const item of response.data.episodes) {
         const episodeMap = episodesMap.get(item.tempId);
         if (episodeMap && episodeMap.poster && episodeMap.video) {
-          const formDataEpisode = new FormData();
-          formDataEpisode.append('poster', episodeMap.poster);
-          formDataEpisode.append('video', episodeMap.video);
+          const formDataPoster = new FormData();
+          formDataPoster.append('file', episodeMap.poster);
           await axiosInstance.patch(
-            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}`,
-            formDataEpisode
+            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=poster`,
+            formDataPoster
+          );
+
+          const formDataVideo = new FormData();
+          formDataVideo.append('file', episodeMap.video);
+          await axiosInstance.patch(
+            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=video`,
+            formDataVideo
           );
         }
       }
@@ -689,7 +752,32 @@ export const AddMovie = () => {
           showFileVideo && <video src={data.prevVideoUrl} controls></video>
         )}
 
-        <button onClick={handleSubmit} disabled={!hasChanges(data)}>
+        <div className="selected-input-form">
+          <label id="title-file-trailer">Tải Trailer</label>
+          <div className="validate">
+            <input
+              id="file-trailer"
+              type="file"
+              name="trailer"
+              onChange={handleFileUpload}
+              required
+            />
+            {errorsFile.trailer && (
+              <small className="error">{errorsFile.trailer}</small>
+            )}
+          </div>
+        </div>
+
+        {isEdit && !errorsFile.trailer && showButtonUploadMovie ? (
+          <video
+            src={data.prevTrailerUrl || loader?.movie.trailerUrl}
+            controls
+          ></video>
+        ) : (
+          showTrailer && <video src={data.prevTrailerUrl} controls></video>
+        )}
+
+        <button onClick={handleSubmit}>
           {isEdit ? 'Sửa Thông Tin Phim' : 'Thêm'}
         </button>
       </div>
