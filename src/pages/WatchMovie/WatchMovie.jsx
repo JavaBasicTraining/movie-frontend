@@ -417,18 +417,7 @@ export const WatchMovie = () => {
                 )}
               </div>
             ))}
-          <span>Bình Luận</span>
-          <div className="reply-input">
-            <input
-              className="input"
-              type="text"
-              value={comment}
-              placeholder="Nhập bình luận của bạn..."
-              onChange={handleCommentChange}
-              onKeyDown={handleKeyDown}
-              required
-            />
-          </div>
+         
         </div>
       </div>
     </div>
