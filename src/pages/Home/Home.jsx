@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../../configs/axiosConfig';
 import { Link } from 'react-router-dom';
 import { PlayCircleOutlined } from '@ant-design/icons';
-import "./Home.scss"
+import './Home.scss';
+
 export const Home = () => {
   const [movies, setMovies] = useState([]);
 
@@ -12,7 +13,7 @@ export const Home = () => {
         const response = await axiosInstance.get(`/api/v1/movies`);
         setMovies(response.data);
       } catch (error) {
-        console.error("Failed to fetch movies", error);
+        console.error('Failed to fetch movies', error);
       }
     };
 
@@ -20,18 +21,18 @@ export const Home = () => {
   }, []);
 
   const horrifiedMovies = movies.filter((movie) =>
-  movie.genres.some((genreName) =>
-    genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
+    movie.genres.some((genreName) =>
+      genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
     )
   );
   const adventureMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes("phiêu lưu".toLowerCase())
+      genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase())
     )
   );
   const cartoonMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes("hoạt hình".toLowerCase())
+      genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase())
     )
   );
 
@@ -121,13 +122,12 @@ export const Home = () => {
       )}
 
       <span>
-        Contact Info: Liên hệ ngay All content of this website is collected from
-        official video websites on the Internet, and does not provide genuine
-        streaming. If your rights are violated, please notify us, we will remove
-        the infringing content in time, thank you for your cooperation! All
-        advertising on the web is the personal opinion of the customer, not
-        related to our website. Please consider and take responsibility for your
-        own choices. Happy moviegoers!
+        Contact Info: Liên hệ ngay All content of this website is collected from official
+        video websites on the Internet, and does not provide genuine streaming. If your
+        rights are violated, please notify us, we will remove the infringing content in
+        time, thank you for your cooperation! All advertising on the web is the personal
+        opinion of the customer, not related to our website. Please consider and take
+        responsibility for your own choices. Happy moviegoers!
       </span>
     </div>
   );

@@ -4,25 +4,15 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import PrivateRoute from './component/PrivateRoute';
 import './index.css';
-import { AddMovie, AddMovieLoader } from './pages/Admin/AddMovie/AddMovie';
 import { Admin } from './pages/Admin/Admin';
-import {
-  ListMovie,
-  MovieManagerLoader,
-} from './pages/Admin/ListMovie/ListMovieAdmin';
-import {
-  CountryLoader,
-  Movie,
-  MovieLoader,
-} from './pages/ListMovie/ListMovieUser';
-import {
-  MovieDetail,
-  MovieDetailLoader,
-} from './pages/MovieDetail/MovieDetail';
+import { ListMovie, MovieManagerLoader } from './pages/Admin/ListMovie/ListMovieAdmin';
+import { MovieEditor, MovieEditorLoader } from './pages/Admin/MovieEditor/MovieEditor';
+import { Home } from './pages/Home/Home';
+import { CountryLoader, Movie, MovieLoader } from './pages/ListMovie/ListMovieUser';
+import { MovieDetail, MovieDetailLoader } from './pages/MovieDetail/MovieDetail';
 import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
 import { WatchMovie } from './pages/WatchMovie/WatchMovie';
 import reportWebVitals from './reportWebVitals';
-import { Home } from './pages/Home/Home';
 
 const router = createBrowserRouter([
   {
@@ -82,12 +72,12 @@ const router = createBrowserRouter([
           },
           {
             path: '/admin/movie/new',
-            element: <AddMovie />,
+            element: <MovieEditor />,
           },
           {
             path: '/admin/movie/:id',
-            element: <AddMovie value="Edit" />,
-            loader: AddMovieLoader,
+            element: <MovieEditor />,
+            loader: MovieEditorLoader,
           },
         ],
       },

@@ -1,4 +1,4 @@
-.container-addmovie {
+.movie-editor {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,7 +7,35 @@
   color: white;
   background-color: rgb(62, 51, 51);
 
-  .form-addmovie {
+  .form-label {
+    color: white;
+  }
+
+  .form-container {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .poster-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+
+    &__image {
+      width: 100%;
+      object-fit: contain;
+    }
+
+    &__remove {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+  }
+
+  .movie-editor__form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -64,9 +92,8 @@
         }
 
         .dropdown-heading .dropdown-heading-value {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-          'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-          'Helvetica Neue', sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
         }
       }
 
