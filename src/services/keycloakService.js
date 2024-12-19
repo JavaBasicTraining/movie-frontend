@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { storageService } from './storageService';
-import { REDIRECT_URL } from '../constants/keycloak';
+import { LOGOUT_REDIRECT_URL, REDIRECT_URL } from '../constants/keycloak';
 import { keycloak } from '../configs/keycloak';
 import { ACCESS_TOKEN } from '../constants/storage';
 
@@ -36,7 +36,7 @@ class KeycloakService {
 
   openLogoutPage() {
     storageService.remove(ACCESS_TOKEN);
-    const loginUrl = `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=http://localhost:3000`;
+    const loginUrl = `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=${LOGOUT_REDIRECT_URL}`;
     window.open(loginUrl, '_self');
   }
 }

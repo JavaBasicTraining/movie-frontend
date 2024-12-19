@@ -2,15 +2,13 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import qs from 'qs';
 import { countries } from '../../../static-data/countries';
-import {
-  DEFAULT_EPISODE,
-  EpisodeForm,
-} from '../../../component/EpisodeForm/EpisodeForm';
+import { DEFAULT_EPISODE, EpisodeForm } from '../../../component/EpisodeForm/EpisodeForm';
 import { MultiSelect } from 'react-multi-select-component';
 import Select from 'react-select';
 import { v4 as uuidv4 } from 'uuid';
 import './AddMovie.scss';
 import { axiosInstance } from '../../../configs/axiosConfig';
+import { notification } from 'antd';
 
 export async function AddMovieLoader({ params }) {
   const id = parseInt(params.id);
@@ -77,7 +75,7 @@ export const AddMovie = () => {
   useEffect(() => {
     setIsEdit(!!loader?.movie || hasChanges(data));
   }, [loader?.movie, data]);
-  
+
   useEffect(() => {
     if (isEdit) {
       fetchDataUpdate(loader?.movie);
@@ -133,7 +131,7 @@ export const AddMovie = () => {
     setOriginalData(updatedData);
   };
   const hasChanges = (dataChange) => {
-    console.log( originalData);
+    console.log(originalData);
 
     return JSON.stringify(dataChange) !== JSON.stringify(originalData);
   };
@@ -315,7 +313,7 @@ export const AddMovie = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      return;
+      return Promise.resolve();
     } else {
       try {
         const newData = {
@@ -325,23 +323,21 @@ export const AddMovie = () => {
             tempId: uuidv4(),
           })),
         };
-        const episodesMap = new Map(
-          newData.episodes.map((item) => [item.tempId, item])
-        );
+
+        const episodesMap = new Map(newData.episodes.map((item) => [item.tempId, item]));
 
         if (!isEdit) {
-          apiCreate(newData, episodesMap);
+          await createMovie(newData, episodesMap);
         } else {
-          apiUpdate(newData, episodesMap);
+          await updateMovie(newData, episodesMap);
         }
       } catch (error) {
-        alert('Lỗi');
-        console.error('Error submitting movie:', error);
+        notification.error({ message: `Error when submitting ${error}` });
       }
     }
   };
 
-  const apiUpdate = async (newData, episodesMap) => {
+  const updateMovie = async (newData, episodesMap) => {
     try {
       const response = await axiosInstance.put(
         `/api/v1/admin/movies/${loader?.movie.id}`,
@@ -358,9 +354,15 @@ export const AddMovie = () => {
             : [],
         }
       );
+
       if (data.poster) {
         await uploadFileMovie(response.data.id, 'poster', data.poster);
       }
+
+      if (data.trailer) {
+        await uploadFileMovie(response.data.id, 'trailer', data.trailer);
+      }
+
       if (data.video && !isSeries()) {
         await uploadFileMovie(response.data.id, 'video', data.video);
       }
@@ -411,54 +413,58 @@ export const AddMovie = () => {
       alert('Lỗi cập nhật phim');
     }
   };
-  const apiCreate = async (newData, episodesMap) => {
-    const response = await axiosInstance.post(
-      `/api/v1/admin/movies`,
 
-      newData
-    );
+  const createMovie = async (newData, episodesMap) => {
+    const response = await axiosInstance.post(`/api/v1/admin/movies`, newData);
 
-    if (!isSeries() && data.poster && data.video) {
-      uploadFileMovie(response.data.id, 'poster', data.poster);
-      uploadFileMovie(response.data.id, 'video', data.video);
-      uploadFileMovie(response.data.id, 'trailer', data.trailer);
-    } else if (data.poster) {
-      uploadFileMovie(response.data.id, 'trailer', data.trailer);
-      const formData = new FormData();
-      formData.append('file', data.poster);
-      const res = await axiosInstance.patch(
-        `/api/v1/admin/movies/${response.data.id}?type=poster`,
-        formData
-      );
-      for (const item of response.data.episodes) {
-        const episodeMap = episodesMap.get(item.tempId);
-        if (episodeMap && episodeMap.poster && episodeMap.video) {
-          const formDataPoster = new FormData();
-          formDataPoster.append('file', episodeMap.poster);
-          await axiosInstance.patch(
-            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=poster`,
-            formDataPoster
-          );
+    if (data.poster) {
+      await uploadFileMovie(response.data.id, 'poster', data.poster);
+    }
 
-          const formDataVideo = new FormData();
-          formDataVideo.append('file', episodeMap.video);
-          await axiosInstance.patch(
-            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=video`,
-            formDataVideo
-          );
-        }
+    if (data.trailer) {
+      await uploadFileMovie(response.data.id, 'trailer', data.trailer);
+    }
+
+    if (!isSeries() && data.video) {
+      await uploadFileMovie(response.data.id, 'video', data.video);
+    }
+
+    if (isSeries()) {
+      await updateEpisodes(response.data.episodes, response.data.id, episodesMap);
+    }
+
+    notification.info({
+      message: 'Thêm phim mới thành công',
+    });
+  };
+
+  const updateEpisodes = async (episodes, movieId, episodesMap) => {
+    for (const episode of episodes) {
+      const episodeMap = episodesMap.get(episode.tempId);
+
+      if (episodeMap?.poster) {
+        await uploadFileEpisode(episode.id, 'poster', episodeMap.poster, movieId);
+      }
+
+      if (episodeMap?.video) {
+        await uploadFileEpisode(episode.id, 'video', episodeMap.video, movieId);
       }
     }
-    alert('Thêm phim mới thành công', response.data);
+  };
+
+  const uploadFileEpisode = async (episodeId, type, file, movieId) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    await axiosInstance.patch(
+      `/api/v1/admin/movies/${movieId}/episodes/${episodeId}?type=${type}`,
+      formData
+    );
   };
 
   const uploadFileMovie = async (id, type, file) => {
     const formData = new FormData();
     formData.append('file', file);
-    await axiosInstance.patch(
-      `/api/v1/admin/movies/${id}?type=${type}`,
-      formData
-    );
+    await axiosInstance.patch(`/api/v1/admin/movies/${id}?type=${type}`, formData);
   };
 
   const handleShowEpisode = (e) => {
@@ -520,9 +526,7 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.nameMovie && (
-              <small className="error">{errors.nameMovie}</small>
-            )}
+            {errors.nameMovie && <small className="error">{errors.nameMovie}</small>}
           </div>
         </div>
 
@@ -536,9 +540,7 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.viTitle && (
-              <small className="error">{errors.viTitle}</small>
-            )}
+            {errors.viTitle && <small className="error">{errors.viTitle}</small>}
           </div>
         </div>
 
@@ -552,9 +554,7 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.enTitle && (
-              <small className="error">{errors.enTitle}</small>
-            )}
+            {errors.enTitle && <small className="error">{errors.enTitle}</small>}
           </div>
         </div>
 
@@ -568,9 +568,7 @@ export const AddMovie = () => {
               onChange={handleChange}
               required
             />
-            {errors.description && (
-              <small className="error">{errors.description}</small>
-            )}
+            {errors.description && <small className="error">{errors.description}</small>}
           </div>
         </div>
 
@@ -607,9 +605,7 @@ export const AddMovie = () => {
                 </option>
               ))}
             </select>
-            {errors.country && (
-              <small className="error">{errors.country}</small>
-            )}
+            {errors.country && <small className="error">{errors.country}</small>}
           </div>
         </div>
 
@@ -634,9 +630,7 @@ export const AddMovie = () => {
                 </option>
               ))}
             </select>
-            {errors.idCategory && (
-              <small className="error">{errors.idCategory}</small>
-            )}
+            {errors.idCategory && <small className="error">{errors.idCategory}</small>}
           </div>
         </div>
 
@@ -687,9 +681,7 @@ export const AddMovie = () => {
               onChange={handleFileUpload}
               required
             />
-            {errorsFile.poster && (
-              <small className="error">{errorsFile.poster}</small>
-            )}
+            {errorsFile.poster && <small className="error">{errorsFile.poster}</small>}
           </div>
         </div>
 
@@ -736,18 +728,13 @@ export const AddMovie = () => {
                 onChange={handleFileUpload}
                 required
               />
-              {errorsFile.video && (
-                <small className="error">{errorsFile.video}</small>
-              )}
+              {errorsFile.video && <small className="error">{errorsFile.video}</small>}
             </div>
           </div>
         )}
 
         {isEdit && !errorsFile.video && showButtonUploadMovie ? (
-          <video
-            src={data.prevVideoUrl || loader?.movie.videoUrl}
-            controls
-          ></video>
+          <video src={data.prevVideoUrl || loader?.movie.videoUrl} controls></video>
         ) : (
           showFileVideo && <video src={data.prevVideoUrl} controls></video>
         )}
@@ -762,24 +749,17 @@ export const AddMovie = () => {
               onChange={handleFileUpload}
               required
             />
-            {errorsFile.trailer && (
-              <small className="error">{errorsFile.trailer}</small>
-            )}
+            {errorsFile.trailer && <small className="error">{errorsFile.trailer}</small>}
           </div>
         </div>
 
         {isEdit && !errorsFile.trailer && showButtonUploadMovie ? (
-          <video
-            src={data.prevTrailerUrl || loader?.movie.trailerUrl}
-            controls
-          ></video>
+          <video src={data.prevTrailerUrl || loader?.movie.trailerUrl} controls></video>
         ) : (
           showTrailer && <video src={data.prevTrailerUrl} controls></video>
         )}
 
-        <button onClick={handleSubmit}>
-          {isEdit ? 'Sửa Thông Tin Phim' : 'Thêm'}
-        </button>
+        <button onClick={handleSubmit}>{isEdit ? 'Sửa Thông Tin Phim' : 'Thêm'}</button>
       </div>
     </div>
   );
