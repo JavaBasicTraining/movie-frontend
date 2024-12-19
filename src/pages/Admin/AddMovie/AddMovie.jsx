@@ -82,6 +82,7 @@ export const AddMovie = () => {
     if (isEdit) {
       fetchDataUpdate(loader?.movie);
       setShowEpisode(loader?.movie?.category?.id === 1);
+      setShowTrailer(true)
       if (loader?.movie?.category?.id === 1) {
         setShowButtonUploadMovie(false);
         setShowFileVideo(false);
@@ -368,7 +369,7 @@ export const AddMovie = () => {
       if (isSeries(response.data.category)) {
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
-
+          uploadFileMovie(response.data.id, 'trailer', data.trailer);
           if (episodeMap.poster && episodeMap.video == null) {
             const formDataPoster = new FormData();
             formDataPoster.append('file', episodeMap.poster);
@@ -774,7 +775,7 @@ export const AddMovie = () => {
             controls
           ></video>
         ) : (
-          showTrailer && <video src={data.prevTrailerUrl} controls></video>
+          showTrailer && <video src={data.prevTrailerUrl ||  loader?.movie.trailerUrl} controls></video>
         )}
 
         <button onClick={handleSubmit}>
