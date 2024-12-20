@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movie-frontend
+  labels:
+    app: movie-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: movie-frontend
+  template:
+    metadata:
+      labels:
+        app: movie-frontend
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: movie-frontend
+        image: huyha25062000/movie-frontend:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 3000
+        env:
+          - name: NODE_ENV
+            value: 'production'
+        resources:
+          limits:
+            memory: '512Mi'
+            cpu: '500m'
+          requests:
+            memory: '256Mi'
+            cpu: '250m'
