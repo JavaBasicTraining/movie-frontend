@@ -5,7 +5,9 @@ import './ListMovieUser.scss';
 
 export async function MovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies`, {
-    params: params.path,
+    params: {
+      keyword: params.keyword
+ }
   });
   return {
     movies: response.data ?? [],
@@ -14,7 +16,7 @@ export async function MovieLoader({ params }) {
 
 export async function CountryLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies`, {
-    params: params,
+    params: params.path,
   });
   return {
     movies: response.data ?? [],
@@ -29,7 +31,7 @@ export const Movie = () => {
       {
         <div className="item">
           {movies?.map((item) => (
-            <Link to={`/${item.nameMovie}`}>
+            <Link to={`/${item.path}`}>
               <div className="poster" key={item.id}>
                 <div className="img-item-filter">
                   <img src={item.posterUrl} alt="" />

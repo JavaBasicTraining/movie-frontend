@@ -33,11 +33,9 @@
       img {
         object-fit: cover;
       }
-      .item-file {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
 
+      
+    
         .validate-episode {
           font-size: 100%;
           color: red;
@@ -46,6 +44,11 @@
           min-width: 100px;
           display: flex;
           flex-direction: column;
+          .item-file {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+    
           input {
             color: black;
           }

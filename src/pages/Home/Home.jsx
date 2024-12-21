@@ -1,98 +1,134 @@
 import React, { useEffect, useState } from 'react';
-import { HiOutlineFilm } from 'react-icons/hi';
-import { SearchOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
-import './Home.scss';
-import { KeycloakComponent } from '../../component/KeycloakComponent/KeycloakComponent';
-import { keycloakService } from '../../services/keycloakService';
-
-export const Header = () => {
-  const navigate = useNavigate();
-  const [name, setName] = useState('');
-
-  const { token } = useAuth();
-
-  const handleChange = (e) => {
-    setName(e.target.value);
-  };
-
-  const isLoggedIn = () => {
-    return token !== null;
-  };
+import { axiosInstance } from '../../configs/axiosConfig';
+import { Link } from 'react-router-dom';
+import { PlayCircleOutlined } from '@ant-design/icons';
+import "./Home.scss"
+export const Home = () => {
+  const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    const tokenCleared = localStorage.getItem('tokenCleared');
-    if (!tokenCleared) {
-    }
+    const fetchMovies = async () => {
+      try {
+        const response = await axiosInstance.get(`/api/v1/movies`);
+        setMovies(response.data);
+      } catch (error) {
+        console.error("Failed to fetch movies", error);
+      }
+    };
+
+    fetchMovies();
   }, []);
 
-  const filterMovie = async (event, params) => {
-    try {
-      if (event && event.key === 'Enter') {
-        event.preventDefault();
-      }
-      if (params === '') {
-        navigate('/');
-      } else if (event.target) {
-        navigate(`/filter/${params}`);
-      }
-    } catch (error) {
-      navigate(`/filter/${params}`);
-      return null;
-    }
-  };
+  const horrifiedMovies = movies.filter((movie) =>
+  movie.genres.some((genreName) =>
+    genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
+    )
+  );
+  const adventureMovies = movies.filter((movie) =>
+    movie.genres.some((genreName) =>
+      genreName.name.toLowerCase().includes("phiêu lưu".toLowerCase())
+    )
+  );
+  const cartoonMovies = movies.filter((movie) =>
+    movie.genres.some((genreName) =>
+      genreName.name.toLowerCase().includes("hoạt hình".toLowerCase())
+    )
+  );
 
   return (
-    <div className="home-page">
-      <div className="header">
-        <div className="header-title">
-          <div className="header-title-icon">
-            <HiOutlineFilm className="icon"></HiOutlineFilm>
-            <div className="title">
-              <span>TrumPhim.Net </span>
-              <label>Phim mới cập nhật chất lượng cao </label>
-            </div>
-          </div>
-          <div className="search">
-            <input
-              placeholder="Tim Kiếm Phim"
-              className="search-input"
-              type="text"
-              name="name"
-              value={name}
-              onChange={handleChange}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  filterMovie(event, name);
-                }
-              }}
-              required
-            ></input>
-            <button onClick={() => filterMovie(null, name)}>
-              <SearchOutlined />
-            </button>
+    <div className="page-container">
+      {movies.length > 0 && (
+        <div className="nav-category">
+          <h1>Phim Đề Cử</h1>
+          <div className="article-item">
+            {movies.map((item) => (
+              <Link to={`/${item.path}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
+                </div>
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
           </div>
         </div>
-        {!isLoggedIn() && (
-          <div className="login-register">
-            <KeycloakComponent className="keycloak" />
+      )}
+
+      {/* Phim Lẻ Mới Cập Nhật */}
+      {adventureMovies.length > 0 && (
+        <div className="nav-category">
+          <h1>Phim Lẻ Mới Cập Nhật</h1>
+          <div className="article-item">
+            {adventureMovies.map((item) => (
+              <Link to={`/${item.path}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
+                </div>
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
           </div>
-        )}
-        {isLoggedIn() && (
-          <div className="login-register">
-            <a
-              href="/public"
-              onClick={(e) => {
-                e.preventDefault();
-                keycloakService.openLogoutPage();
-              }}
-            >
-              Đăng Xuất
-            </a>
+        </div>
+      )}
+
+      {/* Phim Bộ Mới Cập Nhật */}
+      {horrifiedMovies.length > 0 && (
+        <div className="nav-category">
+          <h1>Phim Bộ Mới Cập Nhật</h1>
+          <div className="article-item">
+            {horrifiedMovies.map((item) => (
+              <Link to={`/${item.path}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
+                </div>
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Phim Hoạt Hình */}
+      {cartoonMovies.length > 0 && (
+        <div className="nav-category">
+          <h1>Phim Hoạt Hình</h1>
+          <div className="article-item">
+            {cartoonMovies.map((item) => (
+              <Link to={`/${item.path}`} className="list-item-page" key={item.id}>
+                <div className="img-item">
+                  <img src={item.posterUrl} alt={item.title} />
+                  <div className="icon-play">
+                    <PlayCircleOutlined />
+                  </div>
+                </div>
+                <span>{item.nameMovie}</span>
+                <span>{item.enTitle}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <span>
+        Contact Info: Liên hệ ngay All content of this website is collected from
+        official video websites on the Internet, and does not provide genuine
+        streaming. If your rights are violated, please notify us, we will remove
+        the infringing content in time, thank you for your cooperation! All
+        advertising on the web is the personal opinion of the customer, not
+        related to our website. Please consider and take responsibility for your
+        own choices. Happy moviegoers!
+      </span>
     </div>
   );
 };

@@ -20,9 +20,9 @@ import {
   MovieDetailLoader,
 } from './pages/MovieDetail/MovieDetail';
 import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
-import { Page } from './pages/Page/Page';
 import { WatchMovie } from './pages/WatchMovie/WatchMovie';
 import reportWebVitals from './reportWebVitals';
+import { Home } from './pages/Home/Home';
 
 const router = createBrowserRouter([
   {
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Page />,
+        element: <Home />,
       },
 
       {
