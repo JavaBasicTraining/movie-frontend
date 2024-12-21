@@ -77,12 +77,12 @@ export const AddMovie = () => {
   useEffect(() => {
     setIsEdit(!!loader?.movie || hasChanges(data));
   }, [loader?.movie, data]);
-  
+
   useEffect(() => {
     if (isEdit) {
       fetchDataUpdate(loader?.movie);
       setShowEpisode(loader?.movie?.category?.id === 1);
-      setShowTrailer(true)
+      setShowTrailer(true);
       if (loader?.movie?.category?.id === 1) {
         setShowButtonUploadMovie(false);
         setShowFileVideo(false);
@@ -134,7 +134,7 @@ export const AddMovie = () => {
     setOriginalData(updatedData);
   };
   const hasChanges = (dataChange) => {
-    console.log( originalData);
+    console.log(originalData);
 
     return JSON.stringify(dataChange) !== JSON.stringify(originalData);
   };
@@ -359,17 +359,18 @@ export const AddMovie = () => {
             : [],
         }
       );
+      if (data.trailer) {
+        uploadFileMovie(response.data.id, 'trailer', data.trailer);
+      }
       if (data.poster) {
         await uploadFileMovie(response.data.id, 'poster', data.poster);
       }
       if (data.video && !isSeries()) {
         await uploadFileMovie(response.data.id, 'video', data.video);
       }
-
       if (isSeries(response.data.category)) {
         for (const item of response.data.episodes) {
           const episodeMap = episodesMap.get(item.tempId);
-          uploadFileMovie(response.data.id, 'trailer', data.trailer);
           if (episodeMap.poster && episodeMap.video == null) {
             const formDataPoster = new FormData();
             formDataPoster.append('file', episodeMap.poster);
@@ -775,7 +776,12 @@ export const AddMovie = () => {
             controls
           ></video>
         ) : (
-          showTrailer && <video src={data.prevTrailerUrl ||  loader?.movie.trailerUrl} controls></video>
+          showTrailer && (
+            <video
+              src={data.prevTrailerUrl || loader?.movie.trailerUrl}
+              controls
+            ></video>
+          )
         )}
 
         <button onClick={handleSubmit}>
