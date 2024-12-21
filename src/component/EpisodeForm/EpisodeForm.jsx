@@ -197,7 +197,7 @@ export const EpisodeForm = ({ formChanged, episode, index }) => {
           {showFilePoster && (
             <img
               className="poster-item-episode"
-              src={episode.posterUrl || data.prevPosterUrl}
+              src={ data.prevPosterUrl|| episode.posterUrl}
               alt=""
             />
           )}
@@ -215,7 +215,7 @@ export const EpisodeForm = ({ formChanged, episode, index }) => {
           {(showFileVideo || episode.video) && (
             <video
               className="video-episode-item"
-              src={episode.videoUrl || data.prevVideoUrl}
+              src={ data.prevVideoUrl|| episode.videoUrl }
               controls
             ></video>
           )}
