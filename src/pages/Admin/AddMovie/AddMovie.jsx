@@ -75,7 +75,11 @@ export const AddMovie = () => {
   }, [data.poster]);
 
   useEffect(() => {
-    setIsEdit(!!loader?.movie || hasChanges(data));
+    if (loader?.movie) {
+      setIsEdit(true);
+    } else if (hasChanges(data)) {
+      setIsEdit(false);
+    }
   }, [loader?.movie, data]);
 
   useEffect(() => {
@@ -134,8 +138,6 @@ export const AddMovie = () => {
     setOriginalData(updatedData);
   };
   const hasChanges = (dataChange) => {
-    console.log(originalData);
-
     return JSON.stringify(dataChange) !== JSON.stringify(originalData);
   };
   const handleChange = (e, onSuccess) => {
@@ -342,6 +344,74 @@ export const AddMovie = () => {
     }
   };
 
+  const upLoadFileEpisode = async (item, response, file, type) => {
+    const formDataPoster = new FormData();
+    formDataPoster.append('file', file);
+    await axiosInstance.patch(
+      `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=${type}`,
+      formDataPoster
+    );
+  };
+  const createUpdateEpisode = async (episodesMap, response) => {
+    if (isEdit) {
+      if (isSeries(response.data.category)) {
+        for (const item of response.data.episodes) {
+          const episodeMap = episodesMap.get(item.tempId);
+          if (episodeMap.poster && episodeMap.video == null) {
+            upLoadFileEpisode(item, response, episodeMap.poster, 'poster');
+          }
+
+          if (episodeMap.video && episodeMap.poster == null) {
+            upLoadFileEpisode(item, response, episodeMap.video, 'video');
+          }
+
+          if (episodeMap.poster && episodeMap.video) {
+            const formDataPoster = new FormData();
+            formDataPoster.append('file', episodeMap.poster);
+            await axiosInstance.patch(
+              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=poster`,
+              formDataPoster
+            );
+
+            const formDataVideo = new FormData();
+            formDataVideo.append('file', episodeMap.video);
+            await axiosInstance.patch(
+              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=video`,
+              formDataVideo
+            );
+          }
+        }
+      }
+    } else {
+      if (data.poster) {
+        uploadFileMovie(response.data.id, 'trailer', data.trailer);
+        const formData = new FormData();
+        formData.append('file', data.poster);
+        const res = await axiosInstance.patch(
+          `/api/v1/admin/movies/${response.data.id}?type=poster`,
+          formData
+        );
+        for (const item of response.data.episodes) {
+          const episodeMap = episodesMap.get(item.tempId);
+          if (episodeMap && episodeMap.poster && episodeMap.video) {
+            const formDataPoster = new FormData();
+            formDataPoster.append('file', episodeMap.poster);
+            await axiosInstance.patch(
+              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=poster`,
+              formDataPoster
+            );
+
+            const formDataVideo = new FormData();
+            formDataVideo.append('file', episodeMap.video);
+            await axiosInstance.patch(
+              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=video`,
+              formDataVideo
+            );
+          }
+        }
+      }
+    }
+  };
   const apiUpdate = async (newData, episodesMap) => {
     try {
       const response = await axiosInstance.put(
@@ -368,45 +438,7 @@ export const AddMovie = () => {
       if (data.video && !isSeries()) {
         await uploadFileMovie(response.data.id, 'video', data.video);
       }
-      if (isSeries(response.data.category)) {
-        for (const item of response.data.episodes) {
-          const episodeMap = episodesMap.get(item.tempId);
-          if (episodeMap.poster && episodeMap.video == null) {
-            const formDataPoster = new FormData();
-            formDataPoster.append('file', episodeMap.poster);
-            await axiosInstance.patch(
-              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=poster`,
-              formDataPoster
-            );
-          }
-
-          if (episodeMap.video && episodeMap.poster == null) {
-            const formDataVideo = new FormData();
-            formDataVideo.append('file', episodeMap.video);
-            await axiosInstance.patch(
-              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=video`,
-              formDataVideo
-            );
-          }
-
-          if (episodeMap.poster && episodeMap.video) {
-            const formDataPoster = new FormData();
-            formDataPoster.append('file', episodeMap.poster);
-            await axiosInstance.patch(
-              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=poster`,
-              formDataPoster
-            );
-
-            const formDataVideo = new FormData();
-            formDataVideo.append('file', episodeMap.video);
-            await axiosInstance.patch(
-              `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=video`,
-              formDataVideo
-            );
-          }
-        }
-      }
-
+      createUpdateEpisode(episodesMap, response);
       alert('Cập nhật thành công');
     } catch (error) {
       console.error('Error updating movie:', error);
@@ -424,33 +456,8 @@ export const AddMovie = () => {
       uploadFileMovie(response.data.id, 'poster', data.poster);
       uploadFileMovie(response.data.id, 'video', data.video);
       uploadFileMovie(response.data.id, 'trailer', data.trailer);
-    } else if (data.poster) {
-      uploadFileMovie(response.data.id, 'trailer', data.trailer);
-      const formData = new FormData();
-      formData.append('file', data.poster);
-      const res = await axiosInstance.patch(
-        `/api/v1/admin/movies/${response.data.id}?type=poster`,
-        formData
-      );
-      for (const item of response.data.episodes) {
-        const episodeMap = episodesMap.get(item.tempId);
-        if (episodeMap && episodeMap.poster && episodeMap.video) {
-          const formDataPoster = new FormData();
-          formDataPoster.append('file', episodeMap.poster);
-          await axiosInstance.patch(
-            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=poster`,
-            formDataPoster
-          );
-
-          const formDataVideo = new FormData();
-          formDataVideo.append('file', episodeMap.video);
-          await axiosInstance.patch(
-            `/api/v1/admin/movies/${response.data.id}/episodes/${item.id}?type=video`,
-            formDataVideo
-          );
-        }
-      }
     }
+    createUpdateEpisode(episodesMap, response);
     alert('Thêm phim mới thành công', response.data);
   };
 
@@ -784,7 +791,7 @@ export const AddMovie = () => {
           )
         )}
 
-        <button onClick={handleSubmit}>
+        <button onClick={handleSubmit} disabled={!hasChanges(data)}>
           {isEdit ? 'Sửa Thông Tin Phim' : 'Thêm'}
         </button>
       </div>
