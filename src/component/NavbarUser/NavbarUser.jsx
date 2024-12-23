@@ -12,16 +12,15 @@ export const NavbarUser = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
   useEffect(() => {
-    
-    navbar.map((item) => {
+    navbar.forEach((item) => {
       if (item.name === 'Thể Loại') {
         item.subItems = categories.map((category) => ({
           name: category.name,
           path: category.name,
         }));
       }
-      return item;
     });
   }, [categories]);
 
@@ -34,8 +33,8 @@ export const NavbarUser = () => {
     return navbar.map((value, index) => {
       return (
         <div key={index} className="nav-item">
-          <span
-            className="nav-item-name"
+          <button
+            className="nav-item-name btn-non-style"
             onClick={() => {
               if (value.path !== undefined) {
                 navigate(`/${value.path}`);
@@ -43,7 +42,7 @@ export const NavbarUser = () => {
             }}
           >
             {value.name}
-          </span>
+          </button>
           {value['subItems'] && (
             <div className="nav-sub-items">
               {value['subItems'].map((sub, subIndex) => {
