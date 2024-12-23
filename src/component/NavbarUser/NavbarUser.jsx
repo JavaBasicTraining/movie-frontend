@@ -13,6 +13,7 @@ export const NavbarUser = () => {
     fetchCategories();
   }, []);
   useEffect(() => {
+    
     navbar.map((item) => {
       if (item.name === 'Thể Loại') {
         item.subItems = categories.map((category) => ({
@@ -47,9 +48,8 @@ export const NavbarUser = () => {
             <div className="nav-sub-items">
               {value['subItems'].map((sub, subIndex) => {
                 return (
-                  <span value={sub} className="nav-item-name">
+                  <span key={subIndex} value={sub} className="nav-item-name">
                     <Link
-                      key={subIndex}
                       className="link-item"
                       to={(value.basePath ?? '') + `/${sub.name}`}
                     >
