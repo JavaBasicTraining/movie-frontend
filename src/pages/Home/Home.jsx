@@ -1,48 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import { axiosInstance } from '../../configs/axiosConfig';
-import { Link } from 'react-router-dom';
 import { PlayCircleOutlined } from '@ant-design/icons';
-import "./Home.scss"
+import React from 'react';
+import { Link } from 'react-router-dom';
+import useSWRFetch from '../../hooks/useSWRFetch';
+import './Home.scss';
+
 export const Home = () => {
-  const [movies, setMovies] = useState([]);
+  const {
+    data: movies = [],
+    error,
+    isLoading,
+  } = useSWRFetch('/api/v1/movies', {}, { page: 0, size: 20 });
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const response = await axiosInstance.get(`/api/v1/movies`);
-        setMovies(response.data);
-      } catch (error) {
-        console.error("Failed to fetch movies", error);
-      }
-    };
+  const horrifiedMovies =
+    movies?.filter((movie) =>
+      movie.genres.some((genreName) =>
+        genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
+      )
+    ) ?? [];
 
-    fetchMovies();
-  }, []);
+  const adventureMovies =
+    movies?.filter((movie) =>
+      movie.genres.some((genreName) =>
+        genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase())
+      )
+    ) ?? [];
 
-  const horrifiedMovies = movies.filter((movie) =>
-  movie.genres.some((genreName) =>
-    genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
-    )
-  );
-  const adventureMovies = movies.filter((movie) =>
-    movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes("phiêu lưu".toLowerCase())
-    )
-  );
-  const cartoonMovies = movies.filter((movie) =>
-    movie.genres.some((genreName) =>
-      genreName.name.toLowerCase().includes("hoạt hình".toLowerCase())
-    )
-  );
+  const cartoonMovies =
+    movies?.filter((movie) =>
+      movie.genres.some((genreName) =>
+        genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase())
+      )
+    ) ?? [];
+
+  if (error) return <div>Error loading data: {error.message}</div>;
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="page-container">
-      {movies.length > 0 && (
+      {movies?.length > 0 && (
         <div className="nav-category">
           <h1>Phim Đề Cử</h1>
           <div className="article-item">
-            {movies.map((item) => (
-              <Link to={`/${item.path}`} className="list-item-page" key={item.id}>
+            {movies?.map((item) => (
+              <Link
+                to={`/${item.path}`}
+                className="list-item-page"
+                key={item.id}
+              >
                 <div className="img-item">
                   <img src={item.posterUrl} alt={item.title} />
                   <div className="icon-play">
@@ -63,7 +67,11 @@ export const Home = () => {
           <h1>Phim Lẻ Mới Cập Nhật</h1>
           <div className="article-item">
             {adventureMovies.map((item) => (
-              <Link to={`/${item.path}`} className="list-item-page" key={item.id}>
+              <Link
+                to={`/${item.path}`}
+                className="list-item-page"
+                key={item.id}
+              >
                 <div className="img-item">
                   <img src={item.posterUrl} alt={item.title} />
                   <div className="icon-play">
@@ -84,7 +92,11 @@ export const Home = () => {
           <h1>Phim Bộ Mới Cập Nhật</h1>
           <div className="article-item">
             {horrifiedMovies.map((item) => (
-              <Link to={`/${item.path}`} className="list-item-page" key={item.id}>
+              <Link
+                to={`/${item.path}`}
+                className="list-item-page"
+                key={item.id}
+              >
                 <div className="img-item">
                   <img src={item.posterUrl} alt={item.title} />
                   <div className="icon-play">
@@ -105,7 +117,11 @@ export const Home = () => {
           <h1>Phim Hoạt Hình</h1>
           <div className="article-item">
             {cartoonMovies.map((item) => (
-              <Link to={`/${item.path}`} className="list-item-page" key={item.id}>
+              <Link
+                to={`/${item.path}`}
+                className="list-item-page"
+                key={item.id}
+              >
                 <div className="img-item">
                   <img src={item.posterUrl} alt={item.title} />
                   <div className="icon-play">

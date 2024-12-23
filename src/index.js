@@ -33,7 +33,6 @@ const router = createBrowserRouter([
         path: '/',
         element: <Home />,
       },
-
       {
         path: '/the-loai/:keyword?',
         element: <Movie />,

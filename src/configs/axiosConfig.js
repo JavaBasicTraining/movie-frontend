@@ -36,6 +36,13 @@ const isPathIgnored = (url) => {
   return ignorePaths.some((api) => normalizedUrl.startsWith(api));
 };
 
+export const fetcher = (url, params = {}) => {
+  const queryParams = new URLSearchParams(params).toString();
+  const finalUrl = queryParams ? `${url}?${queryParams}` : url;
+
+  return axiosInstance.get(finalUrl).then((res) => res.data);
+};
+
 axiosInstance.interceptors.request.use(function (config) {
   if (isPublicAPI(config.url)) {
     return config;
