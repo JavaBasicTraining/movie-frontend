@@ -9,7 +9,11 @@ export const Home = () => {
     data: movies = [],
     error,
     isLoading,
-  } = useSWRFetch('/api/v1/movies', {}, { page: 0, size: 20 });
+  } = useSWRFetch({
+    url: '/api/v1/movies',
+    params: { page: 0, size: 20 },
+    options: { dedupingInterval: 5000 },
+  });
 
   const horrifiedMovies =
     movies?.filter((movie) =>
