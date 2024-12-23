@@ -1,0 +1,33 @@
+.NavItem {
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+
+  &:hover > &__label-icon {
+    text-decoration: underline;
+    font-weight: bold;
+  }
+
+  &:hover > &__sub-items {
+    display: flex;
+  }
+
+  &__label-icon {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__label {
+    display: flex;
+    cursor: pointer;
+  }
+
+  &__sub-items {
+    padding-left: 12px;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

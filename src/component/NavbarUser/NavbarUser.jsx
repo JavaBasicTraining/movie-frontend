@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../../configs/axiosConfig';
 import { navbar } from '../../static-data/navBarusUser';
 import './NavbarUser.scss';
+import { NavItem } from './NavItem/NavItem';
+import { faArrowRightFromBracket, faGear } from '@fortawesome/free-solid-svg-icons';
 
 export const NavbarUser = () => {
   const [categories, setCategories] = useState([]);
@@ -66,8 +68,20 @@ export const NavbarUser = () => {
   };
 
   return (
-    <div>
-      <div className="navbar">{listItem()}</div>
-    </div>
+    <nav className="NavbarUser">
+      <div className="NavbarUser__top">
+        <div className="f-title">MovieNight</div>
+        <div className="NavbarUser_nav-list">
+          {navbar?.map((item) => (
+            <NavItem key={item.name} {...item} />
+          ))}
+        </div>
+      </div>
+
+      <div className="NavbarUser__bottom">
+        <NavItem name="Settings" path="/#" icon={faGear} />
+        <NavItem name="Logout" icon={faArrowRightFromBracket}/>
+      </div>
+    </nav>
   );
 };

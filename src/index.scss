@@ -1,0 +1,35 @@
+@import "styles/font";
+
+:root {
+  --primary-bg-color: #CEEAF2;
+  --primary-btn-color: #0294BD;
+  --text-primary: #2B2C2B;
+  --text-black: #030303;
+  --cornor-soft: 8px;
+  --line-color: #D9D9DE;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+}
+
+.h-fit {
+  height: fit-content;
+}
+
+.btn-non-style {
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  background: unset;
+}

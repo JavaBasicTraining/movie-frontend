@@ -1,0 +1,16 @@
+@import "src/styles/font";
+
+.SearchControl {
+  border: 1px solid var(--line-color);
+  border-radius: var(--cornor-soft);
+  display: flex;
+  padding: 12px;
+  gap: 10px;
+
+  &__input {
+    border: none;
+    outline: none;
+    width: 100%;
+    @extend .f-normal !optional;
+  }
+}

@@ -1,7 +1,10 @@
+import { faGlobe, faHouse } from '@fortawesome/free-solid-svg-icons';
+
 export const navbar = [
   {
     name: 'Trang Chủ',
     path: '',
+    icon: faHouse,
   },
   {
     name: 'Thể Loại',
@@ -26,6 +29,7 @@ export const navbar = [
   {
     name: 'Quốc Gia',
     basePath: '/quoc-gia',
+    icon: faGlobe,
     subItems: [
       { name: 'Việt Nam', path: 'viet-nam' },
       { name: 'Mỹ', path: 'my' },
