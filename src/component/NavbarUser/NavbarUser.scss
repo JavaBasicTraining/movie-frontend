@@ -1,16 +1,19 @@
 .navbar {
   display: flex;
-  gap: 18px;
+  gap: 12px;
   background-color: rgb(62, 61, 65);
   font-weight: 50px;
   border: 1px solid black;
 
   .nav-item {
     position: relative;
+    cursor: pointer;
 
-    &:hover .nav-sub-items {
-      display: flex !important;
-      z-index: 9999;
+    &:hover {
+      .nav-sub-items {
+        display: flex !important;
+        z-index: var(--z-index-dropdown);
+      }
     }
 
     .nav-item-name {
@@ -19,17 +22,18 @@
       height: 30px;
       border: none;
       font-weight: bold;
-      background-color: rgb(62, 61, 65);
       color: white;
+      cursor: pointer;
+      padding: 0 6px;
+
+      &:hover {
+        background-color: black;
+        transition: 0.5s;
+      }
 
       .link-item {
         color: white;
         text-decoration: none;
-      }
-      &:hover {
-        transition: 0.5s;
-        background-color: black;
-        cursor: pointer;
       }
     }
 
@@ -40,6 +44,8 @@
       width: 200px;
       display: none;
       flex-direction: column;
+      background-color: var(--primary-color);
+      cursor: pointer;
     }
   }
 }
