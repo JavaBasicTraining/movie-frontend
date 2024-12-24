@@ -1,0 +1,11 @@
+.MovieManager {
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  &__filter-control {
+    display: flex;
+    gap: 10px;
+  }
+}

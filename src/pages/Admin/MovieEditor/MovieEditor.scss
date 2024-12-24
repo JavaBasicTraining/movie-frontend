@@ -1,0 +1,27 @@
+.movie-editor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: rgb(62, 51, 51);
+
+  &__title {
+    color: white;
+  }
+
+  &__form {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  &__form-label {
+    color: white;
+    font-size: 16px;
+  }
+
+  &__episode-form {
+    width: 100%;
+  }
+}
