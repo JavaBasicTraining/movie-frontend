@@ -5,7 +5,7 @@ import React from 'react';
 import './UploadPoster.scss';
 
 export const UploadPoster = (props) => {
-  const { value, onChange } = props;
+  const { fileList, onChange } = props;
 
   const handleChange = (info) => {
     onChange?.(info.fileList);
@@ -46,7 +46,7 @@ export const UploadPoster = (props) => {
   return (
     <Upload
       className="UploadPoster"
-      fileList={value}
+      fileList={fileList}
       onChange={handleChange}
       beforeUpload={() => false}
       itemRender={itemRender}
@@ -60,6 +60,6 @@ export const UploadPoster = (props) => {
 };
 
 UploadPoster.propTypes = {
-  value: PropTypes.object,
+  fileList: PropTypes.array,
   onChange: PropTypes.func,
 };

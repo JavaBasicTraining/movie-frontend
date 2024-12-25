@@ -1,19 +1,10 @@
-import React from 'react';
-import './EpisodeForm.scss';
-import { Form, Input, InputNumber, Space } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
+import { Form, Input, InputNumber, Space } from 'antd';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { UploadPoster } from '../UploadPoster/UploadPoster';
 import { UploadVideo } from '../UploadVideo/UploadVideo';
-
-export const DEFAULT_EPISODE = {
-  episodeCount: '',
-  video: '',
-  poster: '',
-  descriptions: '',
-  movieId: '',
-  prevPosterUrl: '',
-  prevVideoUrl: '',
-};
+import './EpisodeForm.scss';
 
 export const EpisodeForm = ({ field, remove }) => {
   const { key, name, fieldKey, ...restField } = field;
@@ -32,7 +23,7 @@ export const EpisodeForm = ({ field, remove }) => {
       <Form.Item
         {...restField}
         label="Description"
-        name={[name, 'description']}
+        name={[name, 'descriptions']}
         rules={[{ required: true, message: 'Please input description!' }]}
       >
         <Input.TextArea placeholder="Input description" />
@@ -73,4 +64,9 @@ export const EpisodeForm = ({ field, remove }) => {
       <MinusCircleOutlined onClick={() => remove(name)} />
     </Space>
   );
+};
+
+EpisodeForm.propTypes = {
+  field: PropTypes.object,
+  remove: PropTypes.func,
 };

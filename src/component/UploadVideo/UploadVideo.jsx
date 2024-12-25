@@ -1,12 +1,12 @@
-import React from 'react';
-import { Button, Space, Upload } from 'antd';
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Space, Upload } from 'antd';
 import PropTypes from 'prop-types';
+import React from 'react';
 import ReactPlayer from 'react-player';
 import './UploadVideo.scss';
 
 export const UploadVideo = (props) => {
-  const { label = 'Upload Video', value, onChange } = props;
+  const { label = 'Upload Video', fileList, onChange } = props;
 
   const handleChange = (info) => {
     onChange?.(info.fileList);
@@ -41,7 +41,7 @@ export const UploadVideo = (props) => {
   return (
     <Upload
       className="UploadVideo"
-      fileList={value}
+      fileList={fileList}
       onChange={handleChange}
       beforeUpload={() => false}
       itemRender={itemRender}
@@ -56,6 +56,6 @@ export const UploadVideo = (props) => {
 
 UploadVideo.propTypes = {
   label: PropTypes.string,
-  value: PropTypes.object,
+  fileList: PropTypes.array,
   onChange: PropTypes.func,
 };

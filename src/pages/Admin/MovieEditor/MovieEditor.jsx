@@ -1,14 +1,13 @@
+import { Button, Form, Input, notification, Select, Space } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
-import { countries } from '../../../static-data/countries';
-import { EpisodeForm } from '../../../component/EpisodeForm/EpisodeForm';
 import { v4 as uuidv4 } from 'uuid';
-import './MovieEditor.scss';
-import { Button, Form, Input, notification, Select, Space } from 'antd';
-import { UploadPoster, UploadVideo } from '../../../component';
+import { EpisodeForm, UploadPoster, UploadVideo } from '../../../component';
 import { categoryService, genreService, movieService } from '../../../services';
+import { countries } from '../../../static-data/countries';
+import './MovieEditor.scss';
 
-export async function AddMovieLoader({ params }) {
+export async function MovieEditorLoader({ params }) {
   const id = parseInt(params.id);
   if (!isNaN(id) && id !== 0) {
     const res = await movieService.find(id);
@@ -25,18 +24,18 @@ const years = Array.from(
 );
 
 const defaultFormValue = {
-  nameMovie: '',
-  viTitle: '',
-  enTitle: '',
-  description: '',
-  country: '',
-  trailerFile: '',
-  posterFile: '',
-  videoFile: '',
-  categoryId: [],
+  nameMovie: null,
+  viTitle: null,
+  enTitle: null,
+  description: null,
+  country: null,
+  categoryId: null,
   year: currentYear,
   genreIds: [],
   episodes: [],
+  trailerFile: [],
+  posterFile: [],
+  videoFile: [],
 };
 
 const SERIES_MOVIE = 'phim bộ';
@@ -47,10 +46,13 @@ export const MovieEditor = () => {
   const categoryIdWatch = Form.useWatch('categoryId', form);
   const [categories, setCategories] = useState([]);
   const [genres, setGenres] = useState([]);
-  const [originalFormValue, setOriginFormValue] = useState(null);
+  const [originalFormValue, setOriginalFormValue] = useState(null);
+  const [formChanged, setFormChanged] = useState(false);
 
   const hasChanges = useCallback(
     (dataChange) => {
+      console.log('dataChange:', dataChange);
+      console.log(`originalFormValue: ${JSON.stringify(originalFormValue)}`);
       return JSON.stringify(dataChange) !== JSON.stringify(originalFormValue);
     },
     [originalFormValue]
@@ -69,13 +71,36 @@ export const MovieEditor = () => {
   }, []);
 
   const initFormData = useCallback(() => {
+    const getFileList = (url, name) => {
+      if (!url) {
+        return null;
+      }
+      return [
+        {
+          uid: '-1',
+          name,
+          status: 'done',
+          url,
+        },
+      ];
+    };
+
     const formValue = {
       ...movie,
       categoryId: movie?.category?.id,
       genreIds: movie?.genres?.map((genre) => genre.id) ?? [],
+      posterFile: getFileList(movie?.posterUrl, 'poster.png'),
+      videoFile: getFileList(movie?.videoUrl, 'video.mp4'),
+      trailerFile: getFileList(movie?.trailerUrl, 'trailer.mp4'),
+      episodes: movie?.episodes?.map((episode) => ({
+        ...episode,
+        posterFile: getFileList(episode.posterUrl, 'poster.png'),
+        videoFile: getFileList(episode.videoUrl, 'video.mp4'),
+      })),
     };
+
     form.setFieldsValue(formValue);
-    setOriginFormValue(formValue);
+    setOriginalFormValue(formValue);
   }, [form, movie]);
 
   const initData = useCallback(() => {
@@ -100,37 +125,49 @@ export const MovieEditor = () => {
   const updateEpisodeFiles = async (episodesMap, response) => {
     for (const item of response.data.episodes) {
       const episodeMap = episodesMap.get(item.tempId);
-      if (episodeMap.posterFile) {
+      if (episodeMap?.posterFile?.[0]?.originFileObj) {
         await movieService.updateEpisodeFile(
           response.data.id,
           item.id,
-          'poster',
-          episodeMap.posterFile[0]
+          episodeMap.posterFile[0]?.originFileObj,
+          'poster'
         );
       }
 
-      if (episodeMap.videoFile) {
+      if (episodeMap.videoFile?.[0]?.originFileObj) {
         await movieService.updateEpisodeFile(
           response.data.id,
           item.id,
-          'video',
-          episodeMap.videoFile[0]
+          episodeMap.videoFile?.[0]?.originFileObj,
+          'video'
         );
       }
     }
   };
 
   const updateMovieFiles = async (newData, response) => {
-    if (newData.trailerFile) {
-      await uploadMovieFile(response.data.id, 'trailer', newData.trailerFile[0].originFileObj);
+    if (newData?.trailerFile?.[0]?.originFileObj) {
+      await uploadMovieFile(
+        response.data.id,
+        'trailer',
+        newData.trailerFile[0].originFileObj
+      );
     }
 
-    if (newData.posterFile) {
-      await uploadMovieFile(response.data.id, 'poster', newData.posterFile[0].originFileObj);
+    if (newData?.posterFile?.[0]?.originFileObj) {
+      await uploadMovieFile(
+        response.data.id,
+        'poster',
+        newData.posterFile[0].originFileObj
+      );
     }
 
-    if (!isSeries() && newData.videoFile) {
-      await uploadMovieFile(response.data.id, 'video', newData.videoFile[0].originFileObj);
+    if (!isSeries() && newData?.videoFile?.[0]?.originFileObj) {
+      await uploadMovieFile(
+        response.data.id,
+        'video',
+        newData.videoFile[0].originFileObj
+      );
     }
   };
 
@@ -146,6 +183,7 @@ export const MovieEditor = () => {
       notification.success({ message: 'Updated movie' });
     } catch (error) {
       notification.error({ message: 'Failed to update movie' });
+      console.log(error);
     }
   };
 
@@ -190,7 +228,6 @@ export const MovieEditor = () => {
       }
     } catch (error) {
       notification.error({ message: `Error submitting movie: ${error}` });
-      console.log(error)
     }
   };
 
@@ -201,6 +238,18 @@ export const MovieEditor = () => {
   const renderLabel = (label) => (
     <span className="movie-editor__form-label">{label}</span>
   );
+
+  const handleGetFileValue = (e) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
+
+  const handleFormChange = (changedValues) => {
+    const changed = hasChanges(changedValues);
+    setFormChanged(changed);
+  };
 
   return (
     <div className="movie-editor">
@@ -215,6 +264,7 @@ export const MovieEditor = () => {
         initialValues={defaultFormValue}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
+        onValuesChange={handleFormChange}
         autoComplete="off"
       >
         <Form.Item
@@ -366,12 +416,7 @@ export const MovieEditor = () => {
           label={null}
           name="posterFile"
           layout="vertical"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) {
-              return e;
-            }
-            return e?.fileList;
-          }}
+          getValueFromEvent={handleGetFileValue}
           valuePropName="fileList"
           rules={[
             {
@@ -383,37 +428,29 @@ export const MovieEditor = () => {
           <UploadPoster />
         </Form.Item>
 
-        <Form.Item
-          label={null}
-          name="videoFile"
-          layout="vertical"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) {
-              return e;
-            }
-            return e?.fileList;
-          }}
-          valuePropName="fileList"
-          rules={[
-            {
-              required: true,
-              message: 'Please upload video!',
-            },
-          ]}
-        >
-          <UploadVideo label="Upload Video" />
-        </Form.Item>
+        {!isSeries() && (
+          <Form.Item
+            label={null}
+            name="videoFile"
+            layout="vertical"
+            getValueFromEvent={handleGetFileValue}
+            valuePropName="fileList"
+            rules={[
+              {
+                required: true,
+                message: 'Please upload video!',
+              },
+            ]}
+          >
+            <UploadVideo label="Upload Video" />
+          </Form.Item>
+        )}
 
         <Form.Item
           label={null}
           name="trailerFile"
           layout="vertical"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) {
-              return e;
-            }
-            return e?.fileList;
-          }}
+          getValueFromEvent={handleGetFileValue}
           valuePropName="fileList"
           rules={[
             {
@@ -426,26 +463,44 @@ export const MovieEditor = () => {
         </Form.Item>
 
         {isSeries() && (
-          <Form.List name="episodes">
-            {(fields, { add, remove }) => (
-              <Space
-                className="movie-editor__episode-form"
-                direction="vertical"
-              >
-                {fields?.map((field) => (
-                  <EpisodeForm key={field.key} field={field} remove={remove} />
-                ))}
-                <Button type="dashed" onClick={add}>
-                  Add Episode
-                </Button>
-              </Space>
-            )}
-          </Form.List>
+          <Form.Item>
+            <Form.List name="episodes">
+              {(fields, { add, remove }) => (
+                <Space
+                  className="movie-editor__episode-form"
+                  direction="vertical"
+                >
+                  {fields?.map((field) => (
+                    <EpisodeForm
+                      key={field.key}
+                      field={field}
+                      remove={remove}
+                    />
+                  ))}
+                  <Button
+                    type="dashed"
+                    onClick={() => {
+                      // Define default values for a new episode
+                      const defaultEpisode = {
+                        episodeCount: null,
+                        descriptions: null,
+                        posterFile: null,
+                        videoFile: null,
+                      };
+                      add(defaultEpisode);
+                    }}
+                  >
+                    Add Episode
+                  </Button>
+                </Space>
+              )}
+            </Form.List>
+          </Form.Item>
         )}
 
         <Form.Item label={null}>
-          <Button type="primary" htmlType="submit">
-            Submit
+          <Button type="primary" htmlType="submit" disabled={!formChanged}>
+            {isEdit ? 'Save' : 'Create'}
           </Button>
         </Form.Item>
       </Form>

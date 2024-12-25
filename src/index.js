@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import './index.css';
 import {
-  AddMovieLoader,
+  MovieEditorLoader,
   MovieEditor,
 } from './pages/Admin/MovieEditor/MovieEditor';
 import { Admin } from './pages/Admin/Admin';
@@ -75,12 +75,12 @@ const router = createBrowserRouter([
       {
         path: '/admin/movie/new',
         element: <MovieEditor />,
-        loader: AddMovieLoader,
+        loader: MovieEditorLoader,
       },
       {
         path: '/admin/movie/:id',
         element: <MovieEditor value="Edit" />,
-        loader: AddMovieLoader,
+        loader: MovieEditorLoader,
       },
     ],
   },

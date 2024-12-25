@@ -12,7 +12,14 @@ import { PlusOutlined, SyncOutlined } from '@ant-design/icons';
 
 export async function MovieManagerLoader({ request }) {
   const searchParams = new URL(request.url).searchParams;
-  const response = await movieService.query(searchParams);
+  console.log(searchParams);
+  const response = await movieService.query({
+    genre: searchParams.get('genre'),
+    country: searchParams.get('country'),
+    page: searchParams.get('page') ?? 0,
+    size: searchParams.get('size') ?? 20,
+    sort: 'id,desc',
+  });
 
   return {
     movies: response.data ?? [],
@@ -38,6 +45,7 @@ export const MovieManager = () => {
   const [genres, setGenres] = useState([]);
   const [moviesState, setMoviesState] = useState(movies);
   const [reloading, setReloading] = useState(false);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 5 });
 
   const fetchGenres = useCallback(() => {
     genreService.getAll().then((res) => {
@@ -146,7 +154,7 @@ export const MovieManager = () => {
 
   return (
     <div className="MovieManager">
-      <div className='MovieManager__actions'>
+      <div className="MovieManager__actions">
         <div className="MovieManager__filter-control">
           <Button
             icon={<SyncOutlined spin={reloading} />}
@@ -184,7 +192,12 @@ export const MovieManager = () => {
         </Link>
       </div>
 
-      <Table columns={columns} dataSource={moviesState} rowKey="id" />
+      <Table
+        columns={columns}
+        dataSource={moviesState}
+        rowKey="id"
+        pagination={pagination}
+      />
     </div>
   );
 };
