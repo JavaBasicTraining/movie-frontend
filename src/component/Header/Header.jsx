@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { HiOutlineFilm } from 'react-icons/hi';
 import { SearchOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { HiOutlineFilm } from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
-import './Header.scss';
+import { keycloakService } from '../../services';
 import { KeycloakComponent } from '../KeycloakComponent/KeycloakComponent';
-import { keycloakService } from '../../services/keycloakService';
+import './Header.scss';
 
 export const Header = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
-
   const { token } = useAuth();
 
   const handleChange = (e) => {
@@ -20,12 +19,6 @@ export const Header = () => {
   const isLoggedIn = () => {
     return token !== null;
   };
-
-  useEffect(() => {
-    const tokenCleared = localStorage.getItem('tokenCleared');
-    if (!tokenCleared) {
-    }
-  }, []);
 
   const filterMovie = async (event, params) => {
     try {
@@ -51,7 +44,7 @@ export const Header = () => {
             <HiOutlineFilm className="icon"></HiOutlineFilm>
             <div className="title">
               <span>TrumPhim.Net </span>
-              <label>Phim mới cập nhật chất lượng cao </label>
+              <span>Phim mới cập nhật chất lượng cao </span>
             </div>
           </div>
           <div className="search">
@@ -74,11 +67,13 @@ export const Header = () => {
             </button>
           </div>
         </div>
+        
         {!isLoggedIn() && (
           <div className="login-register">
             <KeycloakComponent className="keycloak" />
           </div>
         )}
+
         {isLoggedIn() && (
           <div className="login-register">
             <a
