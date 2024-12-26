@@ -1,4 +1,8 @@
 .MovieManager {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
   &__actions {
     display: flex;
     justify-content: space-between;

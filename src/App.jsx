@@ -5,7 +5,7 @@ import { Header } from './component/Header/Header';
 
 function App() {
   return (
-    <div className="Page">
+    <div className="App">
       <Header />
       <NavbarUser />
       <Outlet />

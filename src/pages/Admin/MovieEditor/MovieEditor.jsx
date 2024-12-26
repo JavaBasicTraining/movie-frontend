@@ -1,4 +1,13 @@
-import { Button, Form, Input, notification, Select, Space } from 'antd';
+import {
+  Button,
+  Flex,
+  Form,
+  Input,
+  notification,
+  Select,
+  Space, Spin,
+  Typography,
+} from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -6,6 +15,8 @@ import { EpisodeForm, UploadPoster, UploadVideo } from '../../../component';
 import { categoryService, genreService, movieService } from '../../../services';
 import { countries } from '../../../static-data/countries';
 import './MovieEditor.scss';
+import { LoadingOutlined } from '@ant-design/icons';
+import { spinnerService } from '../../../services/spinnerService';
 
 export async function MovieEditorLoader({ params }) {
   const id = parseInt(params.id);
@@ -48,6 +59,7 @@ export const MovieEditor = () => {
   const [genres, setGenres] = useState([]);
   const [originalFormValue, setOriginalFormValue] = useState(null);
   const [formChanged, setFormChanged] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const hasChanges = useCallback(
     (dataChange) => {
@@ -209,6 +221,7 @@ export const MovieEditor = () => {
 
   const onFinish = async (value) => {
     try {
+      spinnerService.show();
       const newData = {
         ...value,
         episodes: value?.episodes?.map((episode) => ({
@@ -226,6 +239,7 @@ export const MovieEditor = () => {
       } else {
         await updateMovie(newData, episodesMap);
       }
+      spinnerService.hide();
     } catch (error) {
       notification.error({ message: `Error submitting movie: ${error}` });
     }
@@ -236,7 +250,7 @@ export const MovieEditor = () => {
   };
 
   const renderLabel = (label) => (
-    <span className="movie-editor__form-label">{label}</span>
+    <span className="MovieEditor__form-label">{label}</span>
   );
 
   const handleGetFileValue = (e) => {
@@ -252,13 +266,11 @@ export const MovieEditor = () => {
   };
 
   return (
-    <div className="movie-editor">
-      <h1 className="movie-editor__title">
-        {isEdit ? 'Edit Movie' : 'New Movie'}
-      </h1>
+    <div className="MovieEditor">
+      <Typography.Title>{isEdit ? 'Edit Movie' : 'New Movie'}</Typography.Title>
       <Form
         form={form}
-        className="movie-editor__form"
+        className="MovieEditor__form"
         name="basic"
         layout="vertical"
         initialValues={defaultFormValue}
@@ -267,207 +279,213 @@ export const MovieEditor = () => {
         onValuesChange={handleFormChange}
         autoComplete="off"
       >
-        <Form.Item
-          label={renderLabel('Movie name')}
-          name="nameMovie"
-          layout="vertical"
-          rules={[
-            {
-              required: true,
-              message: 'Please input movie name!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
+        <Flex gap="20px" style={{ marginBottom: '24px' }}>
+          <Flex flex={1} vertical className="bound-box">
+            <Form.Item
+              label={renderLabel('Movie name')}
+              name="nameMovie"
+              layout="vertical"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input movie name!',
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-        <Form.Item
-          label={renderLabel('Vi title')}
-          name="viTitle"
-          layout="vertical"
-          rules={[
-            {
-              required: true,
-              message: 'Please input vi title!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
+            <Form.Item
+              label={renderLabel('Vi title')}
+              name="viTitle"
+              layout="vertical"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input vi title!',
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-        <Form.Item
-          label={renderLabel('En title')}
-          name="enTitle"
-          layout="vertical"
-          rules={[
-            {
-              required: true,
-              message: 'Please input en title!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
+            <Form.Item
+              label={renderLabel('En title')}
+              name="enTitle"
+              layout="vertical"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input en title!',
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-        <Form.Item
-          label={renderLabel('Description')}
-          name="description"
-          layout="vertical"
-          rules={[
-            {
-              required: true,
-              message: 'Please input description!',
-            },
-          ]}
-        >
-          <Input.TextArea rows={3} />
-        </Form.Item>
+            <Form.Item
+              label={renderLabel('Description')}
+              name="description"
+              layout="vertical"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input description!',
+                },
+              ]}
+            >
+              <Input.TextArea rows={3} />
+            </Form.Item>
 
-        <Form.Item
-          label={renderLabel('Publication Year')}
-          name="year"
-          layout="vertical"
-          rules={[
-            {
-              required: true,
-              message: 'Please input publication year!',
-            },
-          ]}
-        >
-          <Select
-            placeholder="Select Publication Year"
-            allowClear
-            showSearch={true}
-            options={years.map((year) => ({
-              label: year.toString(),
-              value: year,
-            }))}
-          />
-        </Form.Item>
+            <Form.Item
+              label={renderLabel('Publication Year')}
+              name="year"
+              layout="vertical"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input publication year!',
+                },
+              ]}
+            >
+              <Select
+                placeholder="Select Publication Year"
+                allowClear
+                showSearch={true}
+                options={years.map((year) => ({
+                  label: year.toString(),
+                  value: year,
+                }))}
+              />
+            </Form.Item>
 
-        <Form.Item
-          label={renderLabel('Country')}
-          name="country"
-          layout="vertical"
-          rules={[
-            {
-              required: true,
-              message: 'Please input country!',
-            },
-          ]}
-        >
-          <Select
-            placeholder="Select Country"
-            allowClear
-            showSearch={true}
-            options={countries.map((country) => ({
-              label: country,
-              value: country,
-            }))}
-          />
-        </Form.Item>
+            <Form.Item
+              label={renderLabel('Country')}
+              name="country"
+              layout="vertical"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input country!',
+                },
+              ]}
+            >
+              <Select
+                placeholder="Select Country"
+                allowClear
+                showSearch={true}
+                options={countries.map((country) => ({
+                  label: country,
+                  value: country,
+                }))}
+              />
+            </Form.Item>
 
-        <Form.Item
-          label={renderLabel('Category')}
-          name="categoryId"
-          layout="vertical"
-          rules={[
-            {
-              required: true,
-              message: 'Please input category!',
-            },
-          ]}
-        >
-          <Select
-            placeholder="Select category"
-            allowClear
-            showSearch={true}
-            options={categories.map((category) => ({
-              label: category.name,
-              value: category.id,
-            }))}
-          />
-        </Form.Item>
+            <Form.Item
+              label={renderLabel('Category')}
+              name="categoryId"
+              layout="vertical"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input category!',
+                },
+              ]}
+            >
+              <Select
+                placeholder="Select category"
+                allowClear
+                showSearch={true}
+                options={categories.map((category) => ({
+                  label: category.name,
+                  value: category.id,
+                }))}
+              />
+            </Form.Item>
 
-        <Form.Item
-          label={renderLabel('Genres')}
-          name="genreIds"
-          layout="vertical"
-          rules={[
-            {
-              required: true,
-              message: 'Please select genres!',
-            },
-          ]}
-        >
-          <Select
-            placeholder="Select genres"
-            mode="multiple"
-            allowClear
-            showSearch={true}
-            options={genres.map((genre) => ({
-              label: genre.name,
-              value: genre.id,
-            }))}
-          />
-        </Form.Item>
+            <Form.Item
+              label={renderLabel('Genres')}
+              name="genreIds"
+              layout="vertical"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select genres!',
+                },
+              ]}
+            >
+              <Select
+                placeholder="Select genres"
+                mode="multiple"
+                allowClear
+                showSearch={true}
+                options={genres.map((genre) => ({
+                  label: genre.name,
+                  value: genre.id,
+                }))}
+              />
+            </Form.Item>
+          </Flex>
 
-        <Form.Item
-          label={null}
-          name="posterFile"
-          layout="vertical"
-          getValueFromEvent={handleGetFileValue}
-          valuePropName="fileList"
-          rules={[
-            {
-              required: true,
-              message: 'Please upload poster!',
-            },
-          ]}
-        >
-          <UploadPoster />
-        </Form.Item>
+          <Flex flex={1} vertical rootClassName="bound-box">
+            <Form.Item
+              label={renderLabel('Upload Poster')}
+              name="posterFile"
+              layout="vertical"
+              getValueFromEvent={handleGetFileValue}
+              valuePropName="fileList"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please upload poster!',
+                },
+              ]}
+            >
+              <UploadPoster />
+            </Form.Item>
 
-        {!isSeries() && (
-          <Form.Item
-            label={null}
-            name="videoFile"
-            layout="vertical"
-            getValueFromEvent={handleGetFileValue}
-            valuePropName="fileList"
-            rules={[
-              {
-                required: true,
-                message: 'Please upload video!',
-              },
-            ]}
-          >
-            <UploadVideo label="Upload Video" />
-          </Form.Item>
-        )}
+            {!isSeries() && (
+              <Form.Item
+                label={renderLabel('Upload Video')}
+                name="videoFile"
+                layout="vertical"
+                getValueFromEvent={handleGetFileValue}
+                valuePropName="fileList"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please upload video!',
+                  },
+                ]}
+              >
+                <UploadVideo label="Upload Video" />
+              </Form.Item>
+            )}
 
-        <Form.Item
-          label={null}
-          name="trailerFile"
-          layout="vertical"
-          getValueFromEvent={handleGetFileValue}
-          valuePropName="fileList"
-          rules={[
-            {
-              required: true,
-              message: 'Please upload trailer!',
-            },
-          ]}
-        >
-          <UploadVideo label="Upload Trailer" />
-        </Form.Item>
+            <Form.Item
+              label={renderLabel('Upload Trailer')}
+              name="trailerFile"
+              layout="vertical"
+              getValueFromEvent={handleGetFileValue}
+              valuePropName="fileList"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please upload trailer!',
+                },
+              ]}
+            >
+              <UploadVideo label="Upload Trailer" />
+            </Form.Item>
+          </Flex>
+        </Flex>
 
         {isSeries() && (
-          <Form.Item>
+          <Flex className="bound-box" style={{ marginBottom: '24px' }}>
             <Form.List name="episodes">
               {(fields, { add, remove }) => (
                 <Space
-                  className="movie-editor__episode-form"
+                  className="MovieEditor__episode-form"
                   direction="vertical"
                 >
                   {fields?.map((field) => (
@@ -495,7 +513,7 @@ export const MovieEditor = () => {
                 </Space>
               )}
             </Form.List>
-          </Form.Item>
+          </Flex>
         )}
 
         <Form.Item label={null}>

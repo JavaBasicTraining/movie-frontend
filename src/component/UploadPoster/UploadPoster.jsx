@@ -3,6 +3,7 @@ import { Button, Image, Space, Upload } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import './UploadPoster.scss';
+import { fileUtil } from '../../utils/fileUtil';
 
 export const UploadPoster = (props) => {
   const { fileList, onChange } = props;
@@ -11,21 +12,11 @@ export const UploadPoster = (props) => {
     onChange?.(info.fileList);
   };
 
-  const getImageUrl = (file) => {
-    if (file.url) {
-      return file.url;
-    }
-    if (file.originFileObj) {
-      return URL.createObjectURL(file.originFileObj);
-    }
-    return '';
-  };
-
   const itemRender = (originNode, file, fileList, actions) => {
     return (
       <Space direction="vertical" className="upload-item">
         <Image
-          src={getImageUrl(file)}
+          src={fileUtil.getUrl(file)}
           alt={file.name}
           wrapperStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
           loading="lazy"

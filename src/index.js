@@ -7,7 +7,7 @@ import {
   MovieEditorLoader,
   MovieEditor,
 } from './pages/Admin/MovieEditor/MovieEditor';
-import { Admin } from './pages/Admin/Admin';
+import { AdminLayout } from './pages/Admin/AdminLayout';
 import {
   CountryLoader,
   Movie,
@@ -65,7 +65,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin',
-    element: <Admin />,
+    element: <AdminLayout />,
     children: [
       {
         path: '/admin/movie/',

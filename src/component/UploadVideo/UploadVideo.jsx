@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ReactPlayer from 'react-player';
 import './UploadVideo.scss';
+import { fileUtil } from '../../utils/fileUtil';
 
 export const UploadVideo = (props) => {
   const { label = 'Upload Video', fileList, onChange } = props;
@@ -12,20 +13,10 @@ export const UploadVideo = (props) => {
     onChange?.(info.fileList);
   };
 
-  const getUrl = (file) => {
-    if (file.url) {
-      return file.url;
-    }
-    if (file.originFileObj) {
-      return URL.createObjectURL(file.originFileObj);
-    }
-    return '';
-  };
-
   const itemRender = (originNode, file, fileList, actions) => {
     return (
       <Space direction="vertical" className="upload-item">
-        <ReactPlayer url={getUrl(file)} controls={true} width="100%" />
+        <ReactPlayer url={fileUtil.getUrl(file)} controls={true} width="100%" />
         <Button
           className="upload-item__remove-btn"
           onClick={actions.remove}
