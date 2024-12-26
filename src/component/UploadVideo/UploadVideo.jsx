@@ -25,7 +25,7 @@ export const UploadVideo = (props) => {
   const itemRender = (originNode, file, fileList, actions) => {
     return (
       <Space direction="vertical" className="upload-item">
-        <ReactPlayer url={getUrl(file)} controls={true} width='100%'/>
+        <ReactPlayer url={getUrl(file)} controls={true} width="100%" />
         <Button
           className="upload-item__remove-btn"
           onClick={actions.remove}

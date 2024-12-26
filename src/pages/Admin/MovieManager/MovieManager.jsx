@@ -1,4 +1,4 @@
-import { Button, Modal, notification, Select, Space, Table } from 'antd';
+import { Button, Modal, notification, Select, Space, Spin, Table } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Link,
@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import './MovieManager.scss';
 import { genreService, movieService } from '../../../services';
-import { PlusOutlined, SyncOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 
 export async function MovieManagerLoader({ request }) {
   const searchParams = new URL(request.url).searchParams;
@@ -197,6 +197,12 @@ export const MovieManager = () => {
         dataSource={moviesState}
         rowKey="id"
         pagination={pagination}
+      />
+      <Spin
+        indicator={<LoadingOutlined spin />}
+        spinning={reloading}
+        size="large"
+        fullscreen
       />
     </div>
   );

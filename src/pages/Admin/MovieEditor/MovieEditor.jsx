@@ -89,13 +89,13 @@ export const MovieEditor = () => {
       ...movie,
       categoryId: movie?.category?.id,
       genreIds: movie?.genres?.map((genre) => genre.id) ?? [],
-      posterFile: getFileList(movie?.posterUrl, 'poster.png'),
-      videoFile: getFileList(movie?.videoUrl, 'video.mp4'),
-      trailerFile: getFileList(movie?.trailerUrl, 'trailer.mp4'),
+      posterFile: getFileList(movie?.posterPresignedUrl, 'poster.png'),
+      videoFile: getFileList(movie?.videoPresignedUrl, 'video.mp4'),
+      trailerFile: getFileList(movie?.trailerPresignedUrl, 'trailer.mp4'),
       episodes: movie?.episodes?.map((episode) => ({
         ...episode,
-        posterFile: getFileList(episode.posterUrl, 'poster.png'),
-        videoFile: getFileList(episode.videoUrl, 'video.mp4'),
+        posterFile: getFileList(episode.posterPresignedUrl, 'poster.png'),
+        videoFile: getFileList(episode.videoPresignedUrl, 'video.mp4'),
       })),
     };
 

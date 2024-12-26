@@ -1,7 +1,15 @@
-.episode-form {
+.EpisodeForm {
+  position: relative;
   display: flex;
   min-width: 100%;
   background-color: white;
   border-radius: 8px;
   padding: 12px;
+
+  &__remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: red;
+  }
 }

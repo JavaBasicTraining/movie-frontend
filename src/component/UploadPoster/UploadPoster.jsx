@@ -52,7 +52,7 @@ export const UploadPoster = (props) => {
       itemRender={itemRender}
       listType="picture"
       maxCount={1}
-      accept='image/*'
+      accept="image/*"
     >
       <Button icon={<UploadOutlined />}>Upload Poster</Button>
     </Upload>

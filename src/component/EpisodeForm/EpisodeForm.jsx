@@ -1,4 +1,4 @@
-import { MinusCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { Form, Input, InputNumber, Space } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -10,7 +10,7 @@ export const EpisodeForm = ({ field, remove }) => {
   const { key, name, fieldKey, ...restField } = field;
 
   return (
-    <Space className="episode-form" direction="vertical">
+    <Space className="EpisodeForm" direction="vertical">
       <Form.Item
         {...restField}
         label="Episode Count"
@@ -61,7 +61,10 @@ export const EpisodeForm = ({ field, remove }) => {
         <UploadVideo />
       </Form.Item>
 
-      <MinusCircleOutlined onClick={() => remove(name)} />
+      <DeleteOutlined
+        className="EpisodeForm__remove-btn"
+        onClick={() => remove(name)}
+      />
     </Space>
   );
 };

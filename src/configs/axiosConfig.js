@@ -1,8 +1,8 @@
+import { notification } from 'antd';
 import axios from 'axios';
+import { ACCESS_TOKEN, PREVIOUS_PATH } from '../constants/storage';
 import { keycloakService } from '../services/keycloakService';
 import { storageService } from '../services/storageService';
-import { ACCESS_TOKEN } from '../constants/storage';
-import { notification } from 'antd';
 
 export const axiosInstance = axios.create({
   baseURL: 'http://localhost:8081',
@@ -59,6 +59,7 @@ axiosInstance.interceptors.response.use(
       });
 
       storageService.remove(ACCESS_TOKEN);
+      storageService.set(PREVIOUS_PATH, window.location.pathname);
 
       setTimeout(() => {
         keycloakService.openLoginPage();
