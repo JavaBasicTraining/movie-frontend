@@ -44,7 +44,7 @@ export const Header = () => {
             <HiOutlineFilm className="icon"></HiOutlineFilm>
             <div className="title">
               <span>TrumPhim.Net </span>
-              <span>Phim mới cập nhật chất lượng cao </span>
+              <span>Phim mới cập nhật chất lượng cao</span>
             </div>
           </div>
           <div className="search">
@@ -67,7 +67,7 @@ export const Header = () => {
             </button>
           </div>
         </div>
-        
+
         {!isLoggedIn() && (
           <div className="login-register">
             <KeycloakComponent className="keycloak" />
