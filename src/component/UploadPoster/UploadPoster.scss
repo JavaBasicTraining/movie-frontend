@@ -3,6 +3,12 @@
     position: relative;
     margin-top: 12px;
 
+    &__image-wrapper {
+      width: 100%;
+      max-width: 300px;
+      object-fit: contain;
+    }
+
     &__remove-btn {
       position: absolute;
       top: 4px;

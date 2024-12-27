@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ReactPlayer from 'react-player';
 import './UploadVideo.scss';
-import { fileUtil } from '../../utils/fileUtil';
+import { fileUtil } from '../../utils';
 
 export const UploadVideo = (props) => {
   const { label = 'Upload Video', fileList, onChange } = props;

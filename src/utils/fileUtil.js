@@ -8,4 +8,11 @@ export const fileUtil = {
     }
     return '';
   },
+
+  getFileFromEvent(e) {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  },
 };

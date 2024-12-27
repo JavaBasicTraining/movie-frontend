@@ -16,6 +16,10 @@
 
   &__episode-form {
     width: 100%;
+
+    .EpisodeForm {
+      @extend .bound-box;
+    }
   }
 
   .bound-box {

@@ -3,7 +3,7 @@ import { Button, Image, Space, Upload } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import './UploadPoster.scss';
-import { fileUtil } from '../../utils/fileUtil';
+import { fileUtil } from '../../utils';
 
 export const UploadPoster = (props) => {
   const { fileList, onChange } = props;
@@ -18,7 +18,7 @@ export const UploadPoster = (props) => {
         <Image
           src={fileUtil.getUrl(file)}
           alt={file.name}
-          wrapperStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          wrapperClassName="upload-item__image-wrapper"
           loading="lazy"
         />
 

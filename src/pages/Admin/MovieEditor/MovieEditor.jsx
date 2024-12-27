@@ -5,7 +5,7 @@ import {
   Input,
   notification,
   Select,
-  Space, Spin,
+  Space,
   Typography,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -15,8 +15,8 @@ import { EpisodeForm, UploadPoster, UploadVideo } from '../../../component';
 import { categoryService, genreService, movieService } from '../../../services';
 import { countries } from '../../../static-data/countries';
 import './MovieEditor.scss';
-import { LoadingOutlined } from '@ant-design/icons';
 import { spinnerService } from '../../../services/spinnerService';
+import { fileUtil, validatorUtil } from '../../../utils';
 
 export async function MovieEditorLoader({ params }) {
   const id = parseInt(params.id);
@@ -59,7 +59,6 @@ export const MovieEditor = () => {
   const [genres, setGenres] = useState([]);
   const [originalFormValue, setOriginalFormValue] = useState(null);
   const [formChanged, setFormChanged] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const hasChanges = useCallback(
     (dataChange) => {
@@ -253,13 +252,6 @@ export const MovieEditor = () => {
     <span className="MovieEditor__form-label">{label}</span>
   );
 
-  const handleGetFileValue = (e) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
-
   const handleFormChange = (changedValues) => {
     const changed = hasChanges(changedValues);
     setFormChanged(changed);
@@ -432,12 +424,17 @@ export const MovieEditor = () => {
               label={renderLabel('Upload Poster')}
               name="posterFile"
               layout="vertical"
-              getValueFromEvent={handleGetFileValue}
+              getValueFromEvent={fileUtil.getFileFromEvent}
               valuePropName="fileList"
               rules={[
                 {
                   required: true,
                   message: 'Please upload poster!',
+                },
+                {
+                  validator: (_, value) =>
+                    validatorUtil.validateFileType(value, 'image/'),
+                  message: 'Please input an image',
                 },
               ]}
             >
@@ -449,12 +446,17 @@ export const MovieEditor = () => {
                 label={renderLabel('Upload Video')}
                 name="videoFile"
                 layout="vertical"
-                getValueFromEvent={handleGetFileValue}
+                getValueFromEvent={fileUtil.getFileFromEvent}
                 valuePropName="fileList"
                 rules={[
                   {
                     required: true,
                     message: 'Please upload video!',
+                  },
+                  {
+                    validator: (_, value) =>
+                      validatorUtil.validateFileType(value, 'video/'),
+                    message: 'Please input a video',
                   },
                 ]}
               >
@@ -466,12 +468,17 @@ export const MovieEditor = () => {
               label={renderLabel('Upload Trailer')}
               name="trailerFile"
               layout="vertical"
-              getValueFromEvent={handleGetFileValue}
+              getValueFromEvent={fileUtil.getFileFromEvent}
               valuePropName="fileList"
               rules={[
                 {
                   required: true,
                   message: 'Please upload trailer!',
+                },
+                {
+                  validator: (_, value) =>
+                    validatorUtil.validateFileType(value, 'video/'),
+                  message: 'Please input a video',
                 },
               ]}
             >
@@ -498,14 +505,7 @@ export const MovieEditor = () => {
                   <Button
                     type="dashed"
                     onClick={() => {
-                      // Define default values for a new episode
-                      const defaultEpisode = {
-                        episodeCount: null,
-                        descriptions: null,
-                        posterFile: null,
-                        videoFile: null,
-                      };
-                      add(defaultEpisode);
+                      add({});
                     }}
                   >
                     Add Episode

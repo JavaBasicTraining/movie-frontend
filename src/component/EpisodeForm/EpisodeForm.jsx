@@ -5,6 +5,8 @@ import React from 'react';
 import { UploadPoster } from '../UploadPoster/UploadPoster';
 import { UploadVideo } from '../UploadVideo/UploadVideo';
 import './EpisodeForm.scss';
+import { fileUtil } from '../../utils/fileUtil';
+import { validatorUtil } from '../../utils/validatorUtil';
 
 export const EpisodeForm = ({ field, remove }) => {
   const { key, name, fieldKey, ...restField } = field;
@@ -33,14 +35,16 @@ export const EpisodeForm = ({ field, remove }) => {
         {...restField}
         label="Upload Poster"
         name={[name, 'posterFile']}
-        getValueFromEvent={(e) => {
-          if (Array.isArray(e)) {
-            return e;
-          }
-          return e?.fileList;
-        }}
+        getValueFromEvent={fileUtil.getFileFromEvent}
         valuePropName="fileList"
-        rules={[{ required: true, message: 'Please input poster!' }]}
+        rules={[
+          { required: true, message: 'Please input poster!' },
+          {
+            validator: (_, value) =>
+              validatorUtil.validateFileType(value, 'image/'),
+            message: 'Please input an image',
+          },
+        ]}
       >
         <UploadPoster />
       </Form.Item>
@@ -49,12 +53,7 @@ export const EpisodeForm = ({ field, remove }) => {
         {...restField}
         label="Upload Video"
         name={[name, 'videoFile']}
-        getValueFromEvent={(e) => {
-          if (Array.isArray(e)) {
-            return e;
-          }
-          return e?.fileList;
-        }}
+        getValueFromEvent={fileUtil.getFileFromEvent}
         valuePropName="fileList"
         rules={[{ required: true, message: 'Please input poster!' }]}
       >
