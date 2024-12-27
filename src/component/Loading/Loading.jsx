@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Spin } from 'antd';
-import { spinnerService } from '../../services/spinnerService';
+import { loadingService } from '../../services';
 import { LoadingOutlined } from '@ant-design/icons';
 
 export const Loading = () => {
@@ -11,10 +11,10 @@ export const Loading = () => {
       setLoading(value);
     };
 
-    spinnerService.subscribe(handleSpinnerChange);
+    loadingService.subscribe(handleSpinnerChange);
 
     return () => {
-      spinnerService.unsubscribe();
+      loadingService.unsubscribe();
     };
   }, []);
 

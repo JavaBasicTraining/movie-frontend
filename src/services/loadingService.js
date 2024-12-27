@@ -1,4 +1,4 @@
-class SpinnerService {
+class LoadingService {
   _callback = () => {};
 
   show() {
@@ -18,4 +18,4 @@ class SpinnerService {
   }
 }
 
-export const spinnerService = new SpinnerService();
+export const loadingService = new LoadingService();

@@ -7,13 +7,11 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import './MovieManager.scss';
-import { genreService, movieService } from '../../../services';
+import { genreService, loadingService, movieService } from '../../../services';
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons';
-import { spinnerService } from '../../../services/spinnerService';
 
 export async function MovieManagerLoader({ request }) {
   const searchParams = new URL(request.url).searchParams;
-  console.log(searchParams);
   const response = await movieService.query({
     genre: searchParams.get('genre'),
     country: searchParams.get('country'),
@@ -113,11 +111,11 @@ export const MovieManager = () => {
   };
 
   const handleReloadClick = () => {
-    spinnerService.show();
+    loadingService.show();
     setReloading(true);
     fetchMovies().finally(() =>
       setTimeout(() => {
-        spinnerService.hide();
+        loadingService.hide();
         setReloading(false);
       }, 1000)
     );

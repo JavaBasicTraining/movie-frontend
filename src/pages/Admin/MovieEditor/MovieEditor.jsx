@@ -12,10 +12,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { EpisodeForm, UploadPoster, UploadVideo } from '../../../component';
-import { categoryService, genreService, movieService } from '../../../services';
+import {
+  categoryService,
+  genreService,
+  loadingService,
+  movieService,
+} from '../../../services';
 import { countries } from '../../../static-data/countries';
 import './MovieEditor.scss';
-import { spinnerService } from '../../../services/spinnerService';
 import { fileUtil, validatorUtil } from '../../../utils';
 
 export async function MovieEditorLoader({ params }) {
@@ -220,7 +224,7 @@ export const MovieEditor = () => {
 
   const onFinish = async (value) => {
     try {
-      spinnerService.show();
+      loadingService.show();
       const newData = {
         ...value,
         episodes: value?.episodes?.map((episode) => ({
@@ -238,7 +242,7 @@ export const MovieEditor = () => {
       } else {
         await updateMovie(newData, episodesMap);
       }
-      spinnerService.hide();
+      loadingService.hide();
     } catch (error) {
       notification.error({ message: `Error submitting movie: ${error}` });
     }
