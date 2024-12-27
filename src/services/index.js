@@ -1,3 +1,5 @@
+export * from './accountService';
+export * from './authenticateService';
 export * from './categoryService';
 export * from './genreService';
 export * from './keycloakService';

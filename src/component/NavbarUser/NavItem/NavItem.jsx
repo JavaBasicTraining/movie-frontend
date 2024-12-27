@@ -6,7 +6,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList } from '@fortawesome/free-solid-svg-icons';
 
 export const NavItem = (props) => {
-  const { name = '', path = '', basePath = '', subItems = [], icon } = props;
+  const {
+    name = '',
+    path = '',
+    basePath = '',
+    subItems = [],
+    icon,
+    onItemClick,
+  } = props;
   const navigate = useNavigate();
 
   const handleItemClick = useCallback(() => {
@@ -15,7 +22,8 @@ export const NavItem = (props) => {
     }
     const url = `${basePath}/${path}`;
     navigate(url);
-  }, [path, basePath, navigate]);
+    onItemClick?.();
+  }, [path, basePath, navigate, onItemClick]);
 
   return (
     <div className="NavItem">
@@ -45,4 +53,5 @@ NavItem.propTypes = {
   basePath: PropTypes.string,
   icon: PropTypes.object,
   subItems: PropTypes.array,
+  onItemClick: PropTypes.func,
 };

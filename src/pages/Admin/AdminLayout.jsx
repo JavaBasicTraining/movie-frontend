@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Loading, NavbarAdmin, PrivateRoute } from '../../component';
 import './AdminLayout.scss';
+import { AuthProvider } from '../../contexts';
 
 const { Header, Sider, Content } = Layout;
 
@@ -22,47 +23,49 @@ export const AdminLayout = () => {
   }, [navigate]);
 
   return (
-    <PrivateRoute>
-      <Layout>
-        <Sider trigger={null} collapsible collapsed={collapsed}>
-          <div className="demo-logo-vertical" />
-          <NavbarAdmin />
-        </Sider>
-
+    <AuthProvider>
+      <PrivateRoute>
         <Layout>
-          <Header style={{ padding: 0 }}>
-            <Button
-              type="text"
-              icon={
-                collapsed ? (
-                  <MenuUnfoldOutlined style={{ color: 'white' }} />
-                ) : (
-                  <MenuFoldOutlined style={{ color: 'white' }} />
-                )
-              }
-              onClick={() => setCollapsed(!collapsed)}
-              style={{
-                fontSize: '16px',
-                width: 64,
-                height: 64,
-              }}
-            />
-          </Header>
-          <Content
-            style={{
-              margin: '24px 16px',
-              padding: 24,
-              minHeight: 280,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            <Outlet />
-          </Content>
-        </Layout>
-      </Layout>
+          <Sider trigger={null} collapsible collapsed={collapsed}>
+            <div className="demo-logo-vertical" />
+            <NavbarAdmin />
+          </Sider>
 
-      <Loading />
-    </PrivateRoute>
+          <Layout>
+            <Header style={{ padding: 0 }}>
+              <Button
+                type="text"
+                icon={
+                  collapsed ? (
+                    <MenuUnfoldOutlined style={{ color: 'white' }} />
+                  ) : (
+                    <MenuFoldOutlined style={{ color: 'white' }} />
+                  )
+                }
+                onClick={() => setCollapsed(!collapsed)}
+                style={{
+                  fontSize: '16px',
+                  width: 64,
+                  height: 64,
+                }}
+              />
+            </Header>
+            <Content
+              style={{
+                margin: '24px 16px',
+                padding: 24,
+                minHeight: 280,
+                background: colorBgContainer,
+                borderRadius: borderRadiusLG,
+              }}
+            >
+              <Outlet />
+            </Content>
+          </Layout>
+        </Layout>
+
+        <Loading />
+      </PrivateRoute>
+    </AuthProvider>
   );
 };

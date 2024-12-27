@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { axiosInstance } from '../configs/axiosConfig';
+import { accountService } from '../services';
 
 const useFetchUser = () => {
   const [user, setUser] = useState(null);
@@ -7,7 +7,7 @@ const useFetchUser = () => {
 
   const fetchUser = async (onSuccess) => {
     try {
-      const response = await axiosInstance.get('/api/account/info');
+      const response = await accountService.getUser();
       onSuccess?.(response.data);
       setUser(response.data);
       setIsUser(true);

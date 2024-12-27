@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
+import { useAuth } from '../hooks';
 
-export const PrivateRoute = ({ element: Element, children, ...rest }) => {
+export const PrivateRoute = ({ children }) => {
   const navigate = useNavigate();
-  const isAuth = useAuth();
+  const { isAuth } = useAuth();
 
   useEffect(() => {
     if (isAuth !== null && !isAuth) {
