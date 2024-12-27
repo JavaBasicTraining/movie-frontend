@@ -6,8 +6,8 @@ import './ListMovieUser.scss';
 export async function MovieLoader({ params }) {
   const response = await axiosInstance.get(`/api/v1/movies`, {
     params: {
-      keyword: params.keyword
- }
+      keyword: params.keyword,
+    },
   });
   return {
     movies: response.data ?? [],
