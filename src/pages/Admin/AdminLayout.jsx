@@ -1,13 +1,9 @@
-import { Outlet, useNavigate } from 'react-router-dom';
-
-import './AdminLayout.scss';
-
-import React, { useEffect, useState } from 'react';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import PrivateRoute from '../../component/PrivateRoute';
 import { Button, Layout, theme } from 'antd';
-import { NavbarAdmin } from '../../component/NavbarAdmin/NavbarAdmin';
-import { Loading } from '../../component/Loading/Loading';
+import React, { useEffect, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { Loading, NavbarAdmin, PrivateRoute } from '../../component';
+import './AdminLayout.scss';
 
 const { Header, Sider, Content } = Layout;
 

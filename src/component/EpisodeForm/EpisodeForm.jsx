@@ -4,9 +4,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { UploadPoster } from '../UploadPoster/UploadPoster';
 import { UploadVideo } from '../UploadVideo/UploadVideo';
+import { fileUtil, validatorUtil } from '../../utils';
 import './EpisodeForm.scss';
-import { fileUtil } from '../../utils/fileUtil';
-import { validatorUtil } from '../../utils/validatorUtil';
 
 export const EpisodeForm = ({ field, remove }) => {
   const { key, name, fieldKey, ...restField } = field;

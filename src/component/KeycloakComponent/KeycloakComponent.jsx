@@ -1,6 +1,6 @@
 import React from 'react';
 import './KeycloakComponent.scss';
-import { keycloakService } from '../../services/keycloakService';
+import { keycloakService } from '../../services';
 
 export const KeycloakComponent = () => {
   // const handleFacebookLogin = () => {
