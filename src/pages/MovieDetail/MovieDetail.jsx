@@ -111,7 +111,7 @@ export const MovieDetail = () => {
         <div className="header">
           <div className="content">
             <div className="btn-poster">
-              <img className="poster" src={movie?.posterUrl} alt="" />
+              <img className="poster" src={movie?.posterPresignedUrl} alt="" />
               <div className="list-btn">
                 {movie?.category?.id === 1 ? (
                   <button onClick={() => navigate(`/xem-phim/${movie.path}`)}>
@@ -193,7 +193,7 @@ export const MovieDetail = () => {
           ></div>
 
           <video
-            src={movie.trailerUrl}
+            src={movie.trailerPresignedUrl}
             controls
             style={{
               position: 'absolute',

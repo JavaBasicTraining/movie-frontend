@@ -2,4 +2,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
+
+  &__avatar {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .avatar-chevron-down {
+    cursor: pointer;
+  }
 }

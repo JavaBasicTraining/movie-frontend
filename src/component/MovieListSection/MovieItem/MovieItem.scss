@@ -1,0 +1,14 @@
+.MovieItem {
+  width: fit-content;
+
+  &__image {
+    border-radius: 12px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+  }
+
+  &__title {
+
+  }
+}

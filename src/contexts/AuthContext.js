@@ -1,4 +1,5 @@
-import { createContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { accountService } from '../services';
 
 export const AuthContext = createContext(null);
@@ -17,7 +18,7 @@ export const AuthProvider = ({ children }) => {
         })
         .catch((error) => {
           console.error('Fetch user error: ', error);
-          reject(error);
+          reject(new Error(error));
         });
     });
   };
@@ -39,9 +40,11 @@ export const AuthProvider = ({ children }) => {
       });
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ isAuth, user }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = useMemo(() => ({ isAuth, user }), [isAuth, user]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node,
 };
