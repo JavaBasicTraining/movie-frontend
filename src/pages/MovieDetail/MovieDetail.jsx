@@ -107,11 +107,11 @@ export const MovieDetail = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <div className="container">
+      <div className="MovieFilter">
         <div className="header">
           <div className="content">
             <div className="btn-poster">
-              <img className="poster" src={movie?.posterPresignedUrl} alt="" />
+              <img className="MovieCard" src={movie?.posterPresignedUrl} alt="" />
               <div className="list-btn">
                 {movie?.category?.id === 1 ? (
                   <button onClick={() => navigate(`/xem-phim/${movie.path}`)}>

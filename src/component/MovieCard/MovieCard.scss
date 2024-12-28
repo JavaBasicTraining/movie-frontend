@@ -1,0 +1,30 @@
+.MovieCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+
+  &:hover {
+    box-shadow: rgba(50, 50, 93, 0.25) 0 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    transition: 0.3s;
+  }
+
+  &__image-container {
+    display: flex;
+    width: 100%;
+    max-width: 190px;
+    height: 170px;
+
+    img {
+      border-radius: 4px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__title {
+    width: 100%;
+  }
+}

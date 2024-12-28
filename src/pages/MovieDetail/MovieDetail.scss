@@ -1,4 +1,4 @@
-.container {
+.MovieFilter {
   display: flex;
   flex-direction: column;
 
@@ -16,7 +16,7 @@
         position: relative; // 4
         width: 280px;
 
-        .poster {
+        .MovieCard {
           display: block;
           width: 100%;
           height: auto;

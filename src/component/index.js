@@ -3,6 +3,7 @@ export * from './EpisodeForm/EpisodeForm';
 export * from './Header/Header';
 export * from './KeycloakComponent/KeycloakComponent';
 export * from './Loading/Loading';
+export * from './MovieCard/MovieCard';
 export * from './MovieListSection/MovieListSection';
 export * from './NavbarAdmin/NavbarAdmin';
 export * from './NavbarUser/NavbarUser';

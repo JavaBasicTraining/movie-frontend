@@ -8,7 +8,7 @@ import { faList } from '@fortawesome/free-solid-svg-icons';
 export const NavItem = (props) => {
   const {
     name = '',
-    path = '',
+    path,
     basePath = '',
     subItems = [],
     icon,

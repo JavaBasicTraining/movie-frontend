@@ -4,27 +4,21 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import './index.scss';
 import {
-  MovieEditorLoader,
-  MovieEditor,
-} from './pages/Admin/MovieEditor/MovieEditor';
-import { AdminLayout } from './pages/Admin/AdminLayout';
-import {
+  AdminLayout,
   CountryLoader,
+  Home,
   Movie,
-  MovieLoader,
-} from './pages/ListMovie/ListMovieUser';
-import {
   MovieDetail,
   MovieDetailLoader,
-} from './pages/MovieDetail/MovieDetail';
-import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
-import { WatchMovie } from './pages/WatchMovie/WatchMovie';
-import reportWebVitals from './reportWebVitals';
-import { Home } from './pages/Home/Home';
-import {
+  MovieEditor,
+  MovieEditorLoader, MovieFilter, MovieFilterLoader,
+  MovieLoader,
   MovieManager,
   MovieManagerLoader,
-} from './pages/Admin/MovieManager/MovieManager';
+  WatchMovie,
+} from './pages';
+import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
+import reportWebVitals from './reportWebVitals';
 
 const router = createBrowserRouter([
   {
@@ -35,21 +29,15 @@ const router = createBrowserRouter([
         path: '/',
         element: <Home />,
       },
-
       {
-        path: '/the-loai/:keyword?',
-        element: <Movie />,
-        loader: MovieLoader,
+        path: '/the-loai/:genre',
+        element: <MovieFilter />,
+        loader: MovieFilterLoader,
       },
       {
-        path: '/quoc-gia/:keyword',
-        element: <Movie />,
-        loader: CountryLoader,
-      },
-      {
-        path: '/filter/:keyword',
-        element: <Movie />,
-        loader: MovieLoader,
+        path: '/quoc-gia/:country',
+        element: <MovieFilter />,
+        loader: MovieFilterLoader,
       },
       {
         path: '/:path',
@@ -94,7 +82,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();

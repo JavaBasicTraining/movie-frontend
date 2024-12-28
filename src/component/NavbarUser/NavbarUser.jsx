@@ -1,6 +1,5 @@
 /* eslint-disable no-lone-blocks */
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { navbar } from '../../static-data/navBarusUser';
 import './NavbarUser.scss';
 import { NavItem } from './NavItem/NavItem';
@@ -9,7 +8,6 @@ import { genreService, keycloakService } from '../../services';
 import { useAuth } from '../../hooks';
 
 export const NavbarUser = () => {
-  const navigate = useNavigate();
   const { isAuth } = useAuth();
   const [categories, setCategories] = useState([]);
 
@@ -32,42 +30,6 @@ export const NavbarUser = () => {
   const fetchCategories = async () => {
     const response = await genreService.getAll();
     setCategories(response.data);
-  };
-
-  const listItem = () => {
-    return navbar.map((value, index) => {
-      return (
-        <div key={index} className="nav-item">
-          <span
-            className="nav-item-name"
-            onClick={() => {
-              if (value.path !== undefined) {
-                navigate(`/${value.path}`);
-              }
-            }}
-          >
-            {value.name}
-          </span>
-          {value['subItems'] && (
-            <div className="nav-sub-items">
-              {value['subItems'].map((sub, subIndex) => {
-                return (
-                  <span value={sub} className="nav-item-name">
-                    <Link
-                      key={subIndex}
-                      className="link-item"
-                      to={(value.basePath ?? '') + `/${sub.name}`}
-                    >
-                      {sub.name}
-                    </Link>
-                  </span>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      );
-    });
   };
 
   const handleLogout = () => {

@@ -1,0 +1,12 @@
+.btn {
+  border: none;
+  padding: .5rem 1rem;
+  border-radius: .25rem;
+  width: fit-content;
+}
+
+.btn-primary {
+  @extend .btn;
+  background: #0193bc;
+  color: white;
+}

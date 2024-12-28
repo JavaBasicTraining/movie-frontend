@@ -1,0 +1,11 @@
+.MovieFilter {
+  gap: 20px;
+  justify-content: space-between;
+  padding: 1px;
+
+  &__grid-movies {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 200px);
+    gap: 12px;
+  }
+}
