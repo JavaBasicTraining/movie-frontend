@@ -9,7 +9,7 @@ export async function MovieFilterLoader({ params, request }) {
   const response = await movieService.query({
     keyword: searchParams.get('keyword'),
     genre: params.genre,
-    county: params.county,
+    country: params.country,
   });
   return {
     movies: response.data ?? [],
@@ -23,9 +23,11 @@ export const MovieFilter = () => {
     <div className="MovieFilter">
       <>
         {movies && (
-          <div className="MovieFilter__grid-movies">
+          <div className="MovieFilter__grid">
             {movies?.map((item) => (
-              <MovieCard key={item.id} movie={item} />
+              <div className="MovieFilter__grid-item" key={item.id}>
+                <MovieCard movie={item} />
+              </div>
             ))}
           </div>
         )}

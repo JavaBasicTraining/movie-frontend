@@ -3,9 +3,15 @@
   justify-content: space-between;
   padding: 1px;
 
-  &__grid-movies {
+  &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, 200px);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
+    justify-content: center;
+  }
+
+  &__grid-item {
+    display: flex;
+    flex-direction: column;
   }
 }
