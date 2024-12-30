@@ -86,7 +86,7 @@ export const MovieEditor = () => {
   }, []);
 
   const initFormData = useCallback(() => {
-    const getFileList = (url, name) => {
+    const getFileList = (url, name, type) => {
       if (!url) {
         return null;
       }
@@ -96,6 +96,7 @@ export const MovieEditor = () => {
           name,
           status: 'done',
           url,
+          type,
         },
       ];
     };
@@ -104,13 +105,13 @@ export const MovieEditor = () => {
       ...movie,
       categoryId: movie?.category?.id,
       genreIds: movie?.genres?.map((genre) => genre.id) ?? [],
-      posterFile: getFileList(movie?.posterPresignedUrl, 'poster.png'),
-      videoFile: getFileList(movie?.videoPresignedUrl, 'video.mp4'),
-      trailerFile: getFileList(movie?.trailerPresignedUrl, 'trailer.mp4'),
+      posterFile: getFileList(movie?.posterPresignedUrl, 'poster.png', 'image/png'),
+      videoFile: getFileList(movie?.videoPresignedUrl, 'video.mp4', 'video/mp4'),
+      trailerFile: getFileList(movie?.trailerPresignedUrl, 'trailer.mp4', 'video/mp4'),
       episodes: movie?.episodes?.map((episode) => ({
         ...episode,
-        posterFile: getFileList(episode.posterPresignedUrl, 'poster.png'),
-        videoFile: getFileList(episode.videoPresignedUrl, 'video.mp4'),
+        posterFile: getFileList(episode.posterPresignedUrl, 'poster.png', 'image/png'),
+        videoFile: getFileList(episode.videoPresignedUrl, 'video.mp4', 'video/mp4'),
       })),
     };
 
