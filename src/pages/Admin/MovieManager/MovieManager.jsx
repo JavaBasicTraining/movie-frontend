@@ -11,6 +11,7 @@ import { genreService, loadingService, movieService } from '../../../services';
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons';
 
 export async function MovieManagerLoader({ request }) {
+  loadingService.show();
   const searchParams = new URL(request.url).searchParams;
   const response = await movieService.query({
     genre: searchParams.get('genre'),
@@ -20,10 +21,15 @@ export async function MovieManagerLoader({ request }) {
     sort: 'id,desc',
   });
 
+  loadingService.hide();
+
+  const totalCount = parseInt(response.headers['x-total-count']) ?? 0;
+
   return {
     movies: response.data ?? [],
     genre: searchParams.get('genre'),
     country: searchParams.get('country'),
+    totalCount,
   };
 }
 
@@ -39,12 +45,16 @@ const countries = [
 
 export const MovieManager = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { movies, genre, country } = useLoaderData();
+  const { movies, genre, country, totalCount, size } = useLoaderData();
   const navigate = useNavigate();
   const [genres, setGenres] = useState([]);
   const [moviesState, setMoviesState] = useState(movies);
   const [reloading, setReloading] = useState(false);
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 5 });
+  const [pagination, setPagination] = useState({
+    current: (searchParams.get('page') ?? 0) + 1,
+    pageSize: searchParams.get('size') ?? 20,
+    total: totalCount,
+  });
 
   const fetchGenres = useCallback(() => {
     genreService.getAll().then((res) => {
@@ -53,9 +63,15 @@ export const MovieManager = () => {
   }, []);
 
   const fetchMovies = useCallback(async () => {
-    const res = await movieService.query({ genre, country });
+    const res = await movieService.query({
+      genre,
+      country,
+      page: pagination.current - 1,
+      size: pagination.pageSize,
+      sort: 'id,desc',
+    });
     setMoviesState(res.data);
-  }, [genre, country]);
+  }, [genre, country, pagination]);
 
   useEffect(() => {
     fetchGenres();
@@ -119,6 +135,30 @@ export const MovieManager = () => {
         setReloading(false);
       }, 1000)
     );
+  };
+
+  const handleTableChange = (pagination) => {
+    console.log('Pagination:', pagination);
+    setPagination(pagination);
+    updateSearchParams({
+      page: pagination.current - 1,
+      size: pagination.pageSize,
+    });
+  };
+
+  const updateSearchParams = ({ page, size }) => {
+    const params = new URLSearchParams(searchParams);
+    if (page) {
+      params.set('page', page.toString());
+    } else {
+      params.delete('page');
+    }
+    if (size) {
+      params.set('size', size);
+    } else {
+      params.delete('size');
+    }
+    setSearchParams(params);
   };
 
   const columns = [
@@ -197,7 +237,12 @@ export const MovieManager = () => {
         columns={columns}
         dataSource={moviesState}
         rowKey="id"
-        pagination={pagination}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: pagination.total,
+        }}
+        onChange={handleTableChange}
       />
     </div>
   );
