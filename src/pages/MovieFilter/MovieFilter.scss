@@ -8,10 +8,12 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
     justify-content: center;
+    transform-style: preserve-3d;
   }
 
   &__grid-item {
     display: flex;
     flex-direction: column;
+    transform-style: preserve-3d;
   }
 }

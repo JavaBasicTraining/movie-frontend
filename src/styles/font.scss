@@ -4,6 +4,19 @@
   font-weight: bolder;
 }
 
+.f-large {
+  font-size: 24px;
+  color: var(--text-black);
+  font-weight: normal;
+}
+
+.f-medium {
+  font-size: 16px;
+  color: var(--text-black);
+  font-weight: normal;
+}
+
+
 .f-normal {
   font-size: 16px;
   color: var(--text-primary);

@@ -67,7 +67,7 @@ export const MovieListSection = (props) => {
     <>
       {movies && movies.length > 0 && (
         <Flex className="MovieListSection" vertical gap={10}>
-          <Flex justify="space-between">
+          <Flex justify="space-between" align="center">
             <span className="MovieListSection__title f-title">{title}</span>
             <Flex gap={20}>
               <FontAwesomeIcon

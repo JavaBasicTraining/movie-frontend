@@ -1,9 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import './NavItem.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faList } from '@fortawesome/free-solid-svg-icons';
+import {
+  faChevronDown,
+  faChevronUp,
+  faList,
+} from '@fortawesome/free-solid-svg-icons';
 
 export const NavItem = (props) => {
   const {
@@ -15,6 +19,7 @@ export const NavItem = (props) => {
     onItemClick,
   } = props;
   const navigate = useNavigate();
+  const [showSubItems, setShowSubItems] = useState(false);
 
   const handleItemClick = useCallback(() => {
     if (path === undefined || path === null) {
@@ -27,7 +32,9 @@ export const NavItem = (props) => {
 
   return (
     <div className="NavItem">
-      <div className="NavItem__label-icon">
+      <div
+        className={`NavItem__label-icon ${showSubItems ? 'NavItem__label-icon--active' : ''}`}
+      >
         <FontAwesomeIcon icon={icon ?? faList} size="1x" />
         <button
           className="NavItem__label btn-non-style f-normal"
@@ -36,9 +43,15 @@ export const NavItem = (props) => {
           {name}
         </button>
 
-        {subItems?.length > 0 && <FontAwesomeIcon icon={faChevronDown} />}
+        {subItems?.length > 0 && (
+          <FontAwesomeIcon
+            icon={showSubItems ? faChevronUp : faChevronDown}
+            onClick={() => setShowSubItems(!showSubItems)}
+          />
+        )}
       </div>
-      {subItems?.length > 0 && (
+
+      {showSubItems && subItems?.length > 0 && (
         <div className="NavItem__sub-items">
           {subItems.map((subItem) => (
             <NavItem key={subItem.name} {...subItem} basePath={basePath} />

@@ -1,5 +1,5 @@
 /* eslint-disable no-lone-blocks */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { navbar } from '../../static-data/navBarusUser';
 import './NavbarUser.scss';
 import { NavItem } from './NavItem/NavItem';
@@ -11,21 +11,24 @@ export const NavbarUser = () => {
   const { isAuth } = useAuth();
   const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    fetchCategories().then();
-  }, []);
-
-  useEffect(() => {
-    navbar.map((item) => {
+  const insertCategories = useCallback(() => {
+    navbar.forEach((item) => {
       if (item.name === 'Thể Loại') {
         item.subItems = categories.map((category) => ({
           name: category.name,
           path: category.name,
         }));
       }
-      return item;
     });
   }, [categories]);
+
+  useEffect(() => {
+    fetchCategories().then();
+  }, []);
+
+  useEffect(() => {
+    insertCategories();
+  }, [insertCategories]);
 
   const fetchCategories = async () => {
     const response = await genreService.getAll();

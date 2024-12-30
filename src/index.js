@@ -5,14 +5,13 @@ import App from './App';
 import './index.scss';
 import {
   AdminLayout,
-  CountryLoader,
   Home,
-  Movie,
   MovieDetail,
   MovieDetailLoader,
   MovieEditor,
-  MovieEditorLoader, MovieFilter, MovieFilterLoader,
-  MovieLoader,
+  MovieEditorLoader,
+  MovieFilter,
+  MovieFilterLoader,
   MovieManager,
   MovieManagerLoader,
   WatchMovie,
@@ -82,7 +81,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 reportWebVitals();

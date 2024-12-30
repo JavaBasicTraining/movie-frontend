@@ -24,9 +24,9 @@ export const MovieFilter = () => {
       <>
         {movies && (
           <div className="MovieFilter__grid">
-            {movies?.map((item) => (
+            {movies?.map((item, index) => (
               <div className="MovieFilter__grid-item" key={item.id}>
-                <MovieCard movie={item} />
+                <MovieCard movie={item} index={index}/>
               </div>
             ))}
           </div>

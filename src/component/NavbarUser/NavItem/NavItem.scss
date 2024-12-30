@@ -9,14 +9,15 @@
     font-weight: bold;
   }
 
-  &:hover > &__sub-items {
-    display: flex;
-  }
-
   &__label-icon {
     display: flex;
     gap: 8px;
     align-items: center;
+
+    &--active {
+      text-decoration: underline;
+      font-weight: bold;
+    }
   }
 
   &__label {
@@ -26,7 +27,7 @@
 
   &__sub-items {
     padding-left: 12px;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
   }

@@ -1,84 +1,21 @@
-.MovieFilter {
+.MovieDetail {
+  position: relative;
   display: flex;
   flex-direction: column;
 
-  .header {
-    display: flex;
+  &__banner {
     width: 100%;
-    flex-direction: column;
-    gap: 50px;
-
-    .content {
-      display: flex;
-      gap: 50px;
-
-      .btn-poster {
-        position: relative; // 4
-        width: 280px;
-
-        .MovieCard {
-          display: block;
-          width: 100%;
-          height: auto;
-        }
-
-        .list-btn {
-          position: absolute; // 3
-          left: 50%; // 1
-          bottom: 0%; // 5
-          transform: translate(-50%, -50%); // 2\
-          border: none;
-
-          :hover {
-            cursor: pointer;
-
-            background-color: rgb(137, 55, 55);
-            display: block;
-          }
-
-          display: flex;
-          gap: 8px;
-
-          button {
-            height: 30px;
-            border: none;
-            font-weight: bold;
-            color: white;
-            background-color: rgb(211, 90, 90);
-            // width: 100px; // k xi nhê, oke a, e hỉu r
-            white-space: nowrap; // chặn xuống dòng, hiện tại nó đang xuống dòng dựa vào khoảng trắng
-            // ngoài cái này, dùng width 100% cx ddc hảm a, k, bth nó sẽ k xuống dòng, tại vì cái width nhỏ lại
-            // nếu set width cho nó thì cũng như k, trừ khi set cứng 1 số vừa đủ, ok a, em toàn dùng width: auto :))
-          }
-        }
-      }
-
-      .info {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        white-space: nowrap;
-
-        justify-content: center;
-        gap: 40px;
-        font-size: 20px;
-        font-weight: bold;
-        color: white;
-      }
-    }
-
-    .body {
-      h1 {
-        font-weight: bold;
-        font-size: 35px;
-      }
-
-      display: flex;
-      flex-direction: column;
-      color: white;
-      gap: 10px;
-
-      font-size: 25px;
-    }
+    height: 500px;
   }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__content {
+    width: 100%;
+  }
+
 }

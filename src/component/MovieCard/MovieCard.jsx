@@ -12,9 +12,13 @@ const defaultMovie = {
 };
 
 export const MovieCard = (props) => {
-  const { movie = defaultMovie } = props;
+  const { movie = defaultMovie, index } = props;
   return (
-    <Link className="MovieCard" to={`/${movie.path ?? ''}`}>
+    <Link
+      className="MovieCard"
+      to={`/${movie.path ?? ''}`}
+      style={{ animationDelay: `${index * 0.05}s` }}
+    >
       <div className="MovieCard__image-container">
         <img src={movie.posterPresignedUrl} alt="" />
       </div>
@@ -33,4 +37,5 @@ export const MovieCard = (props) => {
 
 MovieCard.propTypes = {
   movie: PropTypes.object,
+  index: PropTypes.number,
 };

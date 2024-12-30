@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../../configs/axiosConfig';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { StarFilled, StarOutlined } from '@ant-design/icons';
-import { jwtDecode } from 'jwt-decode';
 import useFetchUser from '../../hooks/useFetchUser';
 import './MovieDetail.scss';
+import { movieService } from '../../services';
+import { Flex } from 'antd';
 
 export async function MovieDetailLoader({ params }) {
-  const response = await axiosInstance.get(`/api/v1/movies/${params.path }`);
+  const response = await movieService.findByPath(params.path);
   return {
     movie: response.data,
   };
@@ -88,12 +88,6 @@ export const MovieDetail = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      setJwt(decodedToken);
-      fetchUser().then();
-    }
     window.addEventListener('keyup', handleKeyup);
     return () => {
       window.removeEventListener('keyup', handleKeyup);
@@ -103,68 +97,55 @@ export const MovieDetail = () => {
   useEffect(() => {
     averageRating(movie.id).then();
     evaluationsNumberReview(movie.id).then();
-  }, [average, rating]);
+  }, [average, movie.id, rating]);
+
+  const handleWatchTrailer = () => {
+    setIsShowTrailer(true);
+  };
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div className="MovieFilter">
-        <div className="header">
-          <div className="content">
-            <div className="btn-poster">
-              <img className="MovieCard" src={movie?.posterPresignedUrl} alt="" />
-              <div className="list-btn">
-                {movie?.category?.id === 1 ? (
-                  <button onClick={() => navigate(`/xem-phim/${movie.path}`)}>
-                    Xem Phim
-                  </button>
-                ) : (
-                  <button onClick={() => navigate(`/xem-phim/${movie.path}`)}>
-                    Xem Phim
-                  </button>
-                )}
-                <button onClick={() => setIsShowTrailer(true)}>
-                  Xem Trailer
-                </button>
-              </div>
-            </div>
-            <div className="info">
-              <span> {movie?.nameMovie} </span>
-              <div>
-                <span>Đánh Giá: </span>
-                {[...Array(5)].map((_, i) => {
-                  const index = i + 1;
-                  const StarComponent =
-                    index <= rating ? StarFilled : StarOutlined;
-                  return (
-                    <StarComponent
-                      onClick={() => {
-                        handleClick(index);
-                      }}
-                      style={index <= rating ? { color: '#fadb14' } : {}}
-                      key={index}
-                    />
-                  );
-                })}
-                ({average}/ {countRating} lượt)
-              </div>
-
-              <span>Quốc Gia: {movie.country}</span>
-              <span>Năm Phát Hành: {movie.year} </span>
-              <span>
-                Thể Loại:{' '}
-                {movie.genres.map((category) => category.name).join(', ')}
-              </span>
-            </div>
-          </div>
-          <div className="body">
-            <h1>Nội dung:</h1>
-            <span> {movie.description}</span>
-          </div>
-          <div className="body">
-            <span> Có Thể Bạn Muốn Xem</span>
-          </div>
-        </div>
+    <Flex className="MovieDetail" gap={10} vertical>
+      <div className="MovieDetail__banner">
+        <img
+          className="MovieDetail__image"
+          src={movie?.posterPresignedUrl}
+          alt=""
+        />
       </div>
+
+      <Flex className="MovieDetail__content" gap={10}>
+        <Flex className="MovieDetail__movie-info" vertical gap={10}>
+          <>
+            <span className="MovieDetail__movie-title f-large">
+              {movie?.nameMovie}
+            </span>
+            <span className="f-medium">
+              Release Date: {movie?.createdDate ?? new Date().toDateString()}
+            </span>
+            <span className="f-medium">
+              Genres: {movie?.genres.map((genre) => genre.name)?.join(', ')}
+            </span>
+
+            <Flex vertical>
+              <span className="f-large">Description</span>
+              <span className="f-medium">{movie?.description}</span>
+            </Flex>
+          </>
+        </Flex>
+        <Flex className="MovieDetail__rating-and-cast">
+          <div className="MovieDetail__rating"></div>
+          <div className="MovieDetail__cast"></div>
+        </Flex>
+      </Flex>
+
+      <Flex className="MovieDetail__actions" justify="center" gap={10}>
+        <button className="btn">Watch Together</button>
+        <button className="btn btn-primary">Watch Only</button>
+        <button className="btn" onClick={handleWatchTrailer}>
+          Watch Trailer
+        </button>
+      </Flex>
+
       {isShowTrailer && (
         <div
           style={{
@@ -205,6 +186,6 @@ export const MovieDetail = () => {
           ></video>
         </div>
       )}
-    </div>
+    </Flex>
   );
 };

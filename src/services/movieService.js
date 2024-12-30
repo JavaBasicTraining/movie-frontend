@@ -23,7 +23,7 @@ class MovieService {
 
   updateMovieFile(movieId, file, type) {
     const formData = new FormData();
-    console.log(file)
+    console.log(file);
     formData.append('file', file);
     return axiosInstance.patch(
       `/api/v1/admin/movies/${movieId}?type=${type}`,
@@ -38,6 +38,10 @@ class MovieService {
       `/api/v1/admin/movies/${movieId}/episodes/${episodeId}?type=${type}`,
       formDataPoster
     );
+  }
+
+  findByPath(path) {
+    return axiosInstance.get(`/api/v1/movies/${path}`);
   }
 }
 
