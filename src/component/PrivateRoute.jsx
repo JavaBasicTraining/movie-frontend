@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks';
+import { keycloakService } from '../services';
 
 export const PrivateRoute = ({ children }) => {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ export const PrivateRoute = ({ children }) => {
 
   useEffect(() => {
     if (isAuth !== null && !isAuth) {
-      navigate('/', { replace: true });
+      keycloakService.openLoginPage();
     }
   }, [isAuth, navigate]);
 

@@ -5,7 +5,7 @@ import {
   ID_TOKEN,
   PREVIOUS_PATH,
   REFRESH_TOKEN,
-} from '../constants/storage';
+} from '../constants';
 import { keycloakService, storageService } from '../services';
 
 export async function Oauth2RedirectLoader({ request }) {
