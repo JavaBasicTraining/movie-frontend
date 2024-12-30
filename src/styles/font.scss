@@ -16,9 +16,23 @@
   font-weight: normal;
 }
 
-
-.f-normal {
-  font-size: 16px;
-  color: var(--text-primary);
+.f-medium-semibold {
+  @extend .f-medium;
   font-weight: 600;
+}
+
+.f-small {
+  font-size: 14px;
+  color: var(--text-black);
+  font-weight: normal;
+}
+
+// text colors
+
+.text-black {
+  color: var(--text-black);
+}
+
+.text-primary {
+  color: var(--text-primary);
 }

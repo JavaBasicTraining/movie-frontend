@@ -13,7 +13,9 @@ export const MovieItem = ({ movie }) => {
           src={movie?.posterPresignedUrl}
           alt={movie.name}
         />
-        <span className="MovieItem__title f-normal">{movie?.enTitle}</span>
+        <span className="MovieItem__title f-medium-semibold">
+          {movie?.enTitle}
+        </span>
       </Flex>
     </Link>
   );

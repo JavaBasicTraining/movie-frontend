@@ -1,28 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { axiosInstance } from '../configs/axiosConfig';
+import './VideoPlayer.scss';
+import { videoService } from '../../services';
+import { axiosInstance } from '../../configs';
 
-const VideoPlayer = ({ fileName }) => {
-  const [videoToken, setVideoToken] = useState(null);
+export const VideoPlayer = ({ fileName }) => {
   const [playing] = useState(false);
   const [volume] = useState(0.8);
+  const [videoUrl, setVideoUrl] = useState();
   const playerRef = useRef(null);
   const watermarkRef = useRef(null);
 
   useEffect(() => {
-    // Fetch video token
     const fetchToken = async () => {
       try {
-        const response = await axiosInstance.get(
-          `/api/v1/minio/video/token?fileName=${fileName}`
-        );
-        setVideoToken(response.data.token);
+        const response = await videoService.generateToken(fileName);
+        const url = response.data.token
+          ? `${axiosInstance.defaults.baseURL}/api/v1/minio/video/stream?fileName=${fileName}&token=${response.data.token}`
+          : null;
+        setVideoUrl(url);
       } catch (error) {
         console.error('Error fetching video token:', error);
       }
     };
 
-    fetchToken();
+    fetchToken().then();
 
     // Update watermark position randomly
     const intervalId = setInterval(() => {
@@ -36,23 +38,18 @@ const VideoPlayer = ({ fileName }) => {
     return () => clearInterval(intervalId);
   }, [fileName]);
 
-  const videoUrl = videoToken
-    ? `http://localhost:8081/api/v1/minio/video/stream?fileName=${fileName}&token=${videoToken}`
-    : null;
-
   return (
-    <div className="video-player-wrapper">
+    <div className="VideoPlayer">
       <div
-        className="video-player-container"
+        className="VideoPlayer__container"
         onContextMenu={(e) => e.preventDefault()}
-        style={{ position: 'relative' }}
       >
         {videoUrl && (
           <ReactPlayer
             ref={playerRef}
             url={videoUrl}
             width="100%"
-            height="auto"
+            height="100%"
             playing={playing}
             volume={volume}
             controls={true}
@@ -74,44 +71,10 @@ const VideoPlayer = ({ fileName }) => {
           />
         )}
 
-        <div
-          ref={watermarkRef}
-          className="video-watermark"
-          style={{
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            padding: '5px',
-            background: 'rgba(255, 255, 255, 0.3)',
-            color: '#fff',
-            pointerEvents: 'none',
-            transition: 'transform 1s ease',
-            userSelect: 'none',
-          }}
-        >
+        <div ref={watermarkRef} className="VideoPlayer__watermark">
           {`${localStorage.getItem('username')} - ${new Date().toLocaleString()}`}
         </div>
       </div>
-
-      <style jsx>{`
-        .video-player-wrapper {
-          position: relative;
-          max-width: 100%;
-          background: #000;
-        }
-
-        .video-player-container {
-          width: 100%;
-          height: 100%;
-        }
-
-        /* Disable selection */
-        .video-player-container * {
-          user-select: none !important;
-        }
-      `}</style>
     </div>
   );
 };
-
-export default VideoPlayer;

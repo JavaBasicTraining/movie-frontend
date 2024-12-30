@@ -1,0 +1,25 @@
+.VideoPlayer {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  background: #000;
+
+  &__container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+  }
+
+  &__water-mark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    pointer-events: none;
+    transition: transform 1s ease;
+    user-select: none;
+  }
+}

@@ -11,4 +11,4 @@ export * from './FriendSection/FriendSection';
 export * from './UploadPoster/UploadPoster';
 export * from './UploadVideo/UploadVideo';
 export * from './PrivateRoute';
-export * from './VideoPlayer';
+export * from './VideoPlayer/VideoPlayer';

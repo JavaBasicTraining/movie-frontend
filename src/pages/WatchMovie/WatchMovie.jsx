@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { axiosInstance } from '../../configs/axiosConfig';
+import { axiosInstance } from '../../configs';
 import { useLoaderData } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { notification } from 'antd'; // Import notification for user feedback
 import { jwtDecode } from 'jwt-decode';
-import VideoPlayer from '../../component/VideoPlayer';
+import { VideoPlayer } from '../../component';
 import './WatchMovie.scss';
-import { storageService } from '../../services/storageService';
-import { ACCESS_TOKEN } from '../../constants/storage';
-import { keycloak } from '../../configs/keycloak';
+import { storageService } from '../../services';
+import { ACCESS_TOKEN } from '../../constants';
 
 export const WatchMovie = () => {
   const [comment, setComment] = useState('');

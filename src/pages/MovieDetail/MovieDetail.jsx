@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { axiosInstance } from '../../configs/axiosConfig';
+import { axiosInstance } from '../../configs';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import useFetchUser from '../../hooks/useFetchUser';
 import './MovieDetail.scss';
 import { movieService } from '../../services';
-import { Flex } from 'antd';
+import { Avatar, Flex, Rate } from 'antd';
+import { VideoPlayer } from '../../component';
 
 export async function MovieDetailLoader({ params }) {
   const response = await movieService.findByPath(params.path);
@@ -14,78 +14,11 @@ export async function MovieDetailLoader({ params }) {
 }
 
 export const MovieDetail = () => {
-  const [rating, setRating] = useState(0);
-  const navigate = useNavigate();
   const { movie } = useLoaderData();
+  const navigate = useNavigate();
+  const [rating, setRating] = useState(0);
   const [isShowTrailer, setIsShowTrailer] = useState(false);
-  const { user, fetchUser } = useFetchUser();
-  const [jwt, setJwt] = useState(null);
   const [average, setAverage] = useState(0);
-  const [countRating, setCountRating] = useState(0);
-
-  const evaluationsNumberReview = async (params) => {
-    const response = await axiosInstance.get(
-      `/api/v1/evaluations/numberOfReviews/${params}`
-    );
-    setCountRating(response.data);
-  };
-
-  const handleKeyup = (e) => {
-    if (e.code === 'Escape') {
-      setIsShowTrailer(false);
-    }
-  };
-
-  const averageRating = async (params) => {
-    const response = await axiosInstance.get(
-      `/api/v1/evaluations/average/${params}`
-    );
-    setAverage(response.data);
-  };
-  const handleClick = async (index) => {
-    try {
-      setRating(index);
-      evaluationsNumberReview(movie.id);
-      if (jwt) {
-        const response = await axiosInstance.get(
-          `/api/v1/evaluations/user/${user.id}/movie/${movie.id}`
-        );
-        if (response.status === 200 && response.data !== '') {
-          const request = {
-            star: index,
-            userId: user.id,
-            movieId: movie.id,
-          };
-          await axiosInstance.put(
-            `/api/v1/evaluations/${response.data.id}`,
-            request
-          );
-          if (index === null) {
-            return 0;
-          } else {
-            setAverage(index);
-          }
-        } else {
-          const request = {
-            star: index,
-            userId: user.id,
-            movieId: movie.id,
-          };
-          await axiosInstance.post(`/api/v1/evaluations`, request);
-          if (index === null) {
-            return 0;
-          } else {
-            setAverage(index);
-          }
-        }
-      } else {
-        alert(`Bạn phải đăng nhập!!`);
-        navigate(`/login`);
-      }
-    } catch (error) {
-      alert('Lỗi' + error);
-    }
-  };
 
   useEffect(() => {
     window.addEventListener('keyup', handleKeyup);
@@ -99,8 +32,36 @@ export const MovieDetail = () => {
     evaluationsNumberReview(movie.id).then();
   }, [average, movie.id, rating]);
 
+  const evaluationsNumberReview = async (params) => {
+    const response = await axiosInstance.get(
+      `/api/v1/evaluations/numberOfReviews/${params}`
+    );
+    setRating(response.data);
+  };
+
+  const averageRating = async (params) => {
+    const response = await axiosInstance.get(
+      `/api/v1/evaluations/average/${params}`
+    );
+    setAverage(response.data);
+  };
+
+  const handleKeyup = (e) => {
+    if (e.code === 'Escape') {
+      setIsShowTrailer(false);
+    }
+  };
+
   const handleWatchTrailer = () => {
     setIsShowTrailer(true);
+  };
+
+  const handleWatchNow = () => {
+    navigate(`/xem-phim/${movie?.path}`);
+  };
+
+  const handleRating = (value) => {
+    setRating(value);
   };
 
   return (
@@ -113,7 +74,7 @@ export const MovieDetail = () => {
         />
       </div>
 
-      <Flex className="MovieDetail__content" gap={10}>
+      <Flex className="MovieDetail__content" gap={50}>
         <Flex className="MovieDetail__movie-info" vertical gap={10}>
           <>
             <span className="MovieDetail__movie-title f-large">
@@ -128,62 +89,60 @@ export const MovieDetail = () => {
 
             <Flex vertical>
               <span className="f-large">Description</span>
-              <span className="f-medium">{movie?.description}</span>
+              <span className="MovieDetail__description f-medium">
+                {movie?.description}
+              </span>
             </Flex>
           </>
         </Flex>
-        <Flex className="MovieDetail__rating-and-cast">
-          <div className="MovieDetail__rating"></div>
-          <div className="MovieDetail__cast"></div>
+
+        <Flex className="MovieDetail__rating-and-cast" vertical gap={10}>
+          <Flex vertical className="MovieDetail__rating" gap={10}>
+            <span className="f-large">Rating</span>
+            <Rate defaultValue={rating} onChange={handleRating} />
+          </Flex>
+
+          <Flex className="MovieDetail__cast" vertical gap={10}>
+            <span className="f-large">Cast & Crew</span>
+            <Flex vertical gap={10}>
+              <>
+                {Array(3)
+                  .fill('')
+                  .map((_, index) => (
+                    <Flex key={`${index.toString()}`} gap={10} align="center">
+                      <Avatar size={48} />
+                      <Flex vertical gap={0}>
+                        <span className="f-medium">Huy Ha</span>
+                        <span className="f-small">Director, Writer</span>
+                      </Flex>
+                    </Flex>
+                  ))}
+              </>
+            </Flex>
+          </Flex>
         </Flex>
       </Flex>
 
       <Flex className="MovieDetail__actions" justify="center" gap={10}>
         <button className="btn">Watch Together</button>
-        <button className="btn btn-primary">Watch Only</button>
+        <button className="btn btn-primary" onClick={handleWatchNow}>
+          Watch Now
+        </button>
         <button className="btn" onClick={handleWatchTrailer}>
           Watch Trailer
         </button>
       </Flex>
 
       {isShowTrailer && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            width: '100%',
-            height: '100%',
-          }}
-        >
+        <div className="MovieDetail__trailer-overlay">
           <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              width: '100%',
-              height: '100%',
-            }}
+            className="MovieDetail__trailer-backdrop"
             onClick={() => setIsShowTrailer(false)}
           ></div>
 
-          <video
-            src={movie.trailerPresignedUrl}
-            controls
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '50%',
-            }}
-          ></video>
+          <div className="MovieDetail__trailer-video">
+            <VideoPlayer fileName={movie.trailerUrl} controls />
+          </div>
         </div>
       )}
     </Flex>

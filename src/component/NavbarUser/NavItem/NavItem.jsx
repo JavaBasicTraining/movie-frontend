@@ -37,7 +37,7 @@ export const NavItem = (props) => {
       >
         <FontAwesomeIcon icon={icon ?? faList} size="1x" />
         <button
-          className="NavItem__label btn-non-style f-normal"
+          className="NavItem__label btn-non-style f-medium-semibold"
           onClick={handleItemClick}
         >
           {name}
