@@ -3,8 +3,16 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './MovieCard.scss';
 
+const defaultMovie = {
+  id: undefined,
+  nameMovie: undefined,
+  enTitle: undefined,
+  path: undefined,
+  posterPresignedUrl: undefined,
+};
+
 export const MovieCard = (props) => {
-  const { movie } = props;
+  const { movie = defaultMovie } = props;
   return (
     <Link to={`/${movie.path}`}>
       <div className="MovieCard" key={movie.id}>
