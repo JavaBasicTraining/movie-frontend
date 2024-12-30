@@ -11,10 +11,12 @@ export const MovieCard = (props) => {
         <div className="MovieCard__image-container">
           <img src={movie.posterPresignedUrl} alt="" />
         </div>
+
         <div className="MovieCard__title">
           <span>{movie.nameMovie}</span>
           <span>{movie.enTitle}</span>
         </div>
+
         <button className="btn-primary" style={{ width: '100%' }}>
           Watch Now
         </button>
