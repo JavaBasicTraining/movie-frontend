@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { storageService } from './storageService';
-import { REDIRECT_URL } from '../constants/keycloak';
+import { REDIRECT_URL } from '../constants';
 import { keycloak } from '../configs/keycloak';
-import { ACCESS_TOKEN } from '../constants/storage';
+import { ACCESS_TOKEN, PREVIOUS_PATH } from '../constants';
 
 class KeycloakService {
   exchangeTokenByCode(code) {
@@ -25,6 +25,7 @@ class KeycloakService {
   }
 
   openLoginPage() {
+    this.savePreviousPath();
     const loginUrl = `${keycloak.url}/realms/${keycloak.realm}/protocol/openid-connect/auth?client_id=${keycloak.clientId}&redirect_uri=${encodeURIComponent(REDIRECT_URL)}&response_type=code&scope=openid`;
     window.open(loginUrl, '_self');
   }
@@ -38,6 +39,10 @@ class KeycloakService {
     storageService.remove(ACCESS_TOKEN);
     const loginUrl = `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=http://localhost:3000`;
     window.open(loginUrl, '_self');
+  }
+
+  savePreviousPath() {
+    storageService.set(PREVIOUS_PATH, window.location.pathname);
   }
 }
 
