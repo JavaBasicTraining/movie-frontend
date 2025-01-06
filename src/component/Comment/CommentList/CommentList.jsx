@@ -1,28 +1,35 @@
 import React from 'react';
-import CommentItem from '../CommentItem/CommentItem';
 
-const CommentList = (props) => {
-  const { comments = [], movieId } = props;
+const CommentList = () => {
+  const fetchComment = async () => {
+    try {
+      const params = new URLSearchParams({ movieId: movie.id });
+      const response = await axiosInstance.get('/api/v1/comment', { params });
+      setListComment(response.data);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      notification.error({
+        message: 'Fetch Comments Error',
+        description: 'Unable to fetch comments.',
+      });
+    }
+  };
   return (
-    <div className="commentList">
-      {comments.map((comment) => 
-        comment?.id ? (
-          // <div>
-          //   <span>{comment.content}</span>
-          //   <span> {comment.user.userName}</span>
-          // </div>
-          <CommentItem 
-            key={comment.id} 
-            comment={comment} 
-            movieId={movieId} 
-          />
-        ) : null
-      )}
+    <div>
+      <span>Bình Luận</span>
+      <div className="reply-input">
+        <input
+          className="input"
+          type="text"
+          value={comment}
+          placeholder="Nhập bình luận của bạn..."
+          onChange={handleCommentChange}
+          onKeyDown={handleKeyDown}
+          required
+        />
+      </div>
     </div>
   );
-  
-};  
+};
 
 export default CommentList;
-
-
