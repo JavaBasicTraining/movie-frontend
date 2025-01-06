@@ -42,7 +42,7 @@ export const Page = () => {
           <h>Phim Đề Cử</h>
           <div className="article-item">
             {movies.map((item) => (
-              <Link to={`/${item.id}`} className="list-item-page" key={item.id}>
+              <Link to={`/${item.path}`} className="list-item-page" key={item.id}>
                 <div className="img-item">
                   <img src={item.posterUrl} alt={item.title} />
                   <div className="icon-play">
