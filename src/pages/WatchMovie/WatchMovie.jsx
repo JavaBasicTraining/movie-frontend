@@ -8,14 +8,13 @@ import VideoPlayer from '../../component/VideoPlayer';
 import './WatchMovie.scss';
 import { storageService } from '../../services/storageService';
 import { ACCESS_TOKEN } from '../../constants/storage';
-import { keycloak } from '../../configs/keycloak';
 import { COMMENTS_PER_PAGE } from '../../constants/comment';
 import { commentService } from '../../services/commentService';
-import CommentList from '../../component/Comment/CommentList/CommentList';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import useFetchUser from '../../hooks/useFetchUser';
 
 import { CommentInput } from '../../component/Comment/CommentInput/CommentInput';
+import CommentList from '../../component/Comment/CommentList/CommentList';
 
 export const WatchMovie = () => {
   const [listComment, setListComment] = useState([]);
@@ -60,6 +59,28 @@ export const WatchMovie = () => {
   };
 
   const handleCommentChange = (e) => setCommentContent(e.target.value);
+  
+  const handleDeleteComment = (commentId) => {
+    setListComment(listComment.filter((comment) => comment.id !== commentId));
+  };
+
+  useEffect(() => {
+    const token = storageService.get(ACCESS_TOKEN);
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setJwt(decodedToken);
+        fetchComment().then();
+      } catch (error) {
+        notification.error({
+          message: 'Invalid Token',
+          description: 'Unable to decode token.',
+        });
+      }
+    }
+
+    getEpisodes();
+  }, []);
 
   const handleSubmitNewComment = async () => {
     if (jwt) {
@@ -193,7 +214,7 @@ export const WatchMovie = () => {
         </div>
         <div className="comment">
           <div className="input">
-            <span className='title'>Bình Luận</span>
+            <span className="title">Bình Luận</span>
             <CommentInput
               value={commentContent}
               onChange={handleCommentChange}
@@ -203,7 +224,11 @@ export const WatchMovie = () => {
             />
           </div>
           <div className="list-comment">
-            <CommentList comments={listComment} movieId={movie.id} />
+            <CommentList 
+              comments={listComment}
+              movieId={movie.id}
+              onDeleted={handleDeleteComment}
+            />
           </div>
         </div>
       </div>

@@ -1,0 +1,93 @@
+.container-test {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin-left: 100px;
+
+  .list {
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    padding: 0;
+    .tree {
+      width: 2px;
+      height: 100px;
+      background: white;
+    }
+    .comment {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      margin-left: 20px;
+
+      .item {
+        display: flex;
+        flex-direction: column;
+
+        h1 {
+          color: white;
+          font-size: 14px;
+          margin: 0;
+        }
+
+        span {
+          color: white;
+        }
+      }
+    }
+  }
+  .reply {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    .line {
+        position: absolute;
+      width: 16px;
+      height: 35px;
+      border: 2px solid #cccccc;
+      border-top: none;
+      border-right: none;
+      border-radius: 0 0 0 16px;
+
+      background: transparent;
+    }
+    .tree-reply {
+        position: relative;
+      width: 2px;
+      height: 100%;
+      background: white;
+    }
+    .reply-container {
+      display: flex;
+
+      padding: 0;
+
+      .reply-item {
+        display: flex;
+        flex-direction: column;
+
+        .replies {
+          display: flex;
+
+          .item-reply {
+            display: flex;
+            flex-direction: column;
+            margin-top: 25px;
+
+            margin-left: 20px;
+            margin-bottom: 20px;
+            h1 {
+              color: white;
+              font-size: 14px;
+              margin: 0;
+            }
+
+            span {
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+}

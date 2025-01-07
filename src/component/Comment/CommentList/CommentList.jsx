@@ -1,33 +1,18 @@
 import React from 'react';
-
-const CommentList = () => {
-  const fetchComment = async () => {
-    try {
-      const params = new URLSearchParams({ movieId: movie.id });
-      const response = await axiosInstance.get('/api/v1/comment', { params });
-      setListComment(response.data);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-      notification.error({
-        message: 'Fetch Comments Error',
-        description: 'Unable to fetch comments.',
-      });
-    }
-  };
+import './CommentList.scss';
+import CommentItem from '../CommentItem/CommentItem';
+const CommentList = (props) => {
+  const { comments = [], movieId, onDeleted } = props;
   return (
-    <div>
-      <span>Bình Luận</span>
-      <div className="reply-input">
-        <input
-          className="input"
-          type="text"
-          value={comment}
-          placeholder="Nhập bình luận của bạn..."
-          onChange={handleCommentChange}
-          onKeyDown={handleKeyDown}
-          required
+    <div className="comment-list common-scrollbar">
+      {comments.map((comment) => (
+        <CommentItem
+          key={comment.id}
+          comment={comment}
+          movieId={movieId}
+          onDeleted={onDeleted}
         />
-      </div>
+      ))}
     </div>
   );
 };
