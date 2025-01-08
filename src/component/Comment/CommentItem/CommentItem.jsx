@@ -35,9 +35,11 @@ const CommentItem = (props) => {
     const year = commentTime.getFullYear();
     return `${day}/${month}/${year}`;
   };
-
   const handleShowOption = () => {
-    setShowOption((prev) => !prev);
+    setShowOption(true);
+    if (showOption == true) {
+      setShowOption(false);
+    }
   };
 
   useEffect(() => {
@@ -65,12 +67,10 @@ const CommentItem = (props) => {
       });
     });
   };
-
   const handleEdit = () => {
     setEditing(true);
     setShowOption(false);
   };
-
   const handleCancelEdit = () => {
     setEditComment(comment);
     setEditing(false);
@@ -85,7 +85,6 @@ const CommentItem = (props) => {
       setEditing(false);
     });
   };
-
   const handleEditCommentChange = (e) => {
     setEditComment({
       ...comment,
@@ -94,7 +93,10 @@ const CommentItem = (props) => {
   };
 
   const handleLike = () => {
-    let isLikeAction = !editComment.userHasLiked;
+    let isLikeAction = true;
+    if (editComment.userHasLiked) {
+      isLikeAction = false;
+    }
     commentService.likeComment(comment.id, isLikeAction).then((res) => {
       setEditComment({
         ...editComment,
@@ -139,11 +141,9 @@ const CommentItem = (props) => {
     fetchReplies();
     setShowReplyList(!showReplyList);
   };
-
   const toggleReply = () => {
     setShowReplyInput(!showReplyInput);
   };
-
   const handleSubmitReply = () => {
     const request = {
       content: replyContent,
@@ -164,7 +164,6 @@ const CommentItem = (props) => {
       fetchReplies();
     });
   };
-
   const handleReplyContentChange = (e) => {
     setReplyContent(e.target.value);
   };
@@ -173,107 +172,109 @@ const CommentItem = (props) => {
     setReplyContent('');
     setShowReplyInput(false);
   };
-
   const handleReplyDeleted = (replyId) => {
     setReplies(replies.filter((reply) => reply.id !== replyId));
   };
 
-  return (
-    <div className="comment-container">
-      <div className="list-tree-container">
-        {editComment.totalReplies > 0 && <div className="list-tree"></div>}
-        <div className="comment-item">
-          <div className="comment-item__header">
-            <div className="comment-item__header-title">
-              <h1 className="userName"> @{comment.user.userName}</h1>
-            </div>
-
-            <div className="comment-item__header-option">
-              <button className="show-option" onClick={handleShowOption}>
-                ...
-              </button>
-              {showOption && user.id === comment.user.id && (
-                <div className="action">
-                  <button onClick={handleEdit}>Chỉnh sửa</button>
-                  <button onClick={handleDeleteComment}> Xóa</button>
-                </div>
-              )}
-            </div>
+ return (
+  <div className="comment-container">
+    <div className="list-tree-container">
+      {editComment.totalReplies > 0 && (
+        <div className="list-tree"></div>
+      )}
+      <div className="comment-item">
+        <div className="comment-item__header">
+          <div className="comment-item__header-title">
+            <h1 className="userName"> @{comment.user.userName}</h1>
           </div>
 
-          {editing ? (
+          <div className="comment-item__header-option">
+            <button className="show-option" onClick={handleShowOption}>
+              ...
+            </button>
+            {showOption && user.id === comment.user.id && (
+              <div className="action">
+                <button onClick={handleEdit}>Chỉnh sửa</button>
+                <button onClick={handleDeleteComment}> Xóa</button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {editing ? (
+          <CommentInput
+            value={editComment.content}
+            onChange={handleEditCommentChange}
+            onSubmit={handleSubmitEdit}
+            onCancel={handleCancelEdit}
+            submitText="Sửa"
+            cancelText="Huỷ"
+          />
+        ) : (
+          <p className="comment__text">{editComment.content}</p>
+        )}
+
+        <div className="comment-item__like-reply">
+          <span className="time-comment">
+            {getTimeDifference(comment.createdDate)}
+          </span>
+          <Button onClick={handleLike} icon={<LikeOutlined />}>
+            ({editComment.totalLikes ?? 0})
+          </Button>
+          <button onClick={toggleReply}>Trả lời</button>
+        </div>
+
+        <div className="comment__reply">
+          {showReplyInput && (
             <CommentInput
-              value={editComment.content}
-              onChange={handleEditCommentChange}
-              onSubmit={handleSubmitEdit}
-              onCancel={handleCancelEdit}
-              submitText="Sửa"
+              value={replyContent}
+              onChange={handleReplyContentChange}
+              onSubmit={handleSubmitReply}
+              onCancel={handleCancelReply}
+              submitText="Phản hồi"
               cancelText="Huỷ"
             />
-          ) : (
-            <p className="comment__text">{editComment.content}</p>
           )}
-
-          <div className="comment-item__like-reply">
-            <span className="time-comment">
-              {getTimeDifference(comment.createdDate)}
-            </span>
-            <Button onClick={handleLike} icon={<LikeOutlined />}>
-              ({editComment.totalLikes ?? 0})
-            </Button>
-            <button onClick={toggleReply}>Trả lời</button>
-          </div>
-
-          <div className="comment__reply">
-            {showReplyInput && (
-              <CommentInput
-                value={replyContent}
-                onChange={handleReplyContentChange}
-                onSubmit={handleSubmitReply}
-                onCancel={handleCancelReply}
-                submitText="Phản hồi"
-                cancelText="Huỷ"
-              />
+          <div className="line-replies">
+            {editComment.totalReplies > 0 && (
+              <Button
+                className="comment__reply-list-toggle"
+                onClick={handleToggleReplyList}
+              >
+                {showReplyList
+                  ? 'Ẩn'
+                  : `Xem ${editComment.totalReplies} phản hồi`}
+              </Button>
             )}
-            <div className="line-replies">
-              {editComment.totalReplies > 0 && (
-                <Button
-                  className="comment__reply-list-toggle"
-                  onClick={handleToggleReplyList}
-                >
-                  {showReplyList
-                    ? 'Ẩn'
-                    : `Xem ${editComment.totalReplies} phản hồi`}
-                </Button>
-              )}
 
-              {showReplyList && (
-                <div className="repies-line">
-                  <div className="comment__reply-list-container">
-                    <div className="comment__reply-list">
-                      {replies.map((reply) => (
-                        <div
-                          key={reply.id}
-                          className="comment__reply-list-item"
-                        >
-                          <div className="list-tree-line"></div>
-                          <CommentItem
-                            comment={reply}
-                            movieId={movieId}
-                            onDeleted={handleReplyDeleted}
-                          />
-                        </div>
-                      ))}
-                    </div>
+            {showReplyList && (
+              <div className="repies-line">
+                <div className="comment__reply-list-container">
+                  <div className="comment__reply-list">
+                    {replies.map((reply) => (
+                      <div
+                        key={reply.id}
+                        className="comment__reply-list-item"
+                      >
+                        <div className="list-tree-line"></div>
+                        <CommentItem
+                          comment={reply}
+                          movieId={movieId}
+                          onDeleted={handleReplyDeleted}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default CommentItem;

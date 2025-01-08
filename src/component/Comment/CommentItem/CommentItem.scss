@@ -6,20 +6,18 @@
   .list-tree-container {
     display: flex;
     align-items: center;
-
-    .list-tree {
-      width: 2px;
-      height: 100%;
-      background: #ccc;
-    }
+  .list-tree {
+        width: 2px;
+        height: 100%;
+        background: #ccc;
+      }
 
     .comment-item {
       display: flex;
       flex-direction: column;
       width: 100%;
       margin-top: 15px;
-  
-
+    
       &__header {
         display: flex;
         justify-content: space-between;
@@ -138,13 +136,13 @@
             }
             &__reply-list-item {
               display: flex;
-            
+
               gap: 10px;
-    
+
               .list-tree {
                 display: none;
               }
-    
+
               &-left-line {
                 width: 16px;
                 height: 28px;
@@ -159,9 +157,6 @@
           }
         }
 
-
-    
-
         .list-tree-line {
           left: 26.2%;
           width: 27px;
@@ -171,7 +166,6 @@
           border-right: none;
           border-radius: 0 94px 0 55px;
           background: transparent;
-      
         }
       }
     }
