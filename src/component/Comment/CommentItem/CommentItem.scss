@@ -6,10 +6,13 @@
   .list-tree-container {
     display: flex;
     align-items: center;
+    width: 100%;
   .list-tree {
-        width: 2px;
-        height: 100%;
-        background: #ccc;
+    width: 2px;
+    height: 75%;
+    background: #ccc;
+    margin-top: 36px;
+
       }
 
     .comment-item {
@@ -136,13 +139,6 @@
             }
             &__reply-list-item {
               display: flex;
-
-              gap: 10px;
-
-              .list-tree {
-                display: none;
-              }
-
               &-left-line {
                 width: 16px;
                 height: 28px;
@@ -158,13 +154,14 @@
         }
 
         .list-tree-line {
-          left: 26.2%;
+          list-style: square;
           width: 27px;
           height: 29px;
           border: 2px solid #ccc;
           border-top: none;
           border-right: none;
-          border-radius: 0 94px 0 55px;
+          border-radius: 0px 9px;
+          padding: 2px;
           background: transparent;
         }
       }
