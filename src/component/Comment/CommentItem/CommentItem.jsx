@@ -184,6 +184,7 @@ const CommentItem = (props) => {
            {editComment.totalReplies > 0 && <div className="trunk"></div>}
            <div className="comment-item__header">
              <div className="comment-item__header-title">
+               <div className='comment-item__avatar'></div>
                <h1 className="userName"> @{comment.user.userName}</h1>
              </div>
 
@@ -226,7 +227,7 @@ const CommentItem = (props) => {
            </div>
          </div>
 
-         <div className="comment__reply">
+         <div className="comment-item__replies">
            {showReplyInput && (
              <CommentInput
                value={replyContent}
