@@ -7,20 +7,33 @@
     display: flex;
     align-items: center;
     width: 100%;
-  .list-tree {
-    width: 2px;
-    height: 75%;
-    background: #ccc;
-    margin-top: 36px;
 
-      }
+    //.list-tree {
+    //  width: 2px;
+    //  height: 75%;
+    //  background: #ccc;
+    //  margin-top: 36px;
+    //}
 
     .comment-item {
       display: flex;
       flex-direction: column;
       width: 100%;
       margin-top: 15px;
-    
+
+      &__main-content {
+        position: relative;
+
+        & .trunk {
+          position: absolute;
+          top: 13px;
+          left: 0;
+          width: 2px;
+          height: calc(100% - 13px);
+          background: #ccc;
+        }
+      }
+
       &__header {
         display: flex;
         justify-content: space-between;
@@ -75,9 +88,8 @@
               padding: 10px;
               text-align: left;
               white-space: nowrap;
-              transition:
-                background 0.3s,
-                transform 0.3s;
+              transition: background 0.3s,
+              transform 0.3s;
 
               &:hover {
                 background: #bfbaba;
@@ -86,6 +98,12 @@
             }
           }
         }
+      }
+
+      &__body {
+        display: flex;
+        flex-direction: column;
+        padding-left: 20px;
       }
 
       &__like-reply {
@@ -131,14 +149,17 @@
             }
           }
         }
+
         .repies-line {
           .comment {
             &__reply-list-container {
               display: flex;
               flex-direction: column;
             }
+
             &__reply-list-item {
               display: flex;
+
               &-left-line {
                 width: 16px;
                 height: 28px;
