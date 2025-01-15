@@ -2,6 +2,7 @@
   display: flex;
   margin-top: 5px;
   gap: 10px;
+  width: 100%;
 
   .list-tree-container {
     display: flex;
@@ -26,10 +27,10 @@
 
         & .trunk {
           position: absolute;
-          top: 28px;
+          top: 30px;
           left: 14px;
-          width: 2px;
-          height: calc(100% - 28px);
+          border-left: 2px solid #ccc;
+          height: calc(100% - 10px);
           background: #ccc;
         }
       }
@@ -95,8 +96,9 @@
               padding: 10px;
               text-align: left;
               white-space: nowrap;
-              transition: background 0.3s,
-              transform 0.3s;
+              transition:
+                background 0.3s,
+                transform 0.3s;
 
               &:hover {
                 background: #bfbaba;
@@ -115,6 +117,34 @@
 
       &__replies {
         padding-left: 14px;
+        position: relative;
+        .intput-container {
+          display: flex;
+          position: relative;
+
+          padding-top: 2px;
+          .line-input-container {
+            display: flex;
+            width: 100%;
+            .line-input {
+              list-style: square;
+              width: 27px;
+              height: 31px;
+              border: 2px solid #ccc;
+              border-top: none;
+              border-right: none;
+              border-radius: 0px 9px;
+              background: transparent;
+            }
+          }
+          .trunk-replies-input {
+            position: absolute;
+
+            border-left: 2px solid #ccc;
+            height: 100%;
+            background: #ccc;
+          }
+        }
       }
 
       &__like-reply {
@@ -140,6 +170,45 @@
       .line-replies {
         display: flex;
         flex-direction: column;
+        position: relative;
+        .line-replies-btn-container {
+          display: flex;
+          align-items: center;
+          position: relative;
+          .trunk-show-replies-btn {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            border-left: 2px solid #ccc;
+                        // height: calc(100% - 20px);
+            height: 100%;
+            background: #ccc;
+          }
+          .line-btn {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            .list-tree-line-replies-btn {
+              list-style: square;
+              width: 27px;
+              height: 31px;
+              border: 2px solid #ccc;
+              border-top: none;
+              border-right: none;
+              border-radius: 0px 9px;
+              background: transparent;
+            }
+          }
+
+          .comment {
+            &__reply-list-toggle {
+              border: none;
+              width: 20%;
+              margin-top: 13px;
+              background: rgb(175, 171, 171);
+            }
+          }
+        }
 
         &__reply {
           display: flex;
@@ -155,7 +224,7 @@
               cursor: pointer;
               font-size: 12px;
               font-weight: 600;
-              color: #868686;
+              background: #868686;
               margin-top: 5px;
             }
           }
@@ -170,7 +239,7 @@
 
             &__reply-list-item {
               display: flex;
-
+              position: relative;
               &-left-line {
                 width: 16px;
                 height: 28px;
@@ -184,17 +253,40 @@
             }
           }
         }
+        .trunk-line-container {
+          width: 100%;
 
-        .list-tree-line {
-          list-style: square;
-          width: 27px;
-          height: 29px;
-          border: 2px solid #ccc;
-          border-top: none;
-          border-right: none;
-          border-radius: 0px 9px;
-          padding: 2px;
-          background: transparent;
+          .trunk-replies {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            border-left: 2px solid #ccc;
+            height: 100%;
+            background: #ccc;
+          }
+          .line-item {
+            display: flex;
+            width: 100%;
+            .trunk-replies-2 {
+              position: absolute;
+              top: -21px;
+              left: 0px;
+              border-left: 2px solid #ccc;
+              height: calc(100% - -25px);
+              background: #ccc;
+            }
+            .list-tree-line {
+              list-style: square;
+              width: 27px;
+              height: 29px;
+              border: 2px solid #ccc;
+              border-top: none;
+              border-right: none;
+              border-radius: 0px 9px;
+              padding: 2px;
+              background: transparent;
+            }
+          }
         }
       }
     }

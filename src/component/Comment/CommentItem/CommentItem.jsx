@@ -35,6 +35,15 @@ const CommentItem = (props) => {
     const year = commentTime.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  const hasNext = (comments, index) => {
+    return (
+      Array.isArray(comments) &&
+      comments.length > 1 &&
+      index < comments.length - 1
+    );
+  };
+
   const handleShowOption = () => {
     setShowOption(true);
     if (showOption == true) {
@@ -49,6 +58,7 @@ const CommentItem = (props) => {
       }
     };
 
+
     fetchLikeCount();
     fetchReplies();
 
@@ -57,6 +67,7 @@ const CommentItem = (props) => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, []);
+
 
   const fetchReplies = (page = 0) => {
     commentService.getReplies(comment.id, page).then((res) => {
@@ -116,9 +127,11 @@ const CommentItem = (props) => {
       cancelText: 'Hủy',
       onOk: async () => {
         try {
+        
+        
+            onDeleted?.(comment.id);
           await commentService.delete(comment.id);
           notification.success({ message: 'Xóa thành công' });
-          onDeleted?.(comment.id);
         } catch (error) {
           notification.error({
             message: `Lỗi khi xóa bình luận: ${error.message}`,
@@ -127,6 +140,7 @@ const CommentItem = (props) => {
       },
     });
   };
+  
 
   const fetchLikeCount = useCallback(() => {
     commentService.getLikeCount(comment.id).then((res) => {
@@ -171,110 +185,139 @@ const CommentItem = (props) => {
   const handleCancelReply = () => {
     setReplyContent('');
     setShowReplyInput(false);
-  };
+  };  
   const handleReplyDeleted = (replyId) => {
-    setReplies(replies.filter((reply) => reply.id !== replyId));
+    const updatedReplies = replies.filter((reply) => reply.id !== replyId);
+    setReplies(updatedReplies);
+    setEditComment((prev) => ({
+      ...prev,
+      totalReplies: updatedReplies.length,
+    }));
   };
+  return (
+    <div className="comment-container">
+      <div className="list-tree-container">
+        <div className="comment-item">
+          <div className="comment-item__main-content">
+            {(editComment.totalReplies > 0  || showReplyInput)&& <div className="trunk"></div>}
+            <div className="comment-item__header">
+              <div className="comment-item__header-title">
+                <div className="comment-item__avatar"></div>
+                <h1 className="userName"> @{comment.user.userName}</h1>
+              </div>
 
- return (
-   <div className="comment-container">
-     <div className="list-tree-container">
-       <div className="comment-item">
-         <div className="comment-item__main-content">
-           {editComment.totalReplies > 0 && <div className="trunk"></div>}
-           <div className="comment-item__header">
-             <div className="comment-item__header-title">
-               <div className='comment-item__avatar'></div>
-               <h1 className="userName"> @{comment.user.userName}</h1>
-             </div>
+              <div className="comment-item__header-option">
+                <button className="show-option" onClick={handleShowOption}>
+                  ...
+                </button>
+                {showOption && user.id === comment.user.id && (
+                  <div className="action">
+                    <button onClick={handleEdit}>Chỉnh sửa</button>
+                    <button onClick={handleDeleteComment}> Xóa</button>
+                  </div>
+                )}
+              </div>
+            </div>
 
-             <div className="comment-item__header-option">
-               <button className="show-option" onClick={handleShowOption}>
-                 ...
-               </button>
-               {showOption && user.id === comment.user.id && (
-                 <div className="action">
-                   <button onClick={handleEdit}>Chỉnh sửa</button>
-                   <button onClick={handleDeleteComment}> Xóa</button>
-                 </div>
-               )}
-             </div>
-           </div>
+            <div className="comment-item__body">
+              {editing ? (
+                <CommentInput
+                  value={editComment.content}
+                  onChange={handleEditCommentChange}
+                  onSubmit={handleSubmitEdit}
+                  onCancel={handleCancelEdit}
+                  submitText="Sửa"
+                  cancelText="Huỷ"
+                />
+              ) : (
+                <p className="comment__text">{editComment.content}</p>
+              )}
 
-           <div className="comment-item__body">
-             {editing ? (
-               <CommentInput
-                 value={editComment.content}
-                 onChange={handleEditCommentChange}
-                 onSubmit={handleSubmitEdit}
-                 onCancel={handleCancelEdit}
-                 submitText="Sửa"
-                 cancelText="Huỷ"
-               />
-             ) : (
-               <p className="comment__text">{editComment.content}</p>
-             )}
+              <div className="comment-item__like-reply">
+                <span className="time-comment">
+                  {getTimeDifference(comment.createdDate)}
+                </span>
+                <Button onClick={handleLike} icon={<LikeOutlined />}>
+                  ({editComment.totalLikes ?? 0})
+                </Button>
+                <button onClick={toggleReply}>Trả lời</button>
+              </div>
+            </div>
+          </div>
 
-             <div className="comment-item__like-reply">
-               <span className="time-comment">
-                 {getTimeDifference(comment.createdDate)}
-               </span>
-               <Button onClick={handleLike} icon={<LikeOutlined />}>
-                 ({editComment.totalLikes ?? 0})
-               </Button>
-               <button onClick={toggleReply}>Trả lời</button>
-             </div>
-           </div>
-         </div>
+          <div className="comment-item__replies">
+            {showReplyInput && (
+              <div className="intput-container">
+                {(showReplyInput && editComment.totalReplies > 0) && <div className="trunk-replies-input"></div>}
+                <div className='line-input-container'>
+                  <div className="line-input"></div>
+                  <CommentInput
+                    value={replyContent}
+                    onChange={handleReplyContentChange}
+                    onSubmit={handleSubmitReply}
+                    onCancel={handleCancelReply}
+                    submitText="Phản hồi"
+                    cancelText="Huỷ"
+                  />
+                </div>
+              </div>
+            )}
+            <div className="line-replies">
+              <div className="line-replies-btn-container">
+                {(showReplyList && editComment.totalReplies > 0) && (
+                  <div className="trunk-show-replies-btn"></div>
+                )}
 
-         <div className="comment-item__replies">
-           {showReplyInput && (
-             <CommentInput
-               value={replyContent}
-               onChange={handleReplyContentChange}
-               onSubmit={handleSubmitReply}
-               onCancel={handleCancelReply}
-               submitText="Phản hồi"
-               cancelText="Huỷ"
-             />
-           )}
-           <div className="line-replies">
-             {editComment.totalReplies > 0 && !showReplyList && (
-               <Button
-                 className="comment__reply-list-toggle"
-                 onClick={handleToggleReplyList}
-               >
-                 {showReplyList
-                   ? 'Ẩn'
-                   : `Xem ${editComment.totalReplies} phản hồi`}
-               </Button>
-             )}
-
-             {showReplyList && (
-               <div className="repies-line">
-                 <div className="comment__reply-list-container">
-                   <div className="comment__reply-list">
-                     {replies.map((reply) => (
-                       <div key={reply.id} className="comment__reply-list-item">
-                         <div className="list-tree-line"></div>
-                         <CommentItem
-                           comment={reply}
-                           movieId={movieId}
-                           onDeleted={handleReplyDeleted}
-                         />
-                       </div>
-                     ))}
-                   </div>
-                 </div>
-               </div>
-             )}
-           </div>
-         </div>
-       </div>
-     </div>
-   </div>
- );
-
+                <div className="line-btn">
+                  {editComment.totalReplies > 0 && (
+                    <div className="list-tree-line-replies-btn"></div>
+                  )}
+                  {editComment.totalReplies > 0 && (
+                    <Button
+                      className="comment__reply-list-toggle"
+                      onClick={handleToggleReplyList}
+                    >
+                      {(showReplyList && editComment.totalReplies>0)
+                        ? 'Ẩn'
+                        : `Xem ${editComment.totalReplies} phản hồi`}
+                    </Button>
+                  )}
+                </div>
+              </div>
+              {showReplyList && (
+                <div className="repies-line">
+                  <div className="comment__reply-list-container">
+                    <div className="comment__reply-list">
+                      {replies.map((reply, index) => (
+                        <div
+                          key={reply.id}
+                          className="comment__reply-list-item"
+                        >
+                          <div className="trunk-line-container">
+                            {hasNext(replies, index) && (
+                              <div className="trunk-replies"></div>
+                            )}
+                            <div className="line-item">
+                              <div className="list-tree-line"></div>
+                              <CommentItem
+                                comment={reply}
+                                movieId={movieId}
+                                onDeleted={handleReplyDeleted}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default CommentItem;
