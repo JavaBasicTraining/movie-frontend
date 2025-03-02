@@ -23,7 +23,6 @@ import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
 import { WatchMovie } from './pages/WatchMovie/WatchMovie';
 import reportWebVitals from './reportWebVitals';
 import { Home } from './pages/Home/Home';
-import Test from './component/Comment/testLineComment/Test';
 
 const router = createBrowserRouter([
   {
@@ -34,10 +33,7 @@ const router = createBrowserRouter([
         path: '/',
         element: <Home />,
       },
-      {
-        path: '/test',
-        element: <Test />,
-      },
+
 
       {
         path: '/the-loai/:keyword?',

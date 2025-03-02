@@ -15,6 +15,7 @@ import useFetchUser from '../../hooks/useFetchUser';
 
 import { CommentInput } from '../../component/Comment/CommentInput/CommentInput';
 import CommentList from '../../component/Comment/CommentList/CommentList';
+import useWebSocket from '../../hooks/useWebSocket';
 
 export const WatchMovie = () => {
   const [listComment, setListComment] = useState([]);
@@ -28,8 +29,10 @@ export const WatchMovie = () => {
   const [jwt, setJwt] = useState(null);
   const menuRef = useRef(null);
   const [lastCommentCreatedDate, setLastCommentCreatedDate] = useState(null);
-  const [hasMore, setHasMore] = useState(true);
-  const [replyComment, setReplyComment] = useState('');
+  // const fetchLatestComments = () => fetchComment(0, COMMENTS_PER_PAGE);
+  const { lastMessage, isConnected, sendMessage } = useWebSocket(setListComment);
+
+  // const { lastMessage, isConnected, sendMessage } = useWebSocket(fetchComment);
 
   const getEpisodes = async () => {
     try {
@@ -59,7 +62,7 @@ export const WatchMovie = () => {
   };
 
   const handleCommentChange = (e) => setCommentContent(e.target.value);
-  
+
   const handleDeleteComment = (commentId) => {
     setListComment(listComment.filter((comment) => comment.id !== commentId));
   };
@@ -82,36 +85,54 @@ export const WatchMovie = () => {
     getEpisodes();
   }, []);
 
-  const handleSubmitNewComment = async () => {
-    if (jwt) {
-      const request = {
-        content: commentContent,
-        user: {
-          id: user.id,
-          userName: user.userName,
-        },
-        movie: {
-          id: movie.id,
-        },
-      };
+//  useEffect(() => {
+//   if (lastMessage) {
+//     const newComment = {
+//       ...lastMessage,
+//       user: lastMessage.user || { id: "unknown", userName: "Unknown User" },
+//     };
 
-      commentService
-        .create(request)
-        .then((res) => {
-          setListComment([res.data, ...listComment]);
-          setCommentContent('');
-        })
-        .catch((error) => {
-          console.error('Error posting comment:', error);
-          notification.error({
-            message: 'Post Comment Error',
-            description: 'Unable to post comment.',
-          });
-        });
-    } else {
+//     setListComment((prevComments) => [...prevComments, newComment]);
+//   }
+// }, [lastMessage]);
+
+  const handleSubmitNewComment = async () => {
+    if (!isConnected) {
+      notification.error({
+        message: 'WebSocket Error',
+        description: 'Không thể kết nối WebSocket để gửi bình luận.',
+      });
+      return;
+    }
+
+    if (!jwt) {
       notification.warning({
         message: 'Login Required',
-        description: 'Please log in to post a comment.',
+        description: 'Vui lòng đăng nhập để bình luận.',
+      });
+      return;
+    }
+
+    const request = {
+      content: commentContent,
+      user: {
+        id: user.id,
+        userName: user.userName,
+      },
+      movie: {
+        id: movie.id,
+      },
+    };
+
+    try {
+    
+      sendMessage(request);
+      setCommentContent('');
+    } catch (error) {
+      console.error('WebSocket Error:', error);
+      notification.error({
+        message: 'Post Comment Error',
+        description: 'Không thể gửi bình luận.',
       });
     }
   };
@@ -140,22 +161,10 @@ export const WatchMovie = () => {
     }
   };
   useEffect(() => {
-    const token = storageService.get(ACCESS_TOKEN);
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        setJwt(decodedToken);
-        fetchComment().then();
-      } catch (error) {
-        notification.error({
-          message: 'Invalid Token',
-          description: 'Unable to decode token.',
-        });
-      }
+    if (isConnected) {
+      console.log('Đã kết nối');
     }
-
-    getEpisodes();
-  }, []);
+  }, [isConnected]);
 
   useEffect(() => {
     const token = storageService.get(ACCESS_TOKEN);
@@ -224,7 +233,7 @@ export const WatchMovie = () => {
             />
           </div>
           <div className="list-comment">
-            <CommentList 
+            <CommentList
               comments={listComment}
               movieId={movie.id}
               onDeleted={handleDeleteComment}
@@ -232,6 +241,7 @@ export const WatchMovie = () => {
           </div>
         </div>
       </div>
+      <h2>Trạng thái kết nối: {isConnected ? 'Đã kết nối' : 'Chưa kết nối'}</h2>
     </div>
   );
 };
