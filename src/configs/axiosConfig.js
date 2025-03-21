@@ -4,8 +4,10 @@ import { ACCESS_TOKEN, PREVIOUS_PATH } from '../constants/storage';
 import { keycloakService } from '../services/keycloakService';
 import { storageService } from '../services/storageService';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://192.168.1.120:8081';
+
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8081',
+  baseURL: API_BASE_URL,
 });
 
 const publicAPI = [

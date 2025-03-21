@@ -36,7 +36,7 @@ class KeycloakService {
 
   openLogoutPage() {
     storageService.remove(ACCESS_TOKEN);
-    const loginUrl = `http://localhost:8080/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=http://localhost:3000`;
+    const loginUrl = `http://192.168.1.120:8082/realms/${keycloak.realm}/protocol/openid-connect/logout?client_id=${keycloak.clientId}&post_logout_redirect_uri=http://localhost:3000`;
     window.open(loginUrl, '_self');
   }
 }
