@@ -54,7 +54,7 @@ const useWebSocket = (setListComment) => {
       return;
     }
 
-    const url = `http://localhost:8081/ws?access_token=${token}`;
+    const url = `http://192.168.1.120:8081/ws?access_token=${token}`;
     const socket = new SockJS(url);
     stompClient.current = Stomp.over(socket);
 
