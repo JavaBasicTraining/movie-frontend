@@ -32,7 +32,6 @@ export const WatchMovie = () => {
   // const fetchLatestComments = () => fetchComment(0, COMMENTS_PER_PAGE);
   const { lastMessage, isConnected, sendMessage } = useWebSocket(setListComment);
 
-  // const { lastMessage, isConnected, sendMessage } = useWebSocket(fetchComment);
 
   const getEpisodes = async () => {
     try {
@@ -85,16 +84,6 @@ export const WatchMovie = () => {
     getEpisodes();
   }, []);
 
-//  useEffect(() => {
-//   if (lastMessage) {
-//     const newComment = {
-//       ...lastMessage,
-//       user: lastMessage.user || { id: "unknown", userName: "Unknown User" },
-//     };
-
-//     setListComment((prevComments) => [...prevComments, newComment]);
-//   }
-// }, [lastMessage]);
 
   const handleSubmitNewComment = async () => {
     if (!isConnected) {
@@ -124,6 +113,8 @@ export const WatchMovie = () => {
       },
     };
 
+    
+
     try {
     
       sendMessage(request);
@@ -136,6 +127,9 @@ export const WatchMovie = () => {
       });
     }
   };
+
+  
+  
 
   const fetchComment = async (page = 0, size = COMMENTS_PER_PAGE) => {
     try {
@@ -232,6 +226,7 @@ export const WatchMovie = () => {
               cancelText="Huỷ"
             />
           </div>
+  
           <div className="list-comment">
             <CommentList
               comments={listComment}
