@@ -2,10 +2,13 @@ import { jwtDecode } from 'jwt-decode';
 import React, { useCallback, useEffect, useState } from 'react';
 import './CommentItem.scss';
 import useFetchUser from '../../../hooks/useFetchUser';
+
 import { commentService } from '../../../services/commentService';
 import { CommentInput } from '../CommentInput/CommentInput';
 import { Button, Modal, notification } from 'antd';
 import { LikeOutlined } from '@ant-design/icons';
+import useWebSocket from '../../../hooks/useWebSocket';
+
 
 const CommentItem = (props) => {
   const { comment, movieId, onDeleted } = props;
@@ -17,6 +20,9 @@ const CommentItem = (props) => {
   const [replyContent, setReplyContent] = useState('');
   const [editing, setEditing] = useState(false);
   const [editComment, setEditComment] = useState(() => comment);
+  const { sendMessage ,receivedReplies} = useWebSocket(setReplies);
+  
+
 
   const getTimeDifference = (currentDate) => {
     const now = new Date();
@@ -132,6 +138,16 @@ const CommentItem = (props) => {
             onDeleted?.(comment.id);
           await commentService.delete(comment.id);
           notification.success({ message: 'Xóa thành công' });
+          setReplies((prevReplies) => {
+            const updatedReplies = [...prevReplies, receivedReplies];
+            console.log("Updated replies:", updatedReplies);
+            return updatedReplies;
+          });
+          setEditComment((prev) => ({
+            ...prev,
+            totalReplies: (prev.totalReplies || 0) + 1,
+          }));
+        
         } catch (error) {
           notification.error({
             message: `Lỗi khi xóa bình luận: ${error.message}`,
@@ -161,23 +177,33 @@ const CommentItem = (props) => {
   const handleSubmitReply = () => {
     const request = {
       content: replyContent,
-      movie: {
-        id: movieId,
-      },
-      user: {
-        id: user.id,
-      },
-      parentComment: {
-        id: comment.id,
-      },
+      movie: { id: movieId },
+      user: user,
+      parentComment: { id: comment.id },
+      createdDate: comment.createdDate,
     };
-    commentService.create(request).then(() => {
-      setReplyContent('');
-      setShowReplyList(true);
-      setShowReplyInput(false);
-      fetchReplies();
-    });
+  
+    sendMessage(request);
+
+ 
+    setReplyContent("");
+  setShowReplyList(false);
+  setShowReplyInput(false);
   };
+  useEffect(() => {
+    if (receivedReplies) {
+      setReplies((prevReplies) => {
+        const updatedReplies = [...prevReplies, receivedReplies];
+        console.log("Updated replies:", updatedReplies);
+        return updatedReplies;
+      });
+      setEditComment((prev) => ({
+        ...prev,
+        totalReplies: (prev.totalReplies || 0) + 1,
+      }));
+    }
+  }, [receivedReplies]);
+  
   const handleReplyContentChange = (e) => {
     setReplyContent(e.target.value);
   };
