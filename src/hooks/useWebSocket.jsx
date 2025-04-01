@@ -7,6 +7,8 @@ const useWebSocket = (setListComment) => {
   const [lastMessage, setLastMessage] = useState(null);
   const stompClient = useRef(null);
   const [userRole, setUserRole] = useState();
+  const [receivedReplies, setReceivedReplies] = useState(null);
+
 
   const sendMessage = (message) => {
     if (!stompClient.current?.connected) {
@@ -29,19 +31,48 @@ const useWebSocket = (setListComment) => {
 
   const onMessage = () => {
     setIsConnected(true);
+
     stompClient.current?.subscribe("/topic/comments", (messageOutput) => {
       const newComment = JSON.parse(messageOutput.body);
-        setListComment((prev) => [...prev, newComment]);
-        setLastMessage(newComment);
+      setListComment((prevComments) => {
+        const updatedComments = prevComments.map((comment) => {
+          if (comment.id === newComment.parentCommentId) {
+            return {
+              ...comment,
+              replies: [...(comment.replies ?? []), { ...newComment }], 
+            };
+          }
+          return comment;
+        });
+
+        return newComment.parentCommentId
+          ? updatedComments
+          : [...prevComments, { ...newComment, replies: [] }];
+      });
+      setLastMessage(newComment);
     });
-  
-    // stompClient.current?.subscribe("/topic/commentUpdates", (updateMessage) => {
-    //   if (updateMessage.body === "update") {
-    //     console.log("Received update signal for comments.");
-    //   }
-    // });
+    stompClient.current?.subscribe("/topic/replies", (message) => {
+      const newReply = JSON.parse(message.body);
+      console.log(" Received new reply from WebSocket:", newReply);
+    
+      setReceivedReplies(newReply);
+      setListComment((prevComments) => {
+        const updatedComments = prevComments.map((comment) => {
+          if (comment.id === newReply.parentCommentId) {
+            return {
+              ...comment,
+              replies: [...(comment.replies ?? []), newReply],
+            };
+          }
+          return comment;
+        });
+        return updatedComments;
+      });
+    
+      setLastMessage(newReply);
+    });
+    
   };
-  
 
   const onError = (frame) => {
     console.error("Socket connection error:", frame.body);
@@ -91,6 +122,7 @@ const useWebSocket = (setListComment) => {
     sendMessage,
     lastMessage,
     isConnected,
+    receivedReplies,
   };
 };
 
