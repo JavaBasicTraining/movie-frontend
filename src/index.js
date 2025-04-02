@@ -2,14 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import PrivateRoute from './component/PrivateRoute';
 import './index.css';
-import { AddMovie, AddMovieLoader } from './pages/Admin/AddMovie/AddMovie';
-import { Admin } from './pages/Admin/Admin';
 import {
-  ListMovie,
-  MovieManagerLoader,
-} from './pages/Admin/ListMovie/ListMovieAdmin';
+  MovieEditorLoader,
+  MovieEditor,
+} from './pages/Admin/MovieEditor/MovieEditor';
+import { AdminLayout } from './pages/Admin/AdminLayout';
 import {
   CountryLoader,
   Movie,
@@ -23,6 +21,10 @@ import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
 import { WatchMovie } from './pages/WatchMovie/WatchMovie';
 import reportWebVitals from './reportWebVitals';
 import { Home } from './pages/Home/Home';
+import {
+  MovieManager,
+  MovieManagerLoader,
+} from './pages/Admin/MovieManager/MovieManager';
 
 const router = createBrowserRouter([
   {
@@ -62,35 +64,24 @@ const router = createBrowserRouter([
       },
     ],
   },
-
   {
     path: '/admin',
-    element: <PrivateRoute />,
+    element: <AdminLayout />,
     children: [
       {
-        path: '/admin',
-        element: <Admin />,
-        children: [
-          {
-            path: '/admin/movie/',
-            element: <ListMovie />,
-            loader: MovieManagerLoader,
-          },
-          {
-            path: '/admin/movie/category/:keyword',
-            element: <ListMovie />,
-            loader: MovieManagerLoader,
-          },
-          {
-            path: '/admin/movie/new',
-            element: <AddMovie />,
-          },
-          {
-            path: '/admin/movie/:id',
-            element: <AddMovie value="Edit" />,
-            loader: AddMovieLoader,
-          },
-        ],
+        path: '/admin/movie/',
+        element: <MovieManager />,
+        loader: MovieManagerLoader,
+      },
+      {
+        path: '/admin/movie/new',
+        element: <MovieEditor />,
+        loader: MovieEditorLoader,
+      },
+      {
+        path: '/admin/movie/:id',
+        element: <MovieEditor value="Edit" />,
+        loader: MovieEditorLoader,
       },
     ],
   },
