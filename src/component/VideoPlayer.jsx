@@ -10,7 +10,6 @@ const VideoPlayer = ({ fileName }) => {
   const watermarkRef = useRef(null);
 
   useEffect(() => {
-    // Fetch video token
     const fetchToken = async () => {
       try {
         const response = await axiosInstance.get(
