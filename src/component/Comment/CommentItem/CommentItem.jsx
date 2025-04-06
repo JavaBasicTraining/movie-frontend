@@ -21,6 +21,11 @@ const CommentItem = (props) => {
 
   useEffect(() => {
     setReplies([...replies, ...(comment.replies ?? [])]);
+    setEditComment((prev) => ({
+      ...prev,
+      totalLikes: comment.totalLikes,
+      totalReplies: (prev.totalReplies || 0) + 1,
+    }));
   }, [comment.replies]);
   const getTimeDifference = (currentDate) => {
     const now = new Date();
