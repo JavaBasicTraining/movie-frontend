@@ -29,9 +29,7 @@ export const WatchMovie = () => {
   const [jwt, setJwt] = useState(null);
   const menuRef = useRef(null);
   const [lastCommentCreatedDate, setLastCommentCreatedDate] = useState(null);
-  // const fetchLatestComments = () => fetchComment(0, COMMENTS_PER_PAGE);
-  const { lastMessage, isConnected, sendMessage } = useWebSocket(setListComment);
-
+  const { isConnected } = useWebSocket(setListComment, movie.id);
 
   const getEpisodes = async () => {
     try {
@@ -84,6 +82,9 @@ export const WatchMovie = () => {
     getEpisodes();
   }, []);
 
+  // useEffect(() => {
+  //   setListComment([...listComment, ...(commentContent ?? [])]);
+  // }, [commentContent]);
 
   const handleSubmitNewComment = async () => {
     if (!isConnected) {
@@ -113,23 +114,17 @@ export const WatchMovie = () => {
       },
     };
 
-    
-
     try {
-    
-      sendMessage(request);
+      const res = await commentService.create(request);    
       setCommentContent('');
     } catch (error) {
-      console.error('WebSocket Error:', error);
+      console.error('Create Comment Error:', error);
       notification.error({
         message: 'Post Comment Error',
         description: 'Không thể gửi bình luận.',
       });
     }
   };
-
-  
-  
 
   const fetchComment = async (page = 0, size = COMMENTS_PER_PAGE) => {
     try {
@@ -226,7 +221,7 @@ export const WatchMovie = () => {
               cancelText="Huỷ"
             />
           </div>
-  
+
           <div className="list-comment">
             <CommentList
               comments={listComment}

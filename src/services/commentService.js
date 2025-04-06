@@ -40,7 +40,7 @@ class CommentService {
     return axiosInstance.get(`${this.baseUrl}/${commentId}/like-count`);
   }
 
-  delete(commentId) {
+  delete(commentId, page = 0, size = COMMENTS_PER_PAGE) {
     return axiosInstance.delete(`${this.baseUrl}/${commentId}`);
   }
 }
