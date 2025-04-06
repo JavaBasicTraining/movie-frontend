@@ -15,13 +15,17 @@
     justify-content: space-between;
     border: 1px solid black;
     padding-inline-end: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
 
     .login-register {
       display: flex;
       align-items: center;
+
       a {
         font-size: 15px;
         color: white;
+        white-space: nowrap;
       }
 
       .keycloak {
@@ -33,19 +37,27 @@
     .header-title {
       display: flex;
       flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: space-between;
       gap: 20px;
+      flex-grow: 1;
 
       .header-title-icon {
-        margin-left: 100px;
         display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: space-between;
+        gap: 20px;
 
         .title {
           display: flex;
           flex-direction: column;
           width: 100%;
-          height: 75px;
+
+          span {
+            font-size: 20px;
+          }
         }
 
         label {
@@ -54,8 +66,9 @@
         }
 
         .icon {
-          width: 100%;
-          height: 75px;
+          width: fit-content;
+          min-height: 75px;
+          min-width: 75px;
         }
       }
 
