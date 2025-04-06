@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { ACCESS_TOKEN, ID_TOKEN, REFRESH_TOKEN } from '../constants/storage';
-import { keycloakService } from '../services/keycloakService';
-import { storageService } from '../services/storageService';
+import {
+  ACCESS_TOKEN,
+  ID_TOKEN,
+  PREVIOUS_PATH,
+  REFRESH_TOKEN,
+} from '../constants/storage';
+import { keycloakService, storageService } from '../services';
 
 export async function Oauth2RedirectLoader({ request }) {
   const [, params] = request.url.split('?');
@@ -34,9 +38,10 @@ export default function Oauth2Redirect() {
 
   useEffect(() => {
     if (loaderData.token) {
-      navigate('/');
+      const path = storageService.get(PREVIOUS_PATH) ?? '/';
+      navigate(path);
     } else {
-      navigate('/login');
+      navigate('/');
     }
   }, [loaderData.token, navigate]);
 

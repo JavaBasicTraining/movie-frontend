@@ -1,50 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { axiosInstance } from '../../configs/axiosConfig';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import './NavbarAdmin.scss';
+import { UserOutlined } from '@ant-design/icons';
+import { Menu } from 'antd';
+
 export const NavbarAdmin = () => {
-  const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
-
-  const fetchGenre = async () => {
-    const response = await axiosInstance.get(`/api/v1/genre`);
-    setCategories(response.data);
-  };
-
-  useEffect(() => {
-    fetchGenre();
-  }, []);
-
-  const navbarList = [
+  const navMenu = [
     {
-      name: 'Movie Management',
-      link: '/admin/movie',
+      key: '1',
+      icon: <UserOutlined />,
+      label: <Link to="/admin/movie">Movie Management</Link>,
     },
     {
-      name: 'User Management',
-      link: '/admin/movie',
+      key: '2',
+      icon: <UserOutlined />,
+      label: <Link to="/admin/movie">User Management</Link>,
     },
     {
-      name: 'Category Management',
-      link: '/admin/movie',
+      key: '3',
+      icon: <UserOutlined />,
+      label: <Link to="/admin/movie">Category Management</Link>,
     },
   ];
 
   return (
-    <div className="navbar-admin">
-      <div className="logo">
-        <img
-          src="/poster/quay-phim-ch-p-nh-1696309932862999506271.png"
-          alt=""
-        />
+    <div className="NavbarAdmin">
+      <div className="NavbarAdmin__logo">
+        <img src="/images/final.gif" alt="logo admin" />
       </div>
-      <div className="item-navbar-admin">
-        {navbarList.map((value, index) => (
-          <Link key={index} to={value.link}>
-            <button className="list-btn-admin text-nowrap">{value.name}</button>
-          </Link>
-        ))}
-      </div>
+
+      <Menu
+        theme="dark"
+        mode="inline"
+        defaultSelectedKeys={['1']}
+        items={navMenu}
+      />
     </div>
   );
 };

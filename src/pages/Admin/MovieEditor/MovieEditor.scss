@@ -1,0 +1,30 @@
+.MovieEditor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+
+  &__form {
+    width: 100%;
+  }
+
+  &__form-label {
+    font-size: 16px;
+  }
+
+  &__episode-form {
+    width: 100%;
+
+    .EpisodeForm {
+      @extend .bound-box;
+    }
+  }
+
+  .bound-box {
+    border: 1px dashed gray;
+    border-radius: 8px;
+    padding: 10px;
+  }
+}
