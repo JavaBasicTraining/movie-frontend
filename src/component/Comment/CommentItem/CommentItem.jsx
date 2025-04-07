@@ -7,8 +7,6 @@ import { commentService } from '../../../services/commentService';
 import { CommentInput } from '../CommentInput/CommentInput';
 import { Button, Modal, notification } from 'antd';
 import { LikeOutlined } from '@ant-design/icons';
-import useWebSocket from '../../../hooks/useWebSocket';
-
 
 const CommentItem = (props) => {
   const { comment, movieId, onDeleted } = props;
@@ -20,10 +18,15 @@ const CommentItem = (props) => {
   const [replyContent, setReplyContent] = useState('');
   const [editing, setEditing] = useState(false);
   const [editComment, setEditComment] = useState(() => comment);
-  const { sendMessage ,receivedReplies} = useWebSocket(setReplies);
-  
 
-
+  useEffect(() => {
+    setReplies([...replies, ...(comment.replies ?? [])]);
+    setEditComment((prev) => ({
+      ...prev,
+      totalLikes: comment.totalLikes,
+      totalReplies: (prev.totalReplies || 0) + 1,
+    }));
+  }, [comment.replies]);
   const getTimeDifference = (currentDate) => {
     const now = new Date();
     const commentTime = new Date(currentDate);
@@ -64,7 +67,6 @@ const CommentItem = (props) => {
       }
     };
 
-
     fetchLikeCount();
     fetchReplies();
 
@@ -74,16 +76,27 @@ const CommentItem = (props) => {
     };
   }, []);
 
-
   const fetchReplies = (page = 0) => {
-    commentService.getReplies(comment.id, page).then((res) => {
-      setReplies(res.data);
-      setEditComment({
-        ...comment,
-        totalReplies: res.data.length ?? 0,
+    if (!comment || !comment.id) {
+      return;
+    }
+
+    commentService
+      .getReplies(comment.id, page)
+      .then((res) => {
+        if (res && res.data) {
+          setReplies(res.data);
+          setEditComment((prev) => ({
+            ...prev,
+            totalReplies: res.data.length ?? 0,
+          }));
+        }
+      })
+      .catch((error) => {
+        console.error('Lỗi khi lấy danh sách phản hồi:', error);
       });
-    });
   };
+
   const handleEdit = () => {
     setEditing(true);
     setShowOption(false);
@@ -124,7 +137,7 @@ const CommentItem = (props) => {
     fetchLikeCount();
   };
 
-  const handleDeleteComment = () => {
+  const handleDeleteComment = (page = 0) => {
     Modal.confirm({
       title: 'Xác nhận xóa',
       content: 'Bạn có chắc chắn muốn xóa bình luận này?',
@@ -133,22 +146,25 @@ const CommentItem = (props) => {
       cancelText: 'Hủy',
       onOk: async () => {
         try {
-        
-        
-            onDeleted?.(comment.id);
-          await commentService.delete(comment.id);
+          await commentService.delete(comment.id, page);
+
           notification.success({ message: 'Xóa thành công' });
-          setReplies((prevReplies) => {
-            const updatedReplies = [...prevReplies, receivedReplies];
-            console.log("Updated replies:", updatedReplies);
-            return updatedReplies;
-          });
+          onDeleted?.(comment.id);
+          fetchReplies();
+          // setReplies((prevReplies) => {
+          //   const newReplies = prevReplies.filter(reply => reply.id !== comment.id);
+          //   console.log("Updated replies:", newReplies);
+          //   return newReplies;
+          // });
+
           setEditComment((prev) => ({
             ...prev,
-            totalReplies: (prev.totalReplies || 0) + 1,
+            totalReplies: Math.max((prev.totalReplies || 0) - 1, 0),
           }));
-        
+
+          setShowReplyList(false);
         } catch (error) {
+          console.error('Delete error:', error);
           notification.error({
             message: `Lỗi khi xóa bình luận: ${error.message}`,
           });
@@ -156,24 +172,34 @@ const CommentItem = (props) => {
       },
     });
   };
-  
 
   const fetchLikeCount = useCallback(() => {
-    commentService.getLikeCount(comment.id).then((res) => {
-      setEditComment({
-        ...comment,
-        totalLikes: res.data.totalLikes,
+    if (!comment || !comment.id) {
+      return;
+    }
+
+    commentService
+      .getLikeCount(comment.id)
+      .then((res) => {
+        setEditComment({
+          ...comment,
+          totalLikes: res.data.totalLikes,
+        });
+      })
+      .catch((error) => {
+        console.error('Lỗi khi lấy số lượt like:', error);
       });
-    });
   }, [comment]);
 
   const handleToggleReplyList = () => {
     fetchReplies();
     setShowReplyList(!showReplyList);
   };
+
   const toggleReply = () => {
     setShowReplyInput(!showReplyInput);
   };
+
   const handleSubmitReply = () => {
     const request = {
       content: replyContent,
@@ -182,28 +208,21 @@ const CommentItem = (props) => {
       parentComment: { id: comment.id },
       createdDate: comment.createdDate,
     };
-  
-    sendMessage(request);
-
- 
-    setReplyContent("");
-  setShowReplyList(false);
-  setShowReplyInput(false);
-  };
-  useEffect(() => {
-    if (receivedReplies) {
-      setReplies((prevReplies) => {
-        const updatedReplies = [...prevReplies, receivedReplies];
-        console.log("Updated replies:", updatedReplies);
-        return updatedReplies;
-      });
+    commentService.create(request).then((res) => {
+      const updatedReplies = [...replies, res.data];
+      setReplies(updatedReplies);
       setEditComment((prev) => ({
         ...prev,
+        totalLikes: res.data.totalLikes,
         totalReplies: (prev.totalReplies || 0) + 1,
       }));
-    }
-  }, [receivedReplies]);
-  
+
+      setReplyContent('');
+      setShowReplyList(true);
+      setShowReplyInput(false);
+    });
+  };
+
   const handleReplyContentChange = (e) => {
     setReplyContent(e.target.value);
   };
@@ -211,7 +230,7 @@ const CommentItem = (props) => {
   const handleCancelReply = () => {
     setReplyContent('');
     setShowReplyInput(false);
-  };  
+  };
   const handleReplyDeleted = (replyId) => {
     const updatedReplies = replies.filter((reply) => reply.id !== replyId);
     setReplies(updatedReplies);
@@ -225,7 +244,9 @@ const CommentItem = (props) => {
       <div className="list-tree-container">
         <div className="comment-item">
           <div className="comment-item__main-content">
-            {(editComment.totalReplies > 0  || showReplyInput)&& <div className="trunk"></div>}
+            {(editComment.totalReplies > 0 || showReplyInput) && (
+              <div className="trunk"></div>
+            )}
             <div className="comment-item__header">
               <div className="comment-item__header-title">
                 <div className="comment-item__avatar"></div>
@@ -290,7 +311,7 @@ const CommentItem = (props) => {
             )}
             <div className="line-replies">
               <div className="line-replies-btn-container">
-                {(showReplyList && editComment.totalReplies > 0) && (
+                {showReplyList && editComment.totalReplies > 0 && (
                   <div className="trunk-show-replies-btn"></div>
                 )}
 
@@ -303,7 +324,7 @@ const CommentItem = (props) => {
                       className="comment__reply-list-toggle"
                       onClick={handleToggleReplyList}
                     >
-                      {(showReplyList && editComment.totalReplies>0)
+                      {showReplyList && editComment.totalReplies > 0
                         ? 'Ẩn'
                         : `Xem ${editComment.totalReplies} phản hồi`}
                     </Button>
