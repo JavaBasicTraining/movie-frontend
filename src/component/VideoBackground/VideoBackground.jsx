@@ -20,6 +20,7 @@ export const VideoBackground = (props) => {
     <>
       {url && (
         <div className="VideoBackground">
+          <div className='overlay'></div>
           <video
             ref={videoRef}
             src={url}

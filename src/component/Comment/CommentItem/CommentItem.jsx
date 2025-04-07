@@ -235,7 +235,7 @@ const CommentItem = (props) => {
   }, [fetchLikeCount, fetchReplies]);
 
   useEffect(() => {
-    setReplies((prevState) => [...prevState, ...(comment.replies ?? [])]);
+    setReplies((prev) => [...prev, ...(comment.replies ?? [])]);
     setEditComment((prev) => ({
       ...prev,
       totalLikes: comment.totalLikes,

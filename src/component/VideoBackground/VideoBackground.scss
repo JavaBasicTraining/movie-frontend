@@ -3,10 +3,36 @@
   height: 80vh;
   overflow: hidden;
   margin-top: -64px;
+  margin-bottom: -150px;
 
   video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .overlay {
+    -webkit-text-size-adjust: 100%;
+    --totl-primary-background: rgba(255,255,255,.8);
+    --totl-primary-font-color: #000;
+    --totl-primate-font-descolor: #565656;
+    color: #fff;
+    --base-line-height: 1.2;
+    line-height: var(--base-line-height);
+    -webkit-font-smoothing: antialiased;
+    font-size: var(--base-font-size);
+    cursor: default;
+    --base-font-size: 0.75vw;
+    font-family: Netflix Sans,Helvetica Neue,Segoe UI,Roboto,Ubuntu,sans-serif;
+    user-select: none;
+    z-index: 8;
+    background: linear-gradient(77deg,rgba(0,0,0,.6),transparent 85%);
+    bottom: 0;
+    left: 0;
+    opacity: 1;
+    position: absolute;
+    right: 26.09%;
+    top: 0;
+    transition: opacity .5s;
   }
 }
