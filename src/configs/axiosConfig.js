@@ -1,11 +1,10 @@
 import { notification } from 'antd';
 import axios from 'axios';
 import { ACCESS_TOKEN, PREVIOUS_PATH } from '../constants/storage';
-import { keycloakService } from '../services/keycloakService';
-import { storageService } from '../services/storageService';
+import { keycloakService, storageService } from '../services';
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8081',
+  baseURL: 'http://192.168.1.68:8081',
 });
 
 const publicAPI = [

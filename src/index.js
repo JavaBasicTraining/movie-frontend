@@ -2,29 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import './index.css';
-import {
-  MovieEditorLoader,
-  MovieEditor,
-} from './pages/Admin/MovieEditor/MovieEditor';
+import { MovieEditor, MovieEditorLoader } from './pages/Admin/MovieEditor/MovieEditor';
 import { AdminLayout } from './pages/Admin/AdminLayout';
-import {
-  CountryLoader,
-  Movie,
-  MovieLoader,
-} from './pages/ListMovie/ListMovieUser';
-import {
-  MovieDetail,
-  MovieDetailLoader,
-} from './pages/MovieDetail/MovieDetail';
+import { CountryLoader, Movie, MovieLoader } from './pages/ListMovie/ListMovieUser';
+import { MovieDetail, MovieDetailLoader } from './pages/MovieDetail/MovieDetail';
 import Oauth2Redirect, { Oauth2RedirectLoader } from './pages/Oauth2Redirect';
 import { WatchMovie } from './pages/WatchMovie/WatchMovie';
 import reportWebVitals from './reportWebVitals';
 import { Home } from './pages/Home/Home';
-import {
-  MovieManager,
-  MovieManagerLoader,
-} from './pages/Admin/MovieManager/MovieManager';
+import { MovieManager, MovieManagerLoader } from './pages/Admin/MovieManager/MovieManager';
+import './index.scss';
 
 const router = createBrowserRouter([
   {
@@ -35,8 +22,6 @@ const router = createBrowserRouter([
         path: '/',
         element: <Home />,
       },
-
-
       {
         path: '/the-loai/:keyword?',
         element: <Movie />,
@@ -95,7 +80,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 reportWebVitals();
