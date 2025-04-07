@@ -1,22 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { axiosInstance } from '../configs/axiosConfig';
 
 const useFetchUser = () => {
   const [user, setUser] = useState(null);
   const [isUser, setIsUser] = useState(true);
 
-  const fetchUser = async (onSuccess) => {
+  const fetchUser = useCallback(async (onSuccess) => {
     try {
       const response = await axiosInstance.get('/api/account/info');
       onSuccess?.(response.data);
       setUser(response.data);
       setIsUser(true);
     } catch (error) {}
-  };
+  }, []);
 
   useEffect(() => {
     fetchUser().then();
-  }, []);
+  }, [fetchUser]);
 
   return { user, isUser, fetchUser };
 };

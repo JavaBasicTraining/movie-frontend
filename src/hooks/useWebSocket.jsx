@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 
@@ -31,7 +31,7 @@ const useWebSocket = (setListComment, movieId) => {
     );
   };
 
-  const onMessage = () => {
+  const onMessage = useCallback(() => {
     setIsConnected(true);
     stompClient.current?.subscribe(`/topic/comment/${movieId}`, (message) => {
       const newComment = JSON.parse(message.body);
@@ -57,7 +57,7 @@ const useWebSocket = (setListComment, movieId) => {
       });
       setLastMessage(newComment);
     });
-  };
+  }, [movieId, setListComment]);
 
   const onError = (frame) => {
     console.error('Socket connection error:', frame.body);
@@ -94,7 +94,7 @@ const useWebSocket = (setListComment, movieId) => {
         setIsConnected(false);
       });
     };
-  }, []);
+  }, [onMessage]);
 
   const parseJwt = (token) => {
     try {

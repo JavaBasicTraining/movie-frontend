@@ -35,7 +35,7 @@ const useAuth = () => {
         setIsAuth(false);
       }
     }
-  }, []);
+  }, [navigate, token]);
 
   return { isAuth, token };
 };

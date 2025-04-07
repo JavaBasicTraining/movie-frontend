@@ -1,4 +1,3 @@
-import { jwtDecode } from 'jwt-decode';
 import React, { useCallback, useEffect, useState } from 'react';
 import './CommentItem.scss';
 import useFetchUser from '../../../hooks/useFetchUser';
@@ -19,14 +18,6 @@ const CommentItem = (props) => {
   const [editing, setEditing] = useState(false);
   const [editComment, setEditComment] = useState(() => comment);
 
-  useEffect(() => {
-    setReplies([...replies, ...(comment.replies ?? [])]);
-    setEditComment((prev) => ({
-      ...prev,
-      totalLikes: comment.totalLikes,
-      totalReplies: (prev.totalReplies || 0) + 1,
-    }));
-  }, [comment.replies]);
   const getTimeDifference = (currentDate) => {
     const now = new Date();
     const commentTime = new Date(currentDate);
@@ -55,47 +46,34 @@ const CommentItem = (props) => {
 
   const handleShowOption = () => {
     setShowOption(true);
-    if (showOption == true) {
+    if (showOption === true) {
       setShowOption(false);
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!e.target.closest('.comment-item__header-option')) {
-        setShowOption(false);
+  const fetchReplies = useCallback(
+    (page = 0) => {
+      if (!comment || !comment.id) {
+        return;
       }
-    };
 
-    fetchLikeCount();
-    fetchReplies();
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
-
-  const fetchReplies = (page = 0) => {
-    if (!comment || !comment.id) {
-      return;
-    }
-
-    commentService
-      .getReplies(comment.id, page)
-      .then((res) => {
-        if (res && res.data) {
-          setReplies(res.data);
-          setEditComment((prev) => ({
-            ...prev,
-            totalReplies: res.data.length ?? 0,
-          }));
-        }
-      })
-      .catch((error) => {
-        console.error('Lỗi khi lấy danh sách phản hồi:', error);
-      });
-  };
+      commentService
+        .getReplies(comment.id, page)
+        .then((res) => {
+          if (res && res.data) {
+            setReplies(res.data);
+            setEditComment((prev) => ({
+              ...prev,
+              totalReplies: res.data.length ?? 0,
+            }));
+          }
+        })
+        .catch((error) => {
+          console.error('Lỗi khi lấy danh sách phản hồi:', error);
+        });
+    },
+    [comment]
+  );
 
   const handleEdit = () => {
     setEditing(true);
@@ -239,6 +217,32 @@ const CommentItem = (props) => {
       totalReplies: updatedReplies.length,
     }));
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.comment-item__header-option')) {
+        setShowOption(false);
+      }
+    };
+
+    fetchLikeCount();
+    fetchReplies();
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [fetchLikeCount, fetchReplies]);
+
+  useEffect(() => {
+    setReplies((prevState) => [...prevState, ...(comment.replies ?? [])]);
+    setEditComment((prev) => ({
+      ...prev,
+      totalLikes: comment.totalLikes,
+      totalReplies: (prev.totalReplies || 0) + 1,
+    }));
+  }, [comment.replies, comment.totalLikes]);
+
   return (
     <div className="comment-container">
       <div className="list-tree-container">
@@ -295,8 +299,10 @@ const CommentItem = (props) => {
           <div className="comment-item__replies">
             {showReplyInput && (
               <div className="intput-container">
-                {(showReplyInput && editComment.totalReplies > 0) && <div className="trunk-replies-input"></div>}
-                <div className='line-input-container'>
+                {showReplyInput && editComment.totalReplies > 0 && (
+                  <div className="trunk-replies-input"></div>
+                )}
+                <div className="line-input-container">
                   <div className="line-input"></div>
                   <CommentInput
                     value={replyContent}

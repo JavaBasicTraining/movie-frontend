@@ -42,6 +42,7 @@ export const MovieDetail = () => {
     );
     setAverage(response.data);
   };
+
   const handleClick = async (index) => {
     try {
       setRating(index);
@@ -98,12 +99,12 @@ export const MovieDetail = () => {
     return () => {
       window.removeEventListener('keyup', handleKeyup);
     };
-  }, []);
+  }, [fetchUser]);
 
   useEffect(() => {
     averageRating(movie.id).then();
     evaluationsNumberReview(movie.id).then();
-  }, [average, rating]);
+  }, [movie.id, rating]);
 
   return (
     <div style={{ position: 'relative' }}>

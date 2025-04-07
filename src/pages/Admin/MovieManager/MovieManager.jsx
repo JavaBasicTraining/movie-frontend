@@ -45,7 +45,7 @@ const countries = [
 
 export const MovieManager = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { movies, genre, country, totalCount, size } = useLoaderData();
+  const { movies, genre, country, totalCount } = useLoaderData();
   const navigate = useNavigate();
   const [genres, setGenres] = useState([]);
   const [moviesState, setMoviesState] = useState(movies);
