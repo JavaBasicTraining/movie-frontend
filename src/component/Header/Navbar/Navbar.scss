@@ -11,13 +11,13 @@
     }
 
     .nav-item-name {
-      font-size: 20px;
-      height: 30px;
+      font-size: 14px;
       border: none;
       font-weight: bold;
       color: white;
       cursor: pointer;
       transition: 0.3s;
+      padding: 8px;
 
       &:hover {
         opacity: 0.5;
@@ -36,7 +36,8 @@
       width: 200px;
       display: none;
       flex-direction: column;
-      background: #3e3d41;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, .9)
     }
   }
 }

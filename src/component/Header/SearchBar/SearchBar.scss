@@ -6,9 +6,10 @@
   .search-input {
     display: flex;
     align-items: center;
+    gap: 12px;
+    padding: 4px;
     border: none;
     width: 0;
-    height: 25px;
     background-color: transparent;
     overflow: hidden;
     transition: width 0.3s ease;

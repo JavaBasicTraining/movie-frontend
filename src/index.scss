@@ -1,9 +1,11 @@
-@import "src/assets/fonts/fonts";
+@import "assets/styles/fonts";
+@import "assets/styles/variables";
 
 body {
   font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: $background-primary;
 }
 
 * {

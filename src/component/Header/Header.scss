@@ -7,10 +7,12 @@
   padding-inline-end: 30px;
   gap: 20px;
   flex-wrap: wrap;
-  background-color: rgba(0, 0, 0, 0.1);
   color: white;
   z-index: 1;
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, .7) 10%, transparent);
   transition: background-color 0.3s;
+  padding-top: 12px;
+  padding-bottom: 12px;
 
   &--none-opacity {
     background-color: rgba(0, 0, 0);
@@ -24,8 +26,7 @@
 
   &__logo {
     width: fit-content;
-    min-height: 75px;
-    min-width: 75px;
+    font-size: 40px;
   }
 
   &__right {

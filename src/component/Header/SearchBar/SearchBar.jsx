@@ -56,7 +56,7 @@ export const SearchBar = () => {
 
         <input
           ref={inputRef}
-          placeholder="Tim Kiếm Phim"
+          placeholder="Phim, diễn viên, thể loại..."
           type="text"
           name="name"
           value={keyword}

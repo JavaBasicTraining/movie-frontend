@@ -3,6 +3,7 @@ import { axiosInstance } from '../../configs/axiosConfig';
 import { Link } from 'react-router-dom';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import './Home.scss';
+import { VideoBackground } from '../../component';
 
 export const Home = () => {
   const [movies, setMovies] = useState([]);
@@ -25,11 +26,13 @@ export const Home = () => {
       genreName.name.toLowerCase().includes('kinh dị'.toLowerCase())
     )
   );
+
   const adventureMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
       genreName.name.toLowerCase().includes('phiêu lưu'.toLowerCase())
     )
   );
+
   const cartoonMovies = movies.filter((movie) =>
     movie.genres.some((genreName) =>
       genreName.name.toLowerCase().includes('hoạt hình'.toLowerCase())
@@ -38,6 +41,8 @@ export const Home = () => {
 
   return (
     <div className="page-container">
+      <VideoBackground url={movies[0]?.videoUrl} />
+
       {movies.length > 0 && (
         <div className="nav-category">
           <h1>Phim Đề Cử</h1>
