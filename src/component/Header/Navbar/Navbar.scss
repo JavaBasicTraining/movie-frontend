@@ -1,9 +1,6 @@
 .navbar {
   display: flex;
   gap: 12px;
-  background-color: rgb(62, 61, 65);
-  font-weight: 50px;
-  border: 1px solid black;
 
   .nav-item {
     position: relative;
@@ -14,22 +11,21 @@
     }
 
     .nav-item-name {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       font-size: 20px;
       height: 30px;
       border: none;
       font-weight: bold;
-      background-color: rgb(62, 61, 65);
       color: white;
+      cursor: pointer;
+      transition: 0.3s;
+
+      &:hover {
+        opacity: 0.5;
+      }
 
       .link-item {
         color: white;
         text-decoration: none;
-      }
-      &:hover {
-        transition: 0.5s;
-        background-color: black;
-        cursor: pointer;
       }
     }
 
@@ -40,6 +36,7 @@
       width: 200px;
       display: none;
       flex-direction: column;
+      background: #3e3d41;
     }
   }
 }

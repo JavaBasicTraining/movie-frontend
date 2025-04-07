@@ -1,17 +1,18 @@
 /* eslint-disable no-lone-blocks */
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { axiosInstance } from '../../configs/axiosConfig';
-import { navbar } from '../../static-data/navBarusUser';
-import './NavbarUser.scss';
+import { axiosInstance } from '../../../configs/axiosConfig';
+import { navbar } from '../../../static-data/navBarusUser';
+import './Navbar.scss';
 
-export const NavbarUser = () => {
+export const Navbar = () => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchCategories();
   }, []);
+
   useEffect(() => {
     navbar.map((item) => {
       if (item.name === 'Thể Loại') {
@@ -43,11 +44,12 @@ export const NavbarUser = () => {
           >
             {value.name}
           </span>
+
           {value['subItems'] && (
             <div className="nav-sub-items">
               {value['subItems'].map((sub, subIndex) => {
                 return (
-                  <span value={sub} className="nav-item-name">
+                  <span key={sub.name} className="nav-item-name">
                     <Link
                       key={subIndex}
                       className="link-item"

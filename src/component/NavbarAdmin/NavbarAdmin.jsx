@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './NavbarAdmin.scss';
 import { UserOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
+import { images } from '../../utils/imageRegistry';
 
 export const NavbarAdmin = () => {
   const navMenu = [
@@ -26,7 +27,7 @@ export const NavbarAdmin = () => {
   return (
     <div className="NavbarAdmin">
       <div className="NavbarAdmin__logo">
-        <img src="/images/final.gif" alt="logo admin" />
+        <img src={images.finalGif} alt="logo admin" />
       </div>
 
       <Menu

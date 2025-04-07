@@ -1,0 +1,36 @@
+.SearchBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .search-input {
+    display: flex;
+    align-items: center;
+    border: none;
+    width: 0;
+    height: 25px;
+    background-color: transparent;
+    overflow: hidden;
+    transition: width 0.3s ease;
+
+    &--expanded {
+      width: 240px;
+      border: 1px solid;
+    }
+
+    input {
+      border: none;
+      background-color: transparent;
+      width: 100%;
+      outline: none;
+      color: white;
+    }
+  }
+
+  &__icon {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: white;
+  }
+}
