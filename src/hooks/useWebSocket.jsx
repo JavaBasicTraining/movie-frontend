@@ -7,6 +7,9 @@ const useWebSocket = (setListComment, movieId) => {
   const [lastMessage, setLastMessage] = useState(null);
   const stompClient = useRef(null);
   const [userRole, setUserRole] = useState();
+  const [acTion, setAction] = useState();
+
+
 
   const sendMessage = (message) => {
     if (!stompClient.current?.connected) {
@@ -27,37 +30,85 @@ const useWebSocket = (setListComment, movieId) => {
     stompClient.current.send(
       '/app/sendComment',
       {},
-      JSON.stringify(enhancedMessage)
+      JSON.stringify({
+        action: 'ADD',
+        data: enhancedMessage,
+      })
     );
   };
 
   const onMessage = () => {
     setIsConnected(true);
     stompClient.current?.subscribe(`/topic/comment/${movieId}`, (message) => {
-      const newComment = JSON.parse(message.body);
-      setListComment((prevComments) => {
-        if (newComment?.parentCommentId) {
-          const updatedComments = prevComments.map((comment) => {
-            if (comment.id === newComment.parentCommentId) {
-              const updated = {
+      const messageData = JSON.parse(message.body);
+      const { action, data } = messageData;
+  
+      console.log('Received action:', action);
+      setAction(action);
+      if (action === 'ADD' || action === 'UPDATE') {
+        setListComment((prevComments) => {
+          if (data?.parentCommentId) {
+            return prevComments.map((comment) => {
+              if (comment.id === data.parentCommentId) {
+                const updatedReplies = [
+                  ...(comment.replies ?? []).filter((res) => res.id !== data.id),
+                  data,
+                ];
+                return {
+                  ...comment,
+                  replies: updatedReplies,
+                };
+              }
+              return comment;
+            });
+          } else {
+            const isExist = prevComments.some((comment) => comment.id === data.id);
+            if (isExist) {
+              return prevComments.map((comment) => {
+                if (comment.id === data.id) {
+                  return {
+                    ...comment,
+                    ...data,
+                    replies: data.replies ?? comment.replies ?? [],
+                  };
+                }
+                return comment;
+              });
+              
+            } else {
+              return [...prevComments, { ...data, replies: [] }];
+            }
+          }
+        });
+      }
+      else
+      if (action === 'DELETE') {
+        setListComment((prevComments) => {
+          return prevComments.map((comment) => {
+            if (comment.id === data.parentCommentId) {
+              const updatedReplies = (comment.replies ?? []).filter(
+                (reply) => reply.id !== data.id
+              );
+      
+              return {
                 ...comment,
-                replies: [...(comment.replies ?? []), { ...newComment }],
+                replies: updatedReplies,
+                totalReplies: updatedReplies.length,
               };
-              console.log('Đã thêm reply vào comment:', updated);
-              return updated;
             }
             return comment;
           });
-          console.log('Danh sách comment sau khi thêm reply:', updatedComments);
-
-          return updatedComments;
-        } else {
-          return [...prevComments, { ...newComment, replies: [] }];
-        }
-      });
-      setLastMessage(newComment);
+        });
+      }
+      
+      
+      
+      
+  
+      setLastMessage(data);
     });
   };
+  
 
   const onError = (frame) => {
     console.error('Socket connection error:', frame.body);
@@ -65,7 +116,7 @@ const useWebSocket = (setListComment, movieId) => {
 
   useEffect(() => {
     if (!stompClient.current?.isConnected) {
-      console.log("connecting...")
+      console.log("connecting...");
       const token = localStorage.getItem('access_token');
       if (!token) {
         console.error('No access token found.');
@@ -111,6 +162,7 @@ const useWebSocket = (setListComment, movieId) => {
     sendMessage,
     lastMessage,
     isConnected,
+    acTion,
   };
 };
 

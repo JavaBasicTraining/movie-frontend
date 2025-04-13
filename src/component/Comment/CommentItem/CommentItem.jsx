@@ -18,15 +18,16 @@ const CommentItem = (props) => {
   const [replyContent, setReplyContent] = useState('');
   const [editing, setEditing] = useState(false);
   const [editComment, setEditComment] = useState(() => comment);
-
   useEffect(() => {
-    setReplies([...replies, ...(comment.replies ?? [])]);
+    const newReplies = comment.replies ?? [];
+    setReplies(newReplies);
     setEditComment((prev) => ({
       ...prev,
+      totalReplies: newReplies.length,
       totalLikes: comment.totalLikes,
-      totalReplies: (prev.totalReplies || 0) + 1,
     }));
   }, [comment.replies]);
+  
   const getTimeDifference = (currentDate) => {
     const now = new Date();
     const commentTime = new Date(currentDate);
@@ -147,19 +148,11 @@ const CommentItem = (props) => {
       onOk: async () => {
         try {
           await commentService.delete(comment.id, page);
-
           notification.success({ message: 'Xóa thành công' });
           onDeleted?.(comment.id);
-          fetchReplies();
-          // setReplies((prevReplies) => {
-          //   const newReplies = prevReplies.filter(reply => reply.id !== comment.id);
-          //   console.log("Updated replies:", newReplies);
-          //   return newReplies;
-          // });
-
           setEditComment((prev) => ({
             ...prev,
-            totalReplies: Math.max((prev.totalReplies || 0) - 1, 0),
+            totalReplies: prev.totalReplies - 1,
           }));
 
           setShowReplyList(false);
