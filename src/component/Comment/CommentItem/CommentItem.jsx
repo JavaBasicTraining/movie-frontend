@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import './CommentItem.scss';
 import useFetchUser from '../../../hooks/useFetchUser';
 
-import { commentService } from '../../../services/commentService';
+import { commentService } from '../../../services';
 import { CommentInput } from '../CommentInput/CommentInput';
 import { Button, Modal, notification } from 'antd';
 import { LikeOutlined } from '@ant-design/icons';

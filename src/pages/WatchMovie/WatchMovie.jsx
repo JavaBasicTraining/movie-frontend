@@ -8,7 +8,7 @@ import './WatchMovie.scss';
 import { storageService } from '../../services';
 import { ACCESS_TOKEN } from '../../constants/storage';
 import { COMMENTS_PER_PAGE } from '../../constants/comment';
-import { commentService } from '../../services/commentService';
+import { commentService } from '../../services';
 import useFetchUser from '../../hooks/useFetchUser';
 
 import { CommentInput } from '../../component/Comment/CommentInput/CommentInput';
