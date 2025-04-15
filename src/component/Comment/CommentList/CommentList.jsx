@@ -1,6 +1,7 @@
 import React from 'react';
 import './CommentList.scss';
 import CommentItem from '../CommentItem/CommentItem';
+
 const CommentList = (props) => {
   const { comments = [], movieId, onDeleted } = props;
   return (

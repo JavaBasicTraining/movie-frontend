@@ -1,44 +1,32 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { axiosInstance } from '../../configs/axiosConfig';
 import { useLoaderData } from 'react-router-dom';
 import { LikeOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { notification } from 'antd'; // Import notification for user feedback
-import { jwtDecode } from 'jwt-decode';
+import { notification } from 'antd';
 import VideoPlayer from '../../component/VideoPlayer';
 import './WatchMovie.scss';
-import { storageService } from '../../services/storageService';
+import { storageService } from '../../services';
 import { ACCESS_TOKEN } from '../../constants/storage';
 import { COMMENTS_PER_PAGE } from '../../constants/comment';
 import { commentService } from '../../services/commentService';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import useFetchUser from '../../hooks/useFetchUser';
 
 import { CommentInput } from '../../component/Comment/CommentInput/CommentInput';
 import CommentList from '../../component/Comment/CommentList/CommentList';
 import useWebSocket from '../../hooks/useWebSocket';
+import { jwtDecode } from 'jwt-decode';
 
 export const WatchMovie = () => {
-  const [listComment, setListComment] = useState([]);
   const { movie } = useLoaderData();
   const { user } = useFetchUser();
+  const menuRef = useRef(null);
+  const [listComment, setListComment] = useState([]);
   const [selectEpisode, setSelectEpisode] = useState([]);
   const [, setCurrentEpisodeIndex] = useState(0);
   const [commentContent, setCommentContent] = useState('');
-  const [editCommentContent, setEditCommentContent] = useState('');
   const [replyToCommentId, setReplyToCommentId] = useState(null);
   const [jwt, setJwt] = useState(null);
-  const menuRef = useRef(null);
-  const [lastCommentCreatedDate, setLastCommentCreatedDate] = useState(null);
   const { isConnected } = useWebSocket(setListComment, movie.id);
-
-  const getEpisodes = async () => {
-    try {
-      const response = await axiosInstance.get(`/api/v1/episode/${movie.id}`);
-      setSelectEpisode(response.data);
-    } catch (error) {
-      console.error('Error fetching episodes:', error);
-    }
-  };
 
   const handleSelectEpisode = async (episodeId) => {
     try {
@@ -50,41 +38,12 @@ export const WatchMovie = () => {
       console.error('Error fetching episode:', error);
     }
   };
-  const handleClickOutside = (event) => {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
-      if (replyToCommentId) {
-        setReplyToCommentId(null);
-      }
-    }
-  };
 
   const handleCommentChange = (e) => setCommentContent(e.target.value);
 
   const handleDeleteComment = (commentId) => {
     setListComment(listComment.filter((comment) => comment.id !== commentId));
   };
-
-  useEffect(() => {
-    const token = storageService.get(ACCESS_TOKEN);
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        setJwt(decodedToken);
-        fetchComment().then();
-      } catch (error) {
-        notification.error({
-          message: 'Invalid Token',
-          description: 'Unable to decode token.',
-        });
-      }
-    }
-
-    getEpisodes();
-  }, []);
-
-  // useEffect(() => {
-  //   setListComment([...listComment, ...(commentContent ?? [])]);
-  // }, [commentContent]);
 
   const handleSubmitNewComment = async () => {
     if (!isConnected) {
@@ -115,7 +74,7 @@ export const WatchMovie = () => {
     };
 
     try {
-      const res = await commentService.create(request);    
+      await commentService.create(request);
       setCommentContent('');
     } catch (error) {
       console.error('Create Comment Error:', error);
@@ -126,29 +85,41 @@ export const WatchMovie = () => {
     }
   };
 
-  const fetchComment = async (page = 0, size = COMMENTS_PER_PAGE) => {
+  const getEpisodes = useCallback(async () => {
     try {
-      const response = await commentService.getComments(
-        movie.id,
-        page,
-        size,
-        lastCommentCreatedDate
-      );
-      const newComments = response.data;
-      const totalPages = response.headers['x-total-pages'];
-      const updatedComments = [...listComment, ...newComments];
-      setListComment(response.data);
-      // setHasMore(updatedComments.length < totalPages);
-      // setLastCommentCreatedDate(
-      //   updatedComments[updatedComments.length - 1].createdDate
-      // );
+      const response = await axiosInstance.get(`/api/v1/episode/${movie.id}`);
+      setSelectEpisode(response.data);
     } catch (error) {
-      notification.error({
-        message: 'Fetch Comments Error',
-        description: 'Unable to fetch comments.',
-      });
+      console.error('Error fetching episodes:', error);
     }
-  };
+  }, [movie.id]);
+
+  const handleClickOutside = useCallback(
+    (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        if (replyToCommentId) {
+          setReplyToCommentId(null);
+        }
+      }
+    },
+    [replyToCommentId]
+  );
+
+  const fetchComment = useCallback(
+    async (page = 0, size = COMMENTS_PER_PAGE) => {
+      try {
+        const response = await commentService.getComments(movie.id, page, size);
+        setListComment(response.data);
+      } catch (error) {
+        notification.error({
+          message: 'Fetch Comments Error',
+          description: 'Unable to fetch comments.',
+        });
+      }
+    },
+    [movie.id]
+  );
+
   useEffect(() => {
     if (isConnected) {
       console.log('Đã kết nối');
@@ -159,6 +130,8 @@ export const WatchMovie = () => {
     const token = storageService.get(ACCESS_TOKEN);
     if (token) {
       try {
+        const decodedToken = jwtDecode(token);
+        setJwt(decodedToken);
         fetchComment().then();
       } catch (error) {
         notification.error({
@@ -174,7 +147,7 @@ export const WatchMovie = () => {
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, []);
+  }, [fetchComment, getEpisodes, handleClickOutside]);
 
   return (
     <div className="container-movie">

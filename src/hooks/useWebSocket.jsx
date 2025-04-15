@@ -7,7 +7,7 @@ const useWebSocket = (setListComment, movieId) => {
   const [lastMessage, setLastMessage] = useState(null);
   const stompClient = useRef(null);
   const [userRole, setUserRole] = useState();
-  const [acTion, setAction] = useState();
+  const [action, setAction] = useState();
 
   const sendMessage = (message) => {
     if (!stompClient.current?.connected) {
@@ -171,7 +171,7 @@ const useWebSocket = (setListComment, movieId) => {
     sendMessage,
     lastMessage,
     isConnected,
-    acTion,
+    acTion: action,
   };
 };
 
