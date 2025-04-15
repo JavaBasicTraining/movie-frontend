@@ -9,8 +9,6 @@ const useWebSocket = (setListComment, movieId) => {
   const [userRole, setUserRole] = useState();
   const [acTion, setAction] = useState();
 
-
-
   const sendMessage = (message) => {
     if (!stompClient.current?.connected) {
       console.error('Socket is not connected.');
@@ -42,73 +40,84 @@ const useWebSocket = (setListComment, movieId) => {
     stompClient.current?.subscribe(`/topic/comment/${movieId}`, (message) => {
       const messageData = JSON.parse(message.body);
       const { action, data } = messageData;
-  
+
       console.log('Received action:', action);
       setAction(action);
-      if (action === 'ADD' || action === 'UPDATE') {
-        setListComment((prevComments) => {
-          if (data?.parentCommentId) {
-            return prevComments.map((comment) => {
-              if (comment.id === data.parentCommentId) {
-                const updatedReplies = [
-                  ...(comment.replies ?? []).filter((res) => res.id !== data.id),
-                  data,
-                ];
-                return {
-                  ...comment,
-                  replies: updatedReplies,
-                };
-              }
-              return comment;
-            });
-          } else {
-            const isExist = prevComments.some((comment) => comment.id === data.id);
-            if (isExist) {
-              return prevComments.map((comment) => {
-                if (comment.id === data.id) {
-                  return {
-                    ...comment,
-                    ...data,
-                    replies: data.replies ?? comment.replies ?? [],
-                  };
-                }
-                return comment;
-              });
-              
-            } else {
-              return [...prevComments, { ...data, replies: [] }];
-            }
-          }
-        });
-      }
-      else
-      if (action === 'DELETE') {
-        setListComment((prevComments) => {
-          return prevComments.map((comment) => {
+
+      setListComment((prevComments) => {
+        const updateOrAddComment = (comments, data) => {
+          return comments.map((comment) => {
             if (comment.id === data.parentCommentId) {
-              const updatedReplies = (comment.replies ?? []).filter(
-                (reply) => reply.id !== data.id
-              );
-      
+              const updatedReplies = [
+                ...(comment.replies ?? []).filter(
+                  (reply) => reply.id !== data.id
+                ),
+                data,
+              ];
               return {
                 ...comment,
                 replies: updatedReplies,
                 totalReplies: updatedReplies.length,
               };
             }
+
+            if (comment.replies && comment.replies.length > 0) {
+              return {
+                ...comment,
+                replies: updateOrAddComment(comment.replies, data),
+              };
+            }
+
             return comment;
           });
-        });
-      }
-      
-      
-      
-      
-  
+        };
+
+        const deleteCommentById = (comments, idToDelete) => {
+          return comments
+            .filter((comment) => comment.id !== idToDelete)
+            .map((comment) => ({
+              ...comment,
+              replies: deleteCommentById(comment.replies ?? [], idToDelete),
+              totalReplies: deleteCommentById(comment.replies ?? [], idToDelete)
+                .length,
+            }));
+        };
+        switch (action) {
+          case 'ADD':
+          case 'UPDATE': {
+            if (data?.parentCommentId) {
+              return updateOrAddComment(prevComments, data);
+            } else {
+              const isExist = prevComments.some(
+                (comment) => comment.id === data.id
+              );
+              if (isExist) {
+                return prevComments.map((comment) => {
+                  if (comment.id === data.id) {
+                    return {
+                      ...comment,
+                      content: data.content,
+                      replies: comment.replies ?? [],
+                    };
+                  }
+                  return comment;
+                });
+              } else {
+                return [...prevComments, { ...data, replies: [] }];
+              }
+            }
+          }
+          case 'DELETE': {
+            return deleteCommentById(prevComments, data);
+          }
+          default:
+            return prevComments;
+        }
+      });
+
       setLastMessage(data);
     });
   };
-  
 
   const onError = (frame) => {
     console.error('Socket connection error:', frame.body);
@@ -116,7 +125,7 @@ const useWebSocket = (setListComment, movieId) => {
 
   useEffect(() => {
     if (!stompClient.current?.isConnected) {
-      console.log("connecting...");
+      console.log('connecting...');
       const token = localStorage.getItem('access_token');
       if (!token) {
         console.error('No access token found.');

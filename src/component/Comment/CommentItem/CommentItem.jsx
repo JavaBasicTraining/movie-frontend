@@ -27,6 +27,20 @@ const CommentItem = (props) => {
       totalLikes: comment.totalLikes,
     }));
   }, [comment.replies]);
+
+  useEffect(() => {
+    if (comment.content !== editComment.content) {
+      const newReplies = comment.replies ?? [];
+      setReplies(newReplies);
+      setEditComment((prev) => ({
+        ...prev,
+        content: comment.content,  
+        totalReplies: newReplies.length,
+        totalLikes: comment.totalLikes,
+      }));
+    }
+  }, [comment]);  
+  
   
   const getTimeDifference = (currentDate) => {
     const now = new Date();
@@ -109,6 +123,8 @@ const CommentItem = (props) => {
 
   const handleSubmitEdit = () => {
     commentService.update(comment.id, editComment).then((res) => {
+      console.log("Response from update:", res); // Log toàn bộ response
+  
       setEditComment({
         ...res.data,
         content: editComment.content,
@@ -116,6 +132,7 @@ const CommentItem = (props) => {
       setEditing(false);
     });
   };
+  
   const handleEditCommentChange = (e) => {
     setEditComment({
       ...comment,
@@ -243,8 +260,8 @@ const CommentItem = (props) => {
             <div className="comment-item__header">
               <div className="comment-item__header-title">
                 <div className="comment-item__avatar"></div>
-                <h1 className="userName"> @{comment.user.userName}</h1>
-              </div>
+                <h1 className="userName"> @{editComment?.user?.userName  || comment?.user?.userName }</h1>
+                </div>
 
               <div className="comment-item__header-option">
                 <button className="show-option" onClick={handleShowOption}>
