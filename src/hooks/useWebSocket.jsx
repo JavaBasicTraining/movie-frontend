@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import { useManageComments } from './useManageComments';
 
 const useWebSocket = (setListComment, movieId) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -8,6 +9,7 @@ const useWebSocket = (setListComment, movieId) => {
   const stompClient = useRef(null);
   const [userRole, setUserRole] = useState();
   const [action, setAction] = useState();
+  const { handleCommentMessage } = useManageComments();
 
   const sendMessage = (message) => {
     if (!stompClient.current?.connected) {
@@ -44,76 +46,7 @@ const useWebSocket = (setListComment, movieId) => {
       console.log('Received action:', action);
       setAction(action);
 
-      setListComment((prevComments) => {
-        const updateOrAddComment = (comments, data) => {
-          return comments.map((comment) => {
-            if (comment.id === data.parentCommentId) {
-              const updatedReplies = [
-                ...(comment.replies ?? []).filter(
-                  (reply) => reply.id !== data.id
-                ),
-                data,
-              ];
-              return {
-                ...comment,
-                replies: updatedReplies,
-                totalReplies: updatedReplies.length,
-              };
-            }
-
-            if (comment.replies && comment.replies.length > 0) {
-              return {
-                ...comment,
-                replies: updateOrAddComment(comment.replies, data),
-              };
-            }
-
-            return comment;
-          });
-        };
-
-        const deleteCommentById = (comments, idToDelete) => {
-          return comments
-            .filter((comment) => comment.id !== idToDelete)
-            .map((comment) => ({
-              ...comment,
-              replies: deleteCommentById(comment.replies ?? [], idToDelete),
-              totalReplies: deleteCommentById(comment.replies ?? [], idToDelete)
-                .length,
-            }));
-        };
-        switch (action) {
-          case 'ADD':
-          case 'UPDATE': {
-            if (data?.parentCommentId) {
-              return updateOrAddComment(prevComments, data);
-            } else {
-              const isExist = prevComments.some(
-                (comment) => comment.id === data.id
-              );
-              if (isExist) {
-                return prevComments.map((comment) => {
-                  if (comment.id === data.id) {
-                    return {
-                      ...comment,
-                      content: data.content,
-                      replies: comment.replies ?? [],
-                    };
-                  }
-                  return comment;
-                });
-              } else {
-                return [...prevComments, { ...data, replies: [] }];
-              }
-            }
-          }
-          case 'DELETE': {
-            return deleteCommentById(prevComments, data);
-          }
-          default:
-            return prevComments;
-        }
-      });
+      handleCommentMessage(data, setListComment, action);
 
       setLastMessage(data);
     });
