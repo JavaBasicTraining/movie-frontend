@@ -1,9 +1,8 @@
-import { jwtDecode } from 'jwt-decode';
 import React, { useCallback, useEffect, useState } from 'react';
 import './CommentItem.scss';
 import useFetchUser from '../../../hooks/useFetchUser';
 
-import { commentService } from '../../../services/commentService';
+import { commentService } from '../../../services';
 import { CommentInput } from '../CommentInput/CommentInput';
 import { Button, Modal, notification } from 'antd';
 import { LikeOutlined } from '@ant-design/icons';
@@ -19,14 +18,6 @@ const CommentItem = (props) => {
   const [editing, setEditing] = useState(false);
   const [editComment, setEditComment] = useState(() => comment);
 
-  useEffect(() => {
-    setReplies([...replies, ...(comment.replies ?? [])]);
-    setEditComment((prev) => ({
-      ...prev,
-      totalLikes: comment.totalLikes,
-      totalReplies: (prev.totalReplies || 0) + 1,
-    }));
-  }, [comment.replies]);
   const getTimeDifference = (currentDate) => {
     const now = new Date();
     const commentTime = new Date(currentDate);
@@ -54,27 +45,8 @@ const CommentItem = (props) => {
   };
 
   const handleShowOption = () => {
-    setShowOption(true);
-    if (showOption == true) {
-      setShowOption(false);
-    }
+    setShowOption(!showOption);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!e.target.closest('.comment-item__header-option')) {
-        setShowOption(false);
-      }
-    };
-
-    fetchLikeCount();
-    fetchReplies();
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
 
   const fetchReplies = (page = 0) => {
     if (!comment || !comment.id) {
@@ -108,6 +80,8 @@ const CommentItem = (props) => {
 
   const handleSubmitEdit = () => {
     commentService.update(comment.id, editComment).then((res) => {
+      console.log('Response from update:', res); // Log toàn bộ response
+
       setEditComment({
         ...res.data,
         content: editComment.content,
@@ -115,6 +89,7 @@ const CommentItem = (props) => {
       setEditing(false);
     });
   };
+
   const handleEditCommentChange = (e) => {
     setEditComment({
       ...comment,
@@ -147,19 +122,11 @@ const CommentItem = (props) => {
       onOk: async () => {
         try {
           await commentService.delete(comment.id, page);
-
           notification.success({ message: 'Xóa thành công' });
           onDeleted?.(comment.id);
-          fetchReplies();
-          // setReplies((prevReplies) => {
-          //   const newReplies = prevReplies.filter(reply => reply.id !== comment.id);
-          //   console.log("Updated replies:", newReplies);
-          //   return newReplies;
-          // });
-
           setEditComment((prev) => ({
             ...prev,
-            totalReplies: Math.max((prev.totalReplies || 0) - 1, 0),
+            totalReplies: prev.totalReplies - 1,
           }));
 
           setShowReplyList(false);
@@ -231,6 +198,7 @@ const CommentItem = (props) => {
     setReplyContent('');
     setShowReplyInput(false);
   };
+
   const handleReplyDeleted = (replyId) => {
     const updatedReplies = replies.filter((reply) => reply.id !== replyId);
     setReplies(updatedReplies);
@@ -239,6 +207,49 @@ const CommentItem = (props) => {
       totalReplies: updatedReplies.length,
     }));
   };
+
+  useEffect(() => {
+    const newReplies = comment.replies ?? [];
+    setReplies(newReplies);
+    setEditComment((prev) => ({
+      ...prev,
+      totalReplies: newReplies.length,
+      totalLikes: comment.totalLikes,
+    }));
+  }, [comment.replies, comment.totalLikes]);
+
+  useEffect(() => {
+    setEditComment((prev) => {
+      if (comment.content !== prev.content) {
+        const newReplies = comment.replies ?? [];
+        setReplies(newReplies);
+        return {
+          ...prev,
+          content: comment.content,
+          totalReplies: newReplies.length,
+          totalLikes: comment.totalLikes,
+        };
+      }
+      return prev;
+    });
+  }, [comment]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.comment-item__header-option')) {
+        setShowOption(false);
+      }
+    };
+
+    fetchLikeCount();
+    fetchReplies();
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="comment-container">
       <div className="list-tree-container">
@@ -250,7 +261,10 @@ const CommentItem = (props) => {
             <div className="comment-item__header">
               <div className="comment-item__header-title">
                 <div className="comment-item__avatar"></div>
-                <h1 className="userName"> @{comment.user.userName}</h1>
+                <h1 className="userName">
+                  {' '}
+                  @{editComment?.user?.userName || comment?.user?.userName}
+                </h1>
               </div>
 
               <div className="comment-item__header-option">
@@ -295,8 +309,10 @@ const CommentItem = (props) => {
           <div className="comment-item__replies">
             {showReplyInput && (
               <div className="intput-container">
-                {(showReplyInput && editComment.totalReplies > 0) && <div className="trunk-replies-input"></div>}
-                <div className='line-input-container'>
+                {showReplyInput && editComment.totalReplies > 0 && (
+                  <div className="trunk-replies-input"></div>
+                )}
+                <div className="line-input-container">
                   <div className="line-input"></div>
                   <CommentInput
                     value={replyContent}

@@ -5,9 +5,10 @@ import { StarFilled, StarOutlined } from '@ant-design/icons';
 import { jwtDecode } from 'jwt-decode';
 import useFetchUser from '../../hooks/useFetchUser';
 import './MovieDetail.scss';
+import { EvaluationService } from '../../services';
 
 export async function MovieDetailLoader({ params }) {
-  const response = await axiosInstance.get(`/api/v1/movies/${params.path }`);
+  const response = await axiosInstance.get(`/api/v1/movies/${params.path}`);
   return {
     movie: response.data,
   };
@@ -23,10 +24,8 @@ export const MovieDetail = () => {
   const [average, setAverage] = useState(0);
   const [countRating, setCountRating] = useState(0);
 
-  const evaluationsNumberReview = async (params) => {
-    const response = await axiosInstance.get(
-      `/api/v1/evaluations/numberOfReviews/${params}`
-    );
+  const getNumberOfReviews = async (params) => {
+    const response = await EvaluationService.getNumberOfReviews(params);
     setCountRating(response.data);
   };
 
@@ -36,16 +35,15 @@ export const MovieDetail = () => {
     }
   };
 
-  const averageRating = async (params) => {
-    const response = await axiosInstance.get(
-      `/api/v1/evaluations/average/${params}`
-    );
+  const getAverage = async (movieId) => {
+    const response = await EvaluationService.getAverageReviews(movieId);
     setAverage(response.data);
   };
-  const handleClick = async (index) => {
+
+  const handleStartClick = async (index) => {
     try {
       setRating(index);
-      evaluationsNumberReview(movie.id);
+      await getNumberOfReviews(movie.id);
       if (jwt) {
         const response = await axiosInstance.get(
           `/api/v1/evaluations/user/${user.id}/movie/${movie.id}`
@@ -92,18 +90,18 @@ export const MovieDetail = () => {
     if (token) {
       const decodedToken = jwtDecode(token);
       setJwt(decodedToken);
-      fetchUser().then();
+      fetchUser(undefined).then();
     }
     window.addEventListener('keyup', handleKeyup);
     return () => {
       window.removeEventListener('keyup', handleKeyup);
     };
-  }, []);
+  }, [fetchUser]);
 
   useEffect(() => {
-    averageRating(movie.id).then();
-    evaluationsNumberReview(movie.id).then();
-  }, [average, rating]);
+    getAverage(movie.id).then();
+    getNumberOfReviews(movie.id).then();
+  }, [movie.id]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -137,9 +135,7 @@ export const MovieDetail = () => {
                     index <= rating ? StarFilled : StarOutlined;
                   return (
                     <StarComponent
-                      onClick={() => {
-                        handleClick(index);
-                      }}
+                      onClick={() => handleStartClick(index)}
                       style={index <= rating ? { color: '#fadb14' } : {}}
                       key={index}
                     />

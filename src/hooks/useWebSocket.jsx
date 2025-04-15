@@ -7,6 +7,7 @@ const useWebSocket = (setListComment, movieId) => {
   const [lastMessage, setLastMessage] = useState(null);
   const stompClient = useRef(null);
   const [userRole, setUserRole] = useState();
+  const [action, setAction] = useState();
 
   const sendMessage = (message) => {
     if (!stompClient.current?.connected) {
@@ -27,35 +28,94 @@ const useWebSocket = (setListComment, movieId) => {
     stompClient.current.send(
       '/app/sendComment',
       {},
-      JSON.stringify(enhancedMessage)
+      JSON.stringify({
+        action: 'ADD',
+        data: enhancedMessage,
+      })
     );
   };
 
   const onMessage = () => {
     setIsConnected(true);
     stompClient.current?.subscribe(`/topic/comment/${movieId}`, (message) => {
-      const newComment = JSON.parse(message.body);
+      const messageData = JSON.parse(message.body);
+      const { action, data } = messageData;
+
+      console.log('Received action:', action);
+      setAction(action);
+
       setListComment((prevComments) => {
-        if (newComment?.parentCommentId) {
-          const updatedComments = prevComments.map((comment) => {
-            if (comment.id === newComment.parentCommentId) {
-              const updated = {
+        const updateOrAddComment = (comments, data) => {
+          return comments.map((comment) => {
+            if (comment.id === data.parentCommentId) {
+              const updatedReplies = [
+                ...(comment.replies ?? []).filter(
+                  (reply) => reply.id !== data.id
+                ),
+                data,
+              ];
+              return {
                 ...comment,
-                replies: [...(comment.replies ?? []), { ...newComment }],
+                replies: updatedReplies,
+                totalReplies: updatedReplies.length,
               };
-              console.log('Đã thêm reply vào comment:', updated);
-              return updated;
             }
+
+            if (comment.replies && comment.replies.length > 0) {
+              return {
+                ...comment,
+                replies: updateOrAddComment(comment.replies, data),
+              };
+            }
+
             return comment;
           });
-          console.log('Danh sách comment sau khi thêm reply:', updatedComments);
+        };
 
-          return updatedComments;
-        } else {
-          return [...prevComments, { ...newComment, replies: [] }];
+        const deleteCommentById = (comments, idToDelete) => {
+          return comments
+            .filter((comment) => comment.id !== idToDelete)
+            .map((comment) => ({
+              ...comment,
+              replies: deleteCommentById(comment.replies ?? [], idToDelete),
+              totalReplies: deleteCommentById(comment.replies ?? [], idToDelete)
+                .length,
+            }));
+        };
+        switch (action) {
+          case 'ADD':
+          case 'UPDATE': {
+            if (data?.parentCommentId) {
+              return updateOrAddComment(prevComments, data);
+            } else {
+              const isExist = prevComments.some(
+                (comment) => comment.id === data.id
+              );
+              if (isExist) {
+                return prevComments.map((comment) => {
+                  if (comment.id === data.id) {
+                    return {
+                      ...comment,
+                      content: data.content,
+                      replies: comment.replies ?? [],
+                    };
+                  }
+                  return comment;
+                });
+              } else {
+                return [...prevComments, { ...data, replies: [] }];
+              }
+            }
+          }
+          case 'DELETE': {
+            return deleteCommentById(prevComments, data);
+          }
+          default:
+            return prevComments;
         }
       });
-      setLastMessage(newComment);
+
+      setLastMessage(data);
     });
   };
 
@@ -65,7 +125,7 @@ const useWebSocket = (setListComment, movieId) => {
 
   useEffect(() => {
     if (!stompClient.current?.isConnected) {
-      console.log("connecting...")
+      console.log('connecting...');
       const token = localStorage.getItem('access_token');
       if (!token) {
         console.error('No access token found.');
@@ -111,6 +171,7 @@ const useWebSocket = (setListComment, movieId) => {
     sendMessage,
     lastMessage,
     isConnected,
+    acTion: action,
   };
 };
 
